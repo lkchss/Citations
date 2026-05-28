@@ -18,30 +18,9 @@ from typing import Any
 
 
 BASE_URL = "https://api.openalex.org/works"
-ECONOMICS_CONCEPT_ID = "C162324750"
-DEFAULT_OUTPUT_DIR = Path("/root/sdb1/openalex/economics")
-DEFAULT_FIELDS = [
-    "id",
-    "doi",
-    "display_name",
-    "publication_year",
-    "publication_date",
-    "type",
-    "authorships",
-    "primary_location",
-    "locations_count",
-    "open_access",
-    "cited_by_count",
-    "cited_by_api_url",
-    "referenced_works",
-    "related_works",
-    "concepts",
-    "topics",
-    "keywords",
-    "ids",
-    "updated_date",
-    "created_date",
-]
+ECONOMICS_FIELD_ID = "20"
+DEFAULT_FILTER = f"primary_topic.field.id:{ECONOMICS_FIELD_ID}"
+DEFAULT_OUTPUT_DIR = Path("/root/sdb1/openalex/economics_field20")
 
 
 def load_dotenv(path: Path) -> None:
@@ -110,7 +89,7 @@ def write_batch(output_dir: Path, batch_number: int, records: list[dict[str, Any
 
 
 def build_filter(args: argparse.Namespace) -> str:
-    filters = [args.openalex_filter or f"concepts.id:{ECONOMICS_CONCEPT_ID}"]
+    filters = [args.openalex_filter or DEFAULT_FILTER]
     if args.from_publication_year:
         filters.append(f"publication_year:>{args.from_publication_year - 1}")
     if args.to_publication_year:
@@ -133,11 +112,15 @@ def parse_args() -> argparse.Namespace:
         "--filter",
         dest="openalex_filter",
         default="",
-        help="Override the OpenAlex filter. Default: concepts.id:C162324750.",
+        help=f"Override the OpenAlex filter. Default: {DEFAULT_FILTER}.",
     )
     parser.add_argument("--from-publication-year", type=int, default=0)
     parser.add_argument("--to-publication-year", type=int, default=0)
-    parser.add_argument("--select", default=",".join(DEFAULT_FIELDS))
+    parser.add_argument(
+        "--select",
+        default="",
+        help="Optional comma-separated root fields. Omit it to pull full OpenAlex Work records.",
+    )
     parser.add_argument("--reset", action="store_true", help="Ignore any existing checkpoint.")
     return parser.parse_args()
 
@@ -165,6 +148,15 @@ def main() -> int:
     batch_number = int(checkpoint.get("next_batch_number", 1))
     openalex_filter = build_filter(args)
 
+    checkpoint_filter = checkpoint.get("filter")
+    if checkpoint_filter and checkpoint_filter != openalex_filter:
+        print(
+            f"Checkpoint filter {checkpoint_filter!r} does not match requested filter "
+            f"{openalex_filter!r}. Use --reset or a different --output-dir.",
+            file=sys.stderr,
+        )
+        return 2
+
     while True:
         if args.max_pages and page_count >= args.max_pages:
             break
@@ -174,8 +166,9 @@ def main() -> int:
             "filter": openalex_filter,
             "per_page": str(args.per_page),
             "cursor": cursor,
-            "select": args.select,
         }
+        if args.select:
+            params["select"] = args.select
         if args.mailto:
             params["mailto"] = args.mailto
 
@@ -213,6 +206,7 @@ def main() -> int:
             "last_batch": str(batch_path),
             "filter": openalex_filter,
             "per_page": args.per_page,
+            "select": args.select or None,
         }
         write_checkpoint(checkpoint_path, checkpoint)
         print(f"{now_iso()} wrote {len(records)} records to {batch_path}", flush=True)

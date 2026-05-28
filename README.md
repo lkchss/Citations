@@ -20,7 +20,15 @@ python3 scripts/pull_openalex_economics.py
 By default, data is written outside the Git repo to:
 
 ```text
-/root/sdb1/openalex/economics
+/root/sdb1/openalex/economics_field20
 ```
 
 The script writes gzip-compressed JSONL batch files and a `checkpoint.json`, so it can resume after stopping.
+
+The default OpenAlex filter is:
+
+```text
+primary_topic.field.id:20
+```
+
+OpenAlex field `20` is `Economics, Econometrics and Finance`. This is broader than a narrow keyword search but avoids pulling papers where economics appears only as a weak or zero-score ancestor concept.
