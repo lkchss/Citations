@@ -33,6 +33,38 @@ primary_topic.field.id:20
 
 OpenAlex field `20` is `Economics, Econometrics and Finance`. This is broader than a narrow keyword search but avoids pulling papers where economics appears only as a weak or zero-score ancestor concept.
 
+## Download The OpenAlex Snapshot
+
+For full OpenAlex ingestion, use the public S3 snapshot instead of the API:
+
+```bash
+python3 scripts/download_openalex_snapshot.py --entity works --workers 8 --largest-first
+```
+
+Default output:
+
+```text
+/root/sdb1/openalex/snapshot
+```
+
+The downloader reads the official OpenAlex manifest, downloads gzip JSONL files concurrently, and skips files that already exist with the expected byte size. The API puller is useful for filtered experiments and incremental/API-only fields; the snapshot is the right path for full-corpus storage.
+
+For parallel API shards, build a reusable skip-ID cache from already pulled files:
+
+```bash
+python3 scripts/build_openalex_id_cache.py \
+  --input-dir /root/sdb1/openalex/economics_field20 \
+  --input-dir /root/sdb1/openalex/economics_field20_shards/to_2009 \
+  --input-dir /root/sdb1/openalex/economics_field20_shards/from_2010 \
+  --output-file /root/sdb1/openalex/economics_existing_ids.txt
+```
+
+Then start balanced economics year shards:
+
+```bash
+./scripts/start_economics_shards.sh
+```
+
 ## Build A First Event Panel
 
 The first econometrics dataset is a balanced paper-author-year panel around author hit papers:

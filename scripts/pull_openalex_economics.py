@@ -72,6 +72,19 @@ def load_existing_work_ids(dirs: list[Path]) -> set[str]:
     return existing_ids
 
 
+def load_existing_work_ids_from_files(paths: list[Path]) -> set[str]:
+    existing_ids: set[str] = set()
+    for path in paths:
+        if not path.exists():
+            continue
+        with path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                work_id = line.strip()
+                if work_id:
+                    existing_ids.add(work_id)
+    return existing_ids
+
+
 def request_json(params: dict[str, str], retries: int) -> dict[str, Any]:
     url = f"{BASE_URL}?{urllib.parse.urlencode(params)}"
     headers = {
@@ -144,6 +157,13 @@ def parse_args() -> argparse.Namespace:
         help="Directory of existing works_*.jsonl.gz files whose OpenAlex IDs should be skipped.",
     )
     parser.add_argument(
+        "--exclude-ids-file",
+        action="append",
+        type=Path,
+        default=[],
+        help="Plain text file with one OpenAlex work ID per line to skip.",
+    )
+    parser.add_argument(
         "--select",
         default="",
         help="Optional comma-separated root fields. Omit it to pull full OpenAlex Work records.",
@@ -166,7 +186,8 @@ def main() -> int:
         return 2
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    exclude_ids = load_existing_work_ids(args.exclude_ids_dir)
+    exclude_ids = load_existing_work_ids_from_files(args.exclude_ids_file)
+    exclude_ids.update(load_existing_work_ids(args.exclude_ids_dir))
     if exclude_ids:
         print(f"{now_iso()} loaded {len(exclude_ids)} existing work IDs to skip", flush=True)
 
@@ -258,6 +279,7 @@ def main() -> int:
             "per_page": args.per_page,
             "select": args.select or None,
             "exclude_ids_dirs": [str(path) for path in args.exclude_ids_dir],
+            "exclude_ids_files": [str(path) for path in args.exclude_ids_file],
         }
         write_checkpoint(checkpoint_path, checkpoint)
         if batch_path:
