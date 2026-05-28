@@ -14,7 +14,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 
 BASE_URL = "https://api.openalex.org/works"
@@ -50,6 +50,26 @@ def write_checkpoint(path: Path, checkpoint: dict[str, Any]) -> None:
     tmp_path = path.with_suffix(".tmp")
     tmp_path.write_text(json.dumps(checkpoint, indent=2, sort_keys=True), encoding="utf-8")
     tmp_path.replace(path)
+
+
+def iter_jsonl_gz(paths: Iterable[Path]) -> Iterable[dict[str, Any]]:
+    for path in paths:
+        with gzip.open(path, "rt", encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    yield json.loads(line)
+
+
+def load_existing_work_ids(dirs: list[Path]) -> set[str]:
+    existing_ids: set[str] = set()
+    for directory in dirs:
+        if not directory.exists():
+            continue
+        for record in iter_jsonl_gz(sorted(directory.glob("works_*.jsonl.gz"))):
+            work_id = record.get("id")
+            if work_id:
+                existing_ids.add(str(work_id))
+    return existing_ids
 
 
 def request_json(params: dict[str, str], retries: int) -> dict[str, Any]:
@@ -117,6 +137,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--from-publication-year", type=int, default=0)
     parser.add_argument("--to-publication-year", type=int, default=0)
     parser.add_argument(
+        "--exclude-ids-dir",
+        action="append",
+        type=Path,
+        default=[],
+        help="Directory of existing works_*.jsonl.gz files whose OpenAlex IDs should be skipped.",
+    )
+    parser.add_argument(
         "--select",
         default="",
         help="Optional comma-separated root fields. Omit it to pull full OpenAlex Work records.",
@@ -139,12 +166,18 @@ def main() -> int:
         return 2
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
+    exclude_ids = load_existing_work_ids(args.exclude_ids_dir)
+    if exclude_ids:
+        print(f"{now_iso()} loaded {len(exclude_ids)} existing work IDs to skip", flush=True)
+
     checkpoint_path = args.output_dir / "checkpoint.json"
     checkpoint = {} if args.reset else read_checkpoint(checkpoint_path)
 
     cursor = checkpoint.get("next_cursor", "*")
     page_count = int(checkpoint.get("pages_completed", 0))
     total_records = int(checkpoint.get("records_written", 0))
+    total_records_seen = int(checkpoint.get("records_seen", total_records))
+    total_records_skipped = int(checkpoint.get("records_skipped_existing", 0))
     batch_number = int(checkpoint.get("next_batch_number", 1))
     openalex_filter = build_filter(args)
 
@@ -173,17 +206,19 @@ def main() -> int:
             params["mailto"] = args.mailto
 
         payload = request_json(params, args.retries)
-        records = payload.get("results", [])
+        fetched_records = payload.get("results", [])
         meta = payload.get("meta", {})
         next_cursor = meta.get("next_cursor")
 
-        if not records:
+        if not fetched_records:
             checkpoint.update(
                 {
                     "completed_at": now_iso(),
                     "next_cursor": next_cursor,
                     "pages_completed": page_count,
                     "records_written": total_records,
+                    "records_seen": total_records_seen,
+                    "records_skipped_existing": total_records_skipped,
                     "next_batch_number": batch_number,
                     "filter": openalex_filter,
                 }
@@ -191,10 +226,23 @@ def main() -> int:
             write_checkpoint(checkpoint_path, checkpoint)
             break
 
-        batch_path = write_batch(args.output_dir, batch_number, records)
+        records = []
+        skipped_existing = 0
+        for record in fetched_records:
+            work_id = str(record.get("id") or "")
+            if work_id and work_id in exclude_ids:
+                skipped_existing += 1
+                continue
+            records.append(record)
+
         page_count += 1
+        total_records_seen += len(fetched_records)
         total_records += len(records)
-        batch_number += 1
+        total_records_skipped += skipped_existing
+        batch_path = None
+        if records:
+            batch_path = write_batch(args.output_dir, batch_number, records)
+            batch_number += 1
         cursor = next_cursor
 
         checkpoint = {
@@ -202,14 +250,27 @@ def main() -> int:
             "next_cursor": cursor,
             "pages_completed": page_count,
             "records_written": total_records,
+            "records_seen": total_records_seen,
+            "records_skipped_existing": total_records_skipped,
             "next_batch_number": batch_number,
-            "last_batch": str(batch_path),
+            "last_batch": str(batch_path) if batch_path else checkpoint.get("last_batch"),
             "filter": openalex_filter,
             "per_page": args.per_page,
             "select": args.select or None,
+            "exclude_ids_dirs": [str(path) for path in args.exclude_ids_dir],
         }
         write_checkpoint(checkpoint_path, checkpoint)
-        print(f"{now_iso()} wrote {len(records)} records to {batch_path}", flush=True)
+        if batch_path:
+            print(
+                f"{now_iso()} wrote {len(records)} records to {batch_path} "
+                f"skipped_existing={skipped_existing}",
+                flush=True,
+            )
+        else:
+            print(
+                f"{now_iso()} wrote 0 records skipped_existing={skipped_existing}",
+                flush=True,
+            )
 
         if not cursor:
             break
