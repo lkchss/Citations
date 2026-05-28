@@ -30,6 +30,7 @@ class Hit:
     author_total_citations: int
     author_included_works: int
     author_hit_citation_share: float
+    unrelated_focal_works: int
     fwci: float | None
     referenced_works: frozenset[str]
 
@@ -170,11 +171,72 @@ def collect_hits(
                     author_total_citations=author_total,
                     author_included_works=author_work_count,
                     author_hit_citation_share=hit_share,
+                    unrelated_focal_works=0,
                     fwci=float_or_none(work.get("fwci")),
                     referenced_works=references,
                 )
             )
     return hits_by_author
+
+
+def count_unrelated_focal_works(
+    paths: list[Path],
+    hits_by_author: dict[str, list[Hit]],
+    allowed_types: set[str],
+    min_focal_age_at_hit: int,
+) -> dict[tuple[str, str], int]:
+    focal_works_by_hit: dict[tuple[str, str], set[str]] = defaultdict(set)
+    for work in iter_works(paths):
+        work_id = str(work.get("id") or "")
+        publication_year = int_or_zero(work.get("publication_year"))
+        work_type = str(work.get("type") or "")
+        if not work_id or not publication_year:
+            continue
+        if allowed_types and work_type not in allowed_types:
+            continue
+
+        for author_id, _author_name, _position in get_authors(work):
+            for hit in hits_by_author.get(author_id, []):
+                if hit.work_id == work_id:
+                    continue
+                if publication_year > hit.publication_year - min_focal_age_at_hit:
+                    continue
+                if work_id in hit.referenced_works:
+                    continue
+                focal_works_by_hit[(author_id, hit.work_id)].add(work_id)
+
+    return {key: len(work_ids) for key, work_ids in focal_works_by_hit.items()}
+
+
+def filter_hits_by_unrelated_focal_works(
+    hits_by_author: dict[str, list[Hit]],
+    unrelated_focal_counts: dict[tuple[str, str], int],
+    min_unrelated_focal_works: int,
+) -> dict[str, list[Hit]]:
+    filtered: dict[str, list[Hit]] = defaultdict(list)
+    for author_id, hits in hits_by_author.items():
+        for hit in hits:
+            unrelated_count = unrelated_focal_counts.get((author_id, hit.work_id), 0)
+            if unrelated_count < min_unrelated_focal_works:
+                continue
+            filtered[author_id].append(
+                Hit(
+                    author_id=hit.author_id,
+                    author_name=hit.author_name,
+                    work_id=hit.work_id,
+                    title=hit.title,
+                    publication_year=hit.publication_year,
+                    work_type=hit.work_type,
+                    cited_by_count=hit.cited_by_count,
+                    author_total_citations=hit.author_total_citations,
+                    author_included_works=hit.author_included_works,
+                    author_hit_citation_share=hit.author_hit_citation_share,
+                    unrelated_focal_works=unrelated_count,
+                    fwci=hit.fwci,
+                    referenced_works=hit.referenced_works,
+                )
+            )
+    return filtered
 
 
 def write_panel(
@@ -208,6 +270,7 @@ def write_panel(
         "hit_author_total_citations",
         "hit_author_included_works",
         "hit_author_citation_share",
+        "hit_unrelated_focal_works",
         "hit_fwci",
         "year",
         "event_time",
@@ -287,6 +350,7 @@ def write_panel(
                                 "hit_author_total_citations": hit.author_total_citations,
                                 "hit_author_included_works": hit.author_included_works,
                                 "hit_author_citation_share": f"{hit.author_hit_citation_share:.8f}",
+                                "hit_unrelated_focal_works": hit.unrelated_focal_works,
                                 "hit_fwci": hit.fwci,
                                 "year": year,
                                 "event_time": event_time,
@@ -315,7 +379,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--output-name", default="author_paper_year_event_panel.csv.gz")
     parser.add_argument("--max-files", type=int, default=0, help="0 means use all batch files.")
-    parser.add_argument("--min-hit-citations", type=int, default=500)
+    parser.add_argument("--min-hit-citations", type=int, default=101)
     parser.add_argument(
         "--min-hit-author-citation-share",
         type=float,
@@ -336,6 +400,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--pre-years", type=int, default=5)
     parser.add_argument("--post-years", type=int, default=5)
     parser.add_argument("--min-focal-age-at-hit", type=int, default=1)
+    parser.add_argument(
+        "--min-unrelated-focal-works",
+        type=int,
+        default=0,
+        help="Minimum prior unrelated focal works required for each author-hit event.",
+    )
     parser.add_argument(
         "--types",
         default=",".join(DEFAULT_TYPES),
@@ -366,6 +436,17 @@ def main() -> int:
         min_hit_year=args.min_hit_year,
         max_hit_year=args.max_hit_year,
     )
+    unrelated_focal_counts = count_unrelated_focal_works(
+        paths=paths,
+        hits_by_author=hits_by_author,
+        allowed_types=allowed_types,
+        min_focal_age_at_hit=args.min_focal_age_at_hit,
+    )
+    hits_by_author = filter_hits_by_unrelated_focal_works(
+        hits_by_author=hits_by_author,
+        unrelated_focal_counts=unrelated_focal_counts,
+        min_unrelated_focal_works=args.min_unrelated_focal_works,
+    )
     hit_count = sum(len(hits) for hits in hits_by_author.values())
     output_path = args.output_dir / args.output_name
     rows, focal_works, focal_pairs = write_panel(
@@ -392,6 +473,7 @@ def main() -> int:
         "pre_years": args.pre_years,
         "post_years": args.post_years,
         "min_focal_age_at_hit": args.min_focal_age_at_hit,
+        "min_unrelated_focal_works": args.min_unrelated_focal_works,
         "hit_authors": len(hits_by_author),
         "author_hit_events": hit_count,
         "focal_works": focal_works,

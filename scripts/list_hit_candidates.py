@@ -12,6 +12,9 @@ from build_author_paper_year_panel import (
     DEFAULT_OUTPUT_DIR,
     DEFAULT_TYPES,
     collect_author_stats,
+    collect_hits,
+    count_unrelated_focal_works,
+    filter_hits_by_unrelated_focal_works,
     get_authors,
     get_primary_topic,
     int_or_zero,
@@ -28,9 +31,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--output-name", default="hit_candidates.csv")
     parser.add_argument("--max-files", type=int, default=0, help="0 means use all batch files.")
-    parser.add_argument("--min-hit-citations", type=int, default=500)
+    parser.add_argument("--min-hit-citations", type=int, default=101)
     parser.add_argument("--min-hit-author-citation-share", type=float, default=0.5)
     parser.add_argument("--min-author-included-works", type=int, default=3)
+    parser.add_argument("--min-focal-age-at-hit", type=int, default=1)
+    parser.add_argument(
+        "--min-unrelated-focal-works",
+        type=int,
+        default=3,
+        help="Minimum prior unrelated focal works required for each author-hit event.",
+    )
     parser.add_argument("--min-hit-year", type=int, default=1990)
     parser.add_argument("--max-hit-year", type=int, default=0)
     parser.add_argument(
@@ -49,6 +59,33 @@ def main() -> int:
 
     allowed_types = {item.strip() for item in args.types.split(",") if item.strip()}
     author_total_citations, author_included_works = collect_author_stats(paths, allowed_types)
+    hits_by_author = collect_hits(
+        paths=paths,
+        allowed_types=allowed_types,
+        author_total_citations=author_total_citations,
+        author_included_works=author_included_works,
+        min_hit_citations=args.min_hit_citations,
+        min_hit_author_citation_share=args.min_hit_author_citation_share,
+        min_author_included_works=args.min_author_included_works,
+        min_hit_year=args.min_hit_year,
+        max_hit_year=args.max_hit_year,
+    )
+    unrelated_focal_counts = count_unrelated_focal_works(
+        paths=paths,
+        hits_by_author=hits_by_author,
+        allowed_types=allowed_types,
+        min_focal_age_at_hit=args.min_focal_age_at_hit,
+    )
+    hits_by_author = filter_hits_by_unrelated_focal_works(
+        hits_by_author=hits_by_author,
+        unrelated_focal_counts=unrelated_focal_counts,
+        min_unrelated_focal_works=args.min_unrelated_focal_works,
+    )
+    kept_hit_keys = {
+        (author_id, hit.work_id): hit
+        for author_id, hits in hits_by_author.items()
+        for hit in hits
+    }
     rows: list[dict[str, object]] = []
 
     for work in iter_works(paths):
@@ -69,12 +106,8 @@ def main() -> int:
 
         field, subfield, topic_id, topic = get_primary_topic(work)
         for author_id, author_name, position in get_authors(work):
-            author_total = author_total_citations.get(author_id, 0)
-            author_work_count = author_included_works.get(author_id, 0)
-            if author_work_count < args.min_author_included_works:
-                continue
-            share = cited_by_count / author_total if author_total else 0.0
-            if share < args.min_hit_author_citation_share:
+            hit = kept_hit_keys.get((author_id, work_id))
+            if not hit:
                 continue
             rows.append(
                 {
@@ -84,9 +117,10 @@ def main() -> int:
                     "year": publication_year,
                     "type": work_type,
                     "citations": cited_by_count,
-                    "author_total_citations": author_total,
-                    "author_included_works": author_work_count,
-                    "share": f"{share:.8f}",
+                    "author_total_citations": hit.author_total_citations,
+                    "author_included_works": hit.author_included_works,
+                    "unrelated_focal_works": hit.unrelated_focal_works,
+                    "share": f"{hit.author_hit_citation_share:.8f}",
                     "fwci": work.get("fwci"),
                     "field": field,
                     "subfield": subfield,
@@ -112,6 +146,7 @@ def main() -> int:
         "citations",
         "author_total_citations",
         "author_included_works",
+        "unrelated_focal_works",
         "share",
         "fwci",
         "field",

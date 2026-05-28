@@ -52,13 +52,13 @@ The first simple hit definition is any included article, preprint, or review wit
 To tighten hits to papers that account for at least half of the author's included-work citations:
 
 ```bash
-python3 scripts/build_author_paper_year_panel.py --min-hit-author-citation-share 0.5 --min-author-included-works 3
+python3 scripts/build_author_paper_year_panel.py --min-hit-author-citation-share 0.5 --min-author-included-works 3 --min-unrelated-focal-works 3
 ```
 
 To inspect the hit candidates before building a panel:
 
 ```bash
-python3 scripts/list_hit_candidates.py --min-hit-author-citation-share 0.5 --min-author-included-works 3
+python3 scripts/list_hit_candidates.py --min-hit-author-citation-share 0.5 --min-author-included-works 3 --min-unrelated-focal-works 3
 ```
 
 Useful options:

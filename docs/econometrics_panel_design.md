@@ -34,7 +34,7 @@ The starter script defines a hit as an OpenAlex work with:
 
 ```text
 type in article, preprint, review
-cited_by_count >= 500
+cited_by_count > 100
 publication_year >= 1990
 ```
 
@@ -47,12 +47,18 @@ hit_cited_by_count_total / author_total_citations >= 0.50
 In the current script this is enabled with:
 
 ```bash
-python3 scripts/build_author_paper_year_panel.py --min-hit-author-citation-share 0.5 --min-author-included-works 3
+python3 scripts/build_author_paper_year_panel.py --min-hit-author-citation-share 0.5 --min-author-included-works 3 --min-unrelated-focal-works 3
 ```
 
 `author_total_citations` is computed over the same included OpenAlex work types in the input files being processed. During an incomplete pull, this is a partial-corpus measure; after the full economics pull finishes, it becomes a within-economics-corpus measure.
 
 The `--min-author-included-works` guard is important because an author with only one included paper mechanically has a hit share of 1.0.
+
+The current stricter event-screen also requires at least three prior unrelated focal papers. That can also be controlled directly:
+
+```bash
+python3 scripts/build_author_paper_year_panel.py --min-unrelated-focal-works 3
+```
 
 This is intentionally simple. Later candidates:
 
@@ -99,6 +105,7 @@ The generated panel contains:
 | `hit_author_total_citations` | Total citations across the author's included works in the processed input corpus |
 | `hit_author_included_works` | Count of the author's included works in the processed input corpus |
 | `hit_author_citation_share` | Hit paper's share of the author's included-work citations |
+| `hit_unrelated_focal_works` | Number of prior unrelated focal papers for this author-hit event |
 | `hit_fwci` | Hit paper field-weighted citation impact, if available |
 | `year` | Calendar year for the outcome |
 | `event_time` | `year - hit_publication_year` |
