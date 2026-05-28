@@ -27,6 +27,9 @@ class Hit:
     publication_year: int
     work_type: str
     cited_by_count: int
+    author_total_citations: int
+    author_included_works: int
+    author_hit_citation_share: float
     fwci: float | None
     referenced_works: frozenset[str]
 
@@ -101,10 +104,31 @@ def float_or_none(value: Any) -> float | None:
         return None
 
 
+def collect_author_stats(
+    paths: list[Path],
+    allowed_types: set[str],
+) -> tuple[dict[str, int], dict[str, int]]:
+    citation_totals: dict[str, int] = defaultdict(int)
+    work_counts: dict[str, int] = defaultdict(int)
+    for work in iter_works(paths):
+        work_type = str(work.get("type") or "")
+        if allowed_types and work_type not in allowed_types:
+            continue
+        cited_by_count = int_or_zero(work.get("cited_by_count"))
+        for author_id, _author_name, _position in get_authors(work):
+            citation_totals[author_id] += cited_by_count
+            work_counts[author_id] += 1
+    return citation_totals, work_counts
+
+
 def collect_hits(
     paths: list[Path],
     allowed_types: set[str],
+    author_total_citations: dict[str, int],
+    author_included_works: dict[str, int],
     min_hit_citations: int,
+    min_hit_author_citation_share: float,
+    min_author_included_works: int,
     min_hit_year: int,
     max_hit_year: int,
 ) -> dict[str, list[Hit]]:
@@ -127,6 +151,13 @@ def collect_hits(
 
         references = frozenset(str(ref) for ref in (work.get("referenced_works") or []))
         for author_id, author_name, _position in get_authors(work):
+            author_total = author_total_citations.get(author_id, 0)
+            author_work_count = author_included_works.get(author_id, 0)
+            if author_work_count < min_author_included_works:
+                continue
+            hit_share = cited_by_count / author_total if author_total else 0.0
+            if hit_share < min_hit_author_citation_share:
+                continue
             hits_by_author[author_id].append(
                 Hit(
                     author_id=author_id,
@@ -136,6 +167,9 @@ def collect_hits(
                     publication_year=publication_year,
                     work_type=work_type,
                     cited_by_count=cited_by_count,
+                    author_total_citations=author_total,
+                    author_included_works=author_work_count,
+                    author_hit_citation_share=hit_share,
                     fwci=float_or_none(work.get("fwci")),
                     referenced_works=references,
                 )
@@ -171,6 +205,9 @@ def write_panel(
         "hit_publication_year",
         "hit_type",
         "hit_cited_by_count_total",
+        "hit_author_total_citations",
+        "hit_author_included_works",
+        "hit_author_citation_share",
         "hit_fwci",
         "year",
         "event_time",
@@ -247,6 +284,9 @@ def write_panel(
                                 "hit_publication_year": hit.publication_year,
                                 "hit_type": hit.work_type,
                                 "hit_cited_by_count_total": hit.cited_by_count,
+                                "hit_author_total_citations": hit.author_total_citations,
+                                "hit_author_included_works": hit.author_included_works,
+                                "hit_author_citation_share": f"{hit.author_hit_citation_share:.8f}",
                                 "hit_fwci": hit.fwci,
                                 "year": year,
                                 "event_time": event_time,
@@ -276,6 +316,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-name", default="author_paper_year_event_panel.csv.gz")
     parser.add_argument("--max-files", type=int, default=0, help="0 means use all batch files.")
     parser.add_argument("--min-hit-citations", type=int, default=500)
+    parser.add_argument(
+        "--min-hit-author-citation-share",
+        type=float,
+        default=0.0,
+        help=(
+            "Minimum share of an author's included-work citations accounted for by the hit. "
+            "For example, 0.5 keeps hits that account for at least half of author citations."
+        ),
+    )
+    parser.add_argument(
+        "--min-author-included-works",
+        type=int,
+        default=1,
+        help="Minimum number of included works an author must have in the processed corpus.",
+    )
     parser.add_argument("--min-hit-year", type=int, default=1990)
     parser.add_argument("--max-hit-year", type=int, default=0)
     parser.add_argument("--pre-years", type=int, default=5)
@@ -296,10 +351,18 @@ def main() -> int:
         raise SystemExit(f"No works_*.jsonl.gz files found in {args.input_dir}")
 
     allowed_types = {item.strip() for item in args.types.split(",") if item.strip()}
+    author_total_citations, author_included_works = collect_author_stats(
+        paths=paths,
+        allowed_types=allowed_types,
+    )
     hits_by_author = collect_hits(
         paths=paths,
         allowed_types=allowed_types,
+        author_total_citations=author_total_citations,
+        author_included_works=author_included_works,
         min_hit_citations=args.min_hit_citations,
+        min_hit_author_citation_share=args.min_hit_author_citation_share,
+        min_author_included_works=args.min_author_included_works,
         min_hit_year=args.min_hit_year,
         max_hit_year=args.max_hit_year,
     )
@@ -322,6 +385,8 @@ def main() -> int:
         "output_path": str(output_path),
         "allowed_types": sorted(allowed_types),
         "min_hit_citations": args.min_hit_citations,
+        "min_hit_author_citation_share": args.min_hit_author_citation_share,
+        "min_author_included_works": args.min_author_included_works,
         "min_hit_year": args.min_hit_year or None,
         "max_hit_year": args.max_hit_year or None,
         "pre_years": args.pre_years,

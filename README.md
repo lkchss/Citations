@@ -49,6 +49,18 @@ Default output:
 
 The first simple hit definition is any included article, preprint, or review with at least 500 total OpenAlex citations and publication year 1990 or later. A focal paper is included for an author-hit event only when it was published before the hit and the hit paper does not cite it. The panel is balanced over event years `-5` through `+5` around the hit publication year, with annual citations from OpenAlex `counts_by_year`.
 
+To tighten hits to papers that account for at least half of the author's included-work citations:
+
+```bash
+python3 scripts/build_author_paper_year_panel.py --min-hit-author-citation-share 0.5 --min-author-included-works 3
+```
+
+To inspect the hit candidates before building a panel:
+
+```bash
+python3 scripts/list_hit_candidates.py --min-hit-author-citation-share 0.5 --min-author-included-works 3
+```
+
 Useful options:
 
 ```bash

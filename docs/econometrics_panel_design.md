@@ -38,6 +38,22 @@ cited_by_count >= 500
 publication_year >= 1990
 ```
 
+A stricter author-prevalence rule can require:
+
+```text
+hit_cited_by_count_total / author_total_citations >= 0.50
+```
+
+In the current script this is enabled with:
+
+```bash
+python3 scripts/build_author_paper_year_panel.py --min-hit-author-citation-share 0.5 --min-author-included-works 3
+```
+
+`author_total_citations` is computed over the same included OpenAlex work types in the input files being processed. During an incomplete pull, this is a partial-corpus measure; after the full economics pull finishes, it becomes a within-economics-corpus measure.
+
+The `--min-author-included-works` guard is important because an author with only one included paper mechanically has a hit share of 1.0.
+
 This is intentionally simple. Later candidates:
 
 - top percentile within publication year and subfield
@@ -80,6 +96,9 @@ The generated panel contains:
 | `hit_publication_year` | Hit paper publication year |
 | `hit_type` | OpenAlex work type for the hit |
 | `hit_cited_by_count_total` | Total current OpenAlex citations to the hit |
+| `hit_author_total_citations` | Total citations across the author's included works in the processed input corpus |
+| `hit_author_included_works` | Count of the author's included works in the processed input corpus |
+| `hit_author_citation_share` | Hit paper's share of the author's included-work citations |
 | `hit_fwci` | Hit paper field-weighted citation impact, if available |
 | `year` | Calendar year for the outcome |
 | `event_time` | `year - hit_publication_year` |
