@@ -61,7 +61,36 @@ primary_topic.field.id == https://openalex.org/fields/20
 
 ### Phase 4: Build Analysis Tables
 
-The current panel builder works from OpenAlex JSONL gzip work files and can be pointed at the extracted economics directory:
+Build normalized research tables from extracted economics works:
+
+```bash
+python3 scripts/build_research_tables.py \
+  --input-dir /root/sdb1/openalex/derived/economics/works \
+  --output-dir /root/sdb1/openalex/derived/economics/tables \
+  --include-references
+```
+
+The table builder creates:
+
+```text
+works.csv.gz
+work_authors.csv.gz
+work_citations_by_year.csv.gz
+work_references.csv.gz
+author_work_stats.csv.gz
+hit_events.csv.gz
+build_summary.json
+```
+
+Then build the event panel from those tables:
+
+```bash
+python3 scripts/build_panel_from_tables.py \
+  --table-dir /root/sdb1/openalex/derived/economics/tables \
+  --output /root/sdb1/openalex/derived/panels/paper_author_hit_year_panel.csv.gz
+```
+
+The older direct panel builder still works from OpenAlex JSONL gzip work files and can be pointed at the extracted economics directory:
 
 ```bash
 python3 scripts/build_author_paper_year_panel.py --input-dir /root/sdb1/openalex/derived/economics/works

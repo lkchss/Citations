@@ -65,6 +65,23 @@ Then start balanced economics year shards:
 ./scripts/start_economics_shards.sh
 ```
 
+Build normalized research tables from extracted economics works:
+
+```bash
+python3 scripts/build_research_tables.py \
+  --input-dir /root/sdb1/openalex/derived/economics/works \
+  --output-dir /root/sdb1/openalex/derived/economics/tables \
+  --include-references
+```
+
+Build the analysis panel from those tables:
+
+```bash
+python3 scripts/build_panel_from_tables.py \
+  --table-dir /root/sdb1/openalex/derived/economics/tables \
+  --output /root/sdb1/openalex/derived/panels/paper_author_hit_year_panel.csv.gz
+```
+
 ## Build A First Event Panel
 
 The first econometrics dataset is a balanced paper-author-year panel around author hit papers:
