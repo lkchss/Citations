@@ -56,6 +56,11 @@ run_processing() {
     --output-dir /root/sdb1/openalex/derived/economics/tables \
     --include-references >> "$LOG" 2>&1
 
+  log "building subject paper-author-year panel"
+  python3 scripts/build_subject_paper_author_year_panel.py \
+    --table-dir /root/sdb1/openalex/derived/economics/tables \
+    --output /root/sdb1/openalex/derived/economics/panels/paper_author_year.csv.gz >> "$LOG" 2>&1
+
   log "building paper-author-hit-year panel"
   python3 scripts/build_panel_from_tables.py \
     --table-dir /root/sdb1/openalex/derived/economics/tables \

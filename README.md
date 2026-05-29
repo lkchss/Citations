@@ -74,7 +74,15 @@ python3 scripts/build_research_tables.py \
   --include-references
 ```
 
-Build the analysis panel from those tables:
+Build the subject-level paper-author-year panel from those tables:
+
+```bash
+python3 scripts/build_subject_paper_author_year_panel.py \
+  --table-dir /root/sdb1/openalex/derived/economics/tables \
+  --output /root/sdb1/openalex/derived/economics/panels/paper_author_year.csv.gz
+```
+
+Build the hit-event analysis panel from those tables:
 
 ```bash
 python3 scripts/build_panel_from_tables.py \

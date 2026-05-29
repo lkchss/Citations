@@ -59,7 +59,7 @@ Default filter:
 primary_topic.field.id == https://openalex.org/fields/20
 ```
 
-### Phase 4: Build Analysis Tables
+### Phase 4: Build Subject Tables And Panels
 
 Build normalized research tables from extracted economics works:
 
@@ -83,6 +83,18 @@ build_summary.json
 ```
 
 Then build the event panel from those tables:
+
+First build the subject-level paper-author-year panel:
+
+```bash
+python3 scripts/build_subject_paper_author_year_panel.py \
+  --table-dir /root/sdb1/openalex/derived/economics/tables \
+  --output /root/sdb1/openalex/derived/economics/panels/paper_author_year.csv.gz
+```
+
+This panel is the clean base layer for subject-level analysis. Hit definitions and event-study panels should be built downstream from it.
+
+Then, when needed, build the hit-event panel:
 
 ```bash
 python3 scripts/build_panel_from_tables.py \
