@@ -7,7 +7,7 @@ import argparse
 import csv
 import gzip
 import json
-from collections import defaultdict
+from itertools import groupby
 from pathlib import Path
 
 
@@ -27,19 +27,25 @@ def int_or_zero(value: str) -> int:
         return 0
 
 
-def load_works(table_dir: Path) -> dict[str, dict[str, str]]:
-    return {row["work_id"]: row for row in read_csv_gz(table_dir / "works.csv.gz")}
+def grouped_by_work(path: Path):
+    for work_id, rows in groupby(read_csv_gz(path), key=lambda row: row["work_id"]):
+        yield work_id, list(rows)
 
 
-def load_work_authors(table_dir: Path) -> list[dict[str, str]]:
-    return list(read_csv_gz(table_dir / "work_authors.csv.gz"))
-
-
-def load_citations(table_dir: Path) -> dict[str, dict[int, int]]:
-    citations: dict[str, dict[int, int]] = defaultdict(dict)
-    for row in read_csv_gz(table_dir / "work_citations_by_year.csv.gz"):
-        citations[row["work_id"]][int_or_zero(row["year"])] = int_or_zero(row["citations"])
-    return citations
+def advance_to_work(groups, current, work_id: str):
+    if current is None:
+        try:
+            current = next(groups)
+        except StopIteration:
+            return None, []
+    current_work_id, rows = current
+    if current_work_id == work_id:
+        try:
+            next_current = next(groups)
+        except StopIteration:
+            next_current = None
+        return next_current, rows
+    return current, []
 
 
 def parse_args() -> argparse.Namespace:
@@ -63,9 +69,10 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    works = load_works(args.table_dir)
-    work_authors = load_work_authors(args.table_dir)
-    citations = load_citations(args.table_dir)
+    author_groups = grouped_by_work(args.table_dir / "work_authors.csv.gz")
+    citation_groups = grouped_by_work(args.table_dir / "work_citations_by_year.csv.gz")
+    current_authors = None
+    current_citations = None
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = [
@@ -91,61 +98,68 @@ def main() -> int:
         "citations_observed",
     ]
     rows = 0
+    works = 0
     paper_author_pairs = 0
     with gzip.open(args.output, "wt", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        for authorship in work_authors:
-            work_id = authorship["work_id"]
-            work = works.get(work_id)
-            if not work:
-                continue
+        for work in read_csv_gz(args.table_dir / "works.csv.gz"):
+            works += 1
+            work_id = work["work_id"]
+            current_authors, authorships = advance_to_work(author_groups, current_authors, work_id)
+            current_citations, citation_rows = advance_to_work(
+                citation_groups, current_citations, work_id
+            )
+            citations = {
+                int_or_zero(row["year"]): int_or_zero(row["citations"]) for row in citation_rows
+            }
             publication_year = int_or_zero(work["publication_year"])
             if not publication_year:
                 continue
             start_year = max(args.start_year or publication_year, publication_year)
             end_year = max(args.end_year, start_year)
-            paper_author_pairs += 1
-            for year in range(start_year, end_year + 1):
-                if year in citations.get(work_id, {}):
-                    citation_value: str | int = citations[work_id][year]
-                    observed = 1
-                elif args.zero_missing_citations:
-                    citation_value = 0
-                    observed = 1
-                else:
-                    citation_value = ""
-                    observed = 0
-                writer.writerow(
-                    {
-                        "work_id": work_id,
-                        "author_id": authorship["author_id"],
-                        "author_name": authorship["author_name"],
-                        "author_position": authorship["author_position"],
-                        "author_sequence": authorship["author_sequence"],
-                        "year": year,
-                        "publication_year": publication_year,
-                        "paper_age": year - publication_year,
-                        "type": work["type"],
-                        "title": work["title"],
-                        "field_id": work["field_id"],
-                        "field_name": work["field_name"],
-                        "subfield_id": work["subfield_id"],
-                        "subfield_name": work["subfield_name"],
-                        "topic_id": work["topic_id"],
-                        "topic_name": work["topic_name"],
-                        "work_cited_by_count_total": work["cited_by_count"],
-                        "fwci": work["fwci"],
-                        "citations": citation_value,
-                        "citations_observed": observed,
-                    }
-                )
-                rows += 1
+            for authorship in authorships:
+                paper_author_pairs += 1
+                for year in range(start_year, end_year + 1):
+                    if year in citations:
+                        citation_value: str | int = citations[year]
+                        observed = 1
+                    elif args.zero_missing_citations:
+                        citation_value = 0
+                        observed = 1
+                    else:
+                        citation_value = ""
+                        observed = 0
+                    writer.writerow(
+                        {
+                            "work_id": work_id,
+                            "author_id": authorship["author_id"],
+                            "author_name": authorship["author_name"],
+                            "author_position": authorship["author_position"],
+                            "author_sequence": authorship["author_sequence"],
+                            "year": year,
+                            "publication_year": publication_year,
+                            "paper_age": year - publication_year,
+                            "type": work["type"],
+                            "title": work["title"],
+                            "field_id": work["field_id"],
+                            "field_name": work["field_name"],
+                            "subfield_id": work["subfield_id"],
+                            "subfield_name": work["subfield_name"],
+                            "topic_id": work["topic_id"],
+                            "topic_name": work["topic_name"],
+                            "work_cited_by_count_total": work["cited_by_count"],
+                            "fwci": work["fwci"],
+                            "citations": citation_value,
+                            "citations_observed": observed,
+                        }
+                    )
+                    rows += 1
 
     summary = {
         "table_dir": str(args.table_dir),
         "output": str(args.output),
-        "works": len(works),
+        "works": works,
         "paper_author_pairs": paper_author_pairs,
         "panel_rows": rows,
         "start_year": args.start_year or "publication_year",

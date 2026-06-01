@@ -191,9 +191,10 @@ def build_tables(args: argparse.Namespace) -> dict[str, int]:
             if allowed_types and parsed.work_type not in allowed_types:
                 continue
 
-            work_by_id[parsed.work_id] = parsed
             authors = get_authors(work)
-            work_authors[parsed.work_id] = authors
+            if not args.skip_hit_events:
+                work_by_id[parsed.work_id] = parsed
+                work_authors[parsed.work_id] = authors
             works_writer.writerow(
                 {
                     "work_id": parsed.work_id,
@@ -224,10 +225,12 @@ def build_tables(args: argparse.Namespace) -> dict[str, int]:
                     }
                 )
                 authors_written += 1
-                author_names.setdefault(author_id, author_name)
-                author_total_citations[author_id] += parsed.cited_by_count
-                author_work_count[author_id] += 1
-                works_by_author[author_id].add(parsed.work_id)
+                if not args.skip_author_stats or not args.skip_hit_events:
+                    author_names.setdefault(author_id, author_name)
+                    author_total_citations[author_id] += parsed.cited_by_count
+                    author_work_count[author_id] += 1
+                if not args.skip_hit_events:
+                    works_by_author[author_id].add(parsed.work_id)
 
             for year, citations in counts_by_year(work):
                 citations_writer.writerow(
@@ -255,32 +258,37 @@ def build_tables(args: argparse.Namespace) -> dict[str, int]:
         if references_handle is not None:
             references_handle.close()
 
-    author_stats_handle, author_stats_writer = csv_writer(
-        args.output_dir / "author_work_stats.csv.gz",
-        ["author_id", "author_name", "included_works", "total_citations"],
-    )
-    try:
-        for author_id in sorted(author_work_count):
-            author_stats_writer.writerow(
-                {
-                    "author_id": author_id,
-                    "author_name": author_names.get(author_id, ""),
-                    "included_works": author_work_count[author_id],
-                    "total_citations": author_total_citations[author_id],
-                }
-            )
-    finally:
-        author_stats_handle.close()
+    authors_stats_written = 0
+    if not args.skip_author_stats:
+        author_stats_handle, author_stats_writer = csv_writer(
+            args.output_dir / "author_work_stats.csv.gz",
+            ["author_id", "author_name", "included_works", "total_citations"],
+        )
+        try:
+            for author_id in sorted(author_work_count):
+                author_stats_writer.writerow(
+                    {
+                        "author_id": author_id,
+                        "author_name": author_names.get(author_id, ""),
+                        "included_works": author_work_count[author_id],
+                        "total_citations": author_total_citations[author_id],
+                    }
+                )
+                authors_stats_written += 1
+        finally:
+            author_stats_handle.close()
 
-    hit_events = build_hit_events(
-        args=args,
-        work_by_id=work_by_id,
-        work_authors=work_authors,
-        works_by_author=works_by_author,
-        author_total_citations=author_total_citations,
-        author_work_count=author_work_count,
-        author_names=author_names,
-    )
+    hit_events = 0
+    if not args.skip_hit_events:
+        hit_events = build_hit_events(
+            args=args,
+            work_by_id=work_by_id,
+            work_authors=work_authors,
+            works_by_author=works_by_author,
+            author_total_citations=author_total_citations,
+            author_work_count=author_work_count,
+            author_names=author_names,
+        )
 
     summary = {
         "input_dir": str(args.input_dir),
@@ -291,9 +299,11 @@ def build_tables(args: argparse.Namespace) -> dict[str, int]:
         "work_authors_written": authors_written,
         "work_citations_by_year_written": citations_written,
         "work_references_written": references_written,
-        "authors_written": len(author_work_count),
+        "authors_written": authors_stats_written,
         "hit_events_written": hit_events,
         "include_references": args.include_references,
+        "skip_author_stats": args.skip_author_stats,
+        "skip_hit_events": args.skip_hit_events,
         "types": sorted(allowed_types),
     }
     (args.output_dir / "build_summary.json").write_text(
@@ -389,6 +399,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-files", type=int, default=0)
     parser.add_argument("--types", default=",".join(DEFAULT_TYPES))
     parser.add_argument("--include-references", action="store_true")
+    parser.add_argument("--skip-author-stats", action="store_true")
+    parser.add_argument("--skip-hit-events", action="store_true")
     parser.add_argument("--min-hit-citations", type=int, default=101)
     parser.add_argument("--min-hit-author-citation-share", type=float, default=0.5)
     parser.add_argument("--min-author-included-works", type=int, default=3)
