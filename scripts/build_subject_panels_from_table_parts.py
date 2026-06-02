@@ -31,6 +31,19 @@ def grouped_by_work(path: Path):
         yield work_id, list(rows)
 
 
+def load_calculated_citations(path: Path) -> dict[str, dict[int, int]]:
+    citations: dict[str, dict[int, int]] = {}
+    with gzip.open(path, "rt", encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            work_id = row["work_id"]
+            year = int_or_zero(row["year"])
+            value = int_or_zero(row.get("calculated_citations") or row.get("citations"))
+            if work_id and year:
+                citations.setdefault(work_id, {})[year] = value
+    return citations
+
+
 def advance_to_work(groups, current, work_id: str):
     if current is None:
         try:
@@ -59,6 +72,7 @@ def build_subject_panel(
     start_year: int,
     end_year: int,
     zero_missing_citations: bool,
+    calculated_citations_path: Path | None = None,
 ) -> dict[str, object]:
     table_parts = subject_dir / "tables_parts"
     works_parts = sorted(table_parts.glob("part_*_works.csv.gz"))
@@ -92,6 +106,11 @@ def build_subject_panel(
     rows = 0
     works = 0
     paper_author_pairs = 0
+    calculated_citations = (
+        load_calculated_citations(calculated_citations_path)
+        if calculated_citations_path
+        else None
+    )
     with gzip.open(tmp_output, "wt", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
@@ -109,12 +128,16 @@ def build_subject_panel(
                 current_authors, authorships = advance_to_work(
                     author_groups, current_authors, work_id
                 )
-                current_citations, citation_rows = advance_to_work(
-                    citation_groups, current_citations, work_id
-                )
-                citations = {
-                    int_or_zero(row["year"]): int_or_zero(row["citations"]) for row in citation_rows
-                }
+                if calculated_citations is None:
+                    current_citations, citation_rows = advance_to_work(
+                        citation_groups, current_citations, work_id
+                    )
+                    citations = {
+                        int_or_zero(row["year"]): int_or_zero(row["citations"])
+                        for row in citation_rows
+                    }
+                else:
+                    citations = calculated_citations.get(work_id, {})
                 publication_year = int_or_zero(work["publication_year"])
                 if not publication_year:
                     continue
@@ -126,7 +149,7 @@ def build_subject_panel(
                         if year in citations:
                             citation_value: str | int = citations[year]
                             observed = 1
-                        elif zero_missing_citations:
+                        elif calculated_citations is not None or zero_missing_citations:
                             citation_value = 0
                             observed = 1
                         else:
@@ -168,6 +191,10 @@ def build_subject_panel(
         "start_year": start_year or "publication_year",
         "end_year": end_year,
         "zero_missing_citations": zero_missing_citations,
+        "calculated_citations_path": (
+            str(calculated_citations_path) if calculated_citations_path else ""
+        ),
+        "citation_source": "calculated_references" if calculated_citations_path else "openalex_counts_by_year",
     }
     tmp_output.replace(output)
     output.with_name(f"{output.name}.summary.json").write_text(
@@ -184,6 +211,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--start-year", type=int, default=0)
     parser.add_argument("--end-year", type=int, default=2026)
     parser.add_argument("--zero-missing-citations", action="store_true")
+    parser.add_argument(
+        "--calculated-citations",
+        type=Path,
+        default=None,
+        help="Use a calculated citations-by-year CSV instead of OpenAlex counts_by_year.",
+    )
     parser.add_argument(
         "--skip-existing",
         action="store_true",
@@ -211,6 +244,7 @@ def main() -> int:
             start_year=args.start_year,
             end_year=args.end_year,
             zero_missing_citations=args.zero_missing_citations,
+            calculated_citations_path=args.calculated_citations,
         )
         summaries.append(summary)
         print(json.dumps(summary, indent=2, sort_keys=True), flush=True)
