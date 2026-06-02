@@ -34,6 +34,10 @@ def chunked(items: list[Path], chunks: int) -> list[list[Path]]:
     return [items[index::chunks] for index in range(chunks)]
 
 
+def batched(items: list[Path], batch_size: int) -> list[list[Path]]:
+    return [items[index : index + batch_size] for index in range(0, len(items), batch_size)]
+
+
 def load_subject_work_ids(subject_dir: Path) -> set[str]:
     work_ids: set[str] = set()
     for path in sorted((subject_dir / "tables_parts").glob("part_*_works.csv.gz")):
@@ -106,7 +110,16 @@ def process_files(
     files: list[Path],
     output_dir: Path,
     part_id: int,
+    overwrite: bool,
 ) -> dict[str, Any]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    part_output = output_dir / f"part_{part_id:04d}_calculated_citations_by_year.csv.gz"
+    part_summary = part_output.with_name(f"{part_output.name}.summary.json")
+    if not overwrite and part_output.exists() and part_summary.exists():
+        summary = json.loads(part_summary.read_text(encoding="utf-8"))
+        summary["skipped_existing"] = True
+        return summary
+
     counts: Counter[tuple[str, int]] = Counter()
     records_seen = 0
     records_with_year = 0
@@ -140,12 +153,13 @@ def process_files(
                 if matched_this_work:
                     citing_works_with_matches += 1
 
-    output_dir.mkdir(parents=True, exist_ok=True)
-    part_output = output_dir / f"part_{part_id:04d}_calculated_citations_by_year.csv.gz"
-    annual_rows = write_counter(part_output, counts)
-    return {
+    tmp_output = part_output.with_name(f"{part_output.name}.tmp")
+    annual_rows = write_counter(tmp_output, counts)
+    tmp_output.replace(part_output)
+    summary = {
         "part_id": part_id,
         "files_processed": len(files),
+        "files": [str(path) for path in files],
         "part_output": str(part_output),
         "records_seen": records_seen,
         "records_with_year": records_with_year,
@@ -154,7 +168,10 @@ def process_files(
         "matched_references": matched_references,
         "citing_works_with_matches": citing_works_with_matches,
         "annual_rows": annual_rows,
+        "skipped_existing": False,
     }
+    part_summary.write_text(json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8")
+    return summary
 
 
 def merge_parts(output_dir: Path, output: Path) -> dict[str, int]:
@@ -194,6 +211,17 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--max-files", type=int, default=0)
+    parser.add_argument(
+        "--files-per-part",
+        type=int,
+        default=5,
+        help="Number of snapshot files per checkpointed part.",
+    )
+    parser.add_argument(
+        "--overwrite-parts",
+        action="store_true",
+        help="Rebuild part outputs even when part output and summary already exist.",
+    )
     parser.add_argument("--skip-parts", action="store_true")
     parser.add_argument(
         "--work-ids-cache",
@@ -219,7 +247,7 @@ def main() -> int:
             raise SystemExit(f"No subject work IDs found in {args.subject_dir / 'tables_parts'}")
 
     workers = max(1, min(args.workers, len(files)))
-    chunks = chunked(files, workers)
+    file_batches = batched(files, max(1, args.files_per_part))
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     totals: dict[str, Any] = {
@@ -229,6 +257,8 @@ def main() -> int:
         "output": str(args.output),
         "input_files": len(files),
         "workers": workers,
+        "files_per_part": max(1, args.files_per_part),
+        "planned_parts": len(file_batches),
         "target_works": len(target_work_ids),
         "work_ids_cache": str(args.work_ids_cache) if args.work_ids_cache else "",
         "records_seen": 0,
@@ -243,13 +273,14 @@ def main() -> int:
 
     if not args.skip_parts and workers == 1:
         init_target_work_ids(target_work_ids)
-        for index, chunk in enumerate(chunks):
-            if not chunk:
+        for index, batch in enumerate(file_batches):
+            if not batch:
                 continue
             part = process_files(
-                files=chunk,
+                files=batch,
                 output_dir=args.output_dir,
                 part_id=index,
+                overwrite=args.overwrite_parts,
             )
             totals["parts"].append(part)
             for key in (
@@ -265,7 +296,8 @@ def main() -> int:
             print(
                 "finished_part="
                 f"{part['part_id']} files={part['files_processed']} "
-                f"matched_refs={part['matched_references']} rows={part['annual_rows']}",
+                f"matched_refs={part['matched_references']} rows={part['annual_rows']} "
+                f"skipped={part.get('skipped_existing', False)}",
                 flush=True,
             )
     elif not args.skip_parts:
@@ -279,12 +311,13 @@ def main() -> int:
             futures = [
                 executor.submit(
                     process_files,
-                    files=chunk,
+                    files=batch,
                     output_dir=args.output_dir,
                     part_id=index,
+                    overwrite=args.overwrite_parts,
                 )
-                for index, chunk in enumerate(chunks)
-                if chunk
+                for index, batch in enumerate(file_batches)
+                if batch
             ]
             for future in as_completed(futures):
                 part = future.result()
@@ -302,7 +335,8 @@ def main() -> int:
                 print(
                     "finished_part="
                     f"{part['part_id']} files={part['files_processed']} "
-                    f"matched_refs={part['matched_references']} rows={part['annual_rows']}",
+                    f"matched_refs={part['matched_references']} rows={part['annual_rows']} "
+                    f"skipped={part.get('skipped_existing', False)}",
                     flush=True,
                 )
 
