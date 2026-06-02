@@ -66,6 +66,7 @@ def build_subject_panel(
         raise SystemExit(f"No works parts found in {table_parts}")
 
     output.parent.mkdir(parents=True, exist_ok=True)
+    tmp_output = output.with_name(f"{output.name}.tmp")
     fieldnames = [
         "work_id",
         "author_id",
@@ -91,7 +92,7 @@ def build_subject_panel(
     rows = 0
     works = 0
     paper_author_pairs = 0
-    with gzip.open(output, "wt", encoding="utf-8", newline="") as handle:
+    with gzip.open(tmp_output, "wt", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         for works_part in works_parts:
@@ -168,6 +169,7 @@ def build_subject_panel(
         "end_year": end_year,
         "zero_missing_citations": zero_missing_citations,
     }
+    tmp_output.replace(output)
     output.with_name(f"{output.name}.summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True),
         encoding="utf-8",
@@ -182,6 +184,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--start-year", type=int, default=0)
     parser.add_argument("--end-year", type=int, default=2026)
     parser.add_argument("--zero-missing-citations", action="store_true")
+    parser.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Skip subjects whose final panel and summary JSON already exist.",
+    )
     return parser.parse_args()
 
 
@@ -194,6 +201,10 @@ def main() -> int:
     for subject in subjects:
         subject_dir = args.input_root / subject
         output = subject_dir / "panels" / "paper_author_year.csv.gz"
+        summary_path = output.with_name(f"{output.name}.summary.json")
+        if args.skip_existing and output.exists() and summary_path.exists():
+            print(f"skipping existing subject={subject} output={output}", flush=True)
+            continue
         summary = build_subject_panel(
             subject_dir=subject_dir,
             output=output,
