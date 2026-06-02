@@ -14,9 +14,14 @@ from statistics import mean
 from typing import Any
 
 
-DEFAULT_TABLE_DIR = Path("/root/sdb1/openalex/derived/economics/tables")
-DEFAULT_WORKS_JSONL_DIR = Path("/root/sdb1/openalex/derived/economics/works")
-DEFAULT_OUTPUT_DIR = Path("/root/sdb1/openalex/derived/economics/analysis/hit_effects")
+DEFAULT_TABLE_DIR = Path("/root/sdb1/openalex/subjects/economics_econometrics_and_finance")
+DEFAULT_WORKS_JSONL_DIR = Path("/root/sdb1/openalex/snapshot/data/works")
+DEFAULT_CALCULATED_CITATIONS = (
+    DEFAULT_TABLE_DIR / "calculated_citations" / "calculated_citations_by_year.csv.gz"
+)
+DEFAULT_OUTPUT_DIR = Path(
+    "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects"
+)
 
 
 @dataclass(frozen=True)
@@ -55,6 +60,22 @@ def read_csv_gz(path: Path):
         yield from csv.DictReader(handle)
 
 
+def iter_table_rows(table_dir: Path, table_name: str):
+    flat_path = table_dir / f"{table_name}.csv.gz"
+    if flat_path.exists():
+        yield from read_csv_gz(flat_path)
+        return
+
+    parts_dir = table_dir / "tables_parts"
+    if not parts_dir.exists() and table_dir.name == "tables_parts":
+        parts_dir = table_dir
+    part_paths = sorted(parts_dir.glob(f"part_*_{table_name}.csv.gz"))
+    if not part_paths:
+        raise FileNotFoundError(f"No {table_name} table found under {table_dir}")
+    for path in part_paths:
+        yield from read_csv_gz(path)
+
+
 def int_or_zero(value: str | int | None) -> int:
     try:
         return int(value or 0)
@@ -88,7 +109,7 @@ def extract_top_level_id(line: str) -> str:
 
 def load_works(table_dir: Path) -> dict[str, Work]:
     works = {}
-    for row in read_csv_gz(table_dir / "works.csv.gz"):
+    for row in iter_table_rows(table_dir, "works"):
         works[row["work_id"]] = Work(
             work_id=row["work_id"],
             title=row["title"],
@@ -106,7 +127,7 @@ def compute_author_stats(
     author_total_citations: dict[str, int] = defaultdict(int)
     author_work_count: dict[str, int] = defaultdict(int)
     author_names: dict[str, str] = {}
-    for row in read_csv_gz(table_dir / "work_authors.csv.gz"):
+    for row in iter_table_rows(table_dir, "work_authors"):
         work = works.get(row["work_id"])
         if not work:
             continue
@@ -132,7 +153,7 @@ def find_hit_candidates(
     max_hit_year: int,
 ) -> list[HitCandidate]:
     candidates = []
-    for row in read_csv_gz(table_dir / "work_authors.csv.gz"):
+    for row in iter_table_rows(table_dir, "work_authors"):
         work = works.get(row["work_id"])
         if not work:
             continue
@@ -189,7 +210,9 @@ def collect_candidate_author_works(
 
 def load_hit_references(works_jsonl_dir: Path, hit_work_ids: set[str]) -> dict[str, set[str]]:
     references: dict[str, set[str]] = {}
-    files = sorted(works_jsonl_dir.glob("works_*.jsonl.gz"))
+    if not hit_work_ids:
+        return references
+    files = sorted(works_jsonl_dir.rglob("*.gz"))
     seen = 0
     for path in files:
         with gzip.open(path, "rt", encoding="utf-8") as handle:
@@ -216,12 +239,22 @@ def load_hit_references(works_jsonl_dir: Path, hit_work_ids: set[str]) -> dict[s
     return references
 
 
-def load_citations_for_focals(table_dir: Path, focal_work_ids: set[str]) -> dict[str, dict[int, int]]:
+def load_citations_for_focals(
+    table_dir: Path,
+    focal_work_ids: set[str],
+    calculated_citations: Path | None,
+) -> dict[str, dict[int, int]]:
     citations: dict[str, dict[int, int]] = defaultdict(dict)
-    for row in read_csv_gz(table_dir / "work_citations_by_year.csv.gz"):
+    if calculated_citations:
+        rows = read_csv_gz(calculated_citations)
+    else:
+        rows = iter_table_rows(table_dir, "work_citations_by_year")
+    for row in rows:
         work_id = row["work_id"]
         if work_id in focal_work_ids:
-            citations[work_id][int_or_zero(row["year"])] = int_or_zero(row["citations"])
+            citations[work_id][int_or_zero(row["year"])] = int_or_zero(
+                row.get("calculated_citations") or row.get("citations")
+            )
     return citations
 
 
@@ -469,6 +502,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--table-dir", type=Path, default=DEFAULT_TABLE_DIR)
     parser.add_argument("--works-jsonl-dir", type=Path, default=DEFAULT_WORKS_JSONL_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument(
+        "--calculated-citations",
+        type=Path,
+        default=DEFAULT_CALCULATED_CITATIONS,
+        help="Annual citation file calculated from referenced_works.",
+    )
+    parser.add_argument(
+        "--use-openalex-counts-by-year",
+        action="store_true",
+        help="Use OpenAlex counts_by_year instead of calculated referenced_works citations.",
+    )
     parser.add_argument("--min-hit-citations", type=int, default=101)
     parser.add_argument("--min-hit-author-citation-share", type=float, default=0.5)
     parser.add_argument("--min-author-included-works", type=int, default=4)
@@ -484,6 +528,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    if args.use_openalex_counts_by_year:
+        args.calculated_citations = None
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     print("loading works", flush=True)
@@ -574,7 +620,13 @@ def main() -> int:
     print(f"hit_events={len(hit_rows)} focal_pairs={len(hit_focal_rows)}", flush=True)
 
     print("loading focal citations", flush=True)
-    citations = load_citations_for_focals(args.table_dir, focal_work_ids)
+    calculated_citations = (
+        args.calculated_citations if args.calculated_citations and args.calculated_citations.exists() else None
+    )
+    if args.calculated_citations and not calculated_citations:
+        raise SystemExit(f"Calculated citations file not found: {args.calculated_citations}")
+    citations = load_citations_for_focals(args.table_dir, focal_work_ids, calculated_citations)
+    zero_missing_citations = args.zero_missing_citations or bool(calculated_citations)
 
     hit_events_output = args.output_dir / "hit_events.csv.gz"
     event_panel_output = args.output_dir / "paper_author_hit_year_panel.csv.gz"
@@ -589,7 +641,7 @@ def main() -> int:
         citations=citations,
         pre_years=args.pre_years,
         post_years=args.post_years,
-        zero_missing_citations=args.zero_missing_citations,
+        zero_missing_citations=zero_missing_citations,
     )
     write_event_summary(event_summary_output, event_summary_rows)
 
@@ -604,7 +656,9 @@ def main() -> int:
             "max_hit_year": args.max_hit_year,
             "pre_years": args.pre_years,
             "post_years": args.post_years,
-            "zero_missing_citations": args.zero_missing_citations,
+            "zero_missing_citations": zero_missing_citations,
+            "citation_source": "calculated_references" if calculated_citations else "openalex_counts_by_year",
+            "calculated_citations": str(calculated_citations) if calculated_citations else "",
         },
         "works": len(works),
         "authors": len(author_work_count),
