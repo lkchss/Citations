@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="480.0" y="32" text-anchor="middle" font-family="Arial" font-size="24" font-weight="700">Economics Hit Event-Time Citation Means</text>
+<line x1="86" x2="932" y1="484.0" y2="484.0" stroke="#e5e7eb"/>
+<text x="76" y="488.0" text-anchor="end" font-family="Arial" font-size="12" fill="#374151">0.00</text>
+<line x1="86" x2="932" y1="399.6" y2="399.6" stroke="#e5e7eb"/>
+<text x="76" y="403.6" text-anchor="end" font-family="Arial" font-size="12" fill="#374151">0.86</text>
+<line x1="86" x2="932" y1="315.2" y2="315.2" stroke="#e5e7eb"/>
+<text x="76" y="319.2" text-anchor="end" font-family="Arial" font-size="12" fill="#374151">1.72</text>
+<line x1="86" x2="932" y1="230.8" y2="230.8" stroke="#e5e7eb"/>
+<text x="76" y="234.8" text-anchor="end" font-family="Arial" font-size="12" fill="#374151">2.58</text>
+<line x1="86" x2="932" y1="146.4" y2="146.4" stroke="#e5e7eb"/>
+<text x="76" y="150.4" text-anchor="end" font-family="Arial" font-size="12" fill="#374151">3.44</text>
+<line x1="86" x2="932" y1="62.0" y2="62.0" stroke="#e5e7eb"/>
+<text x="76" y="66.0" text-anchor="end" font-family="Arial" font-size="12" fill="#374151">4.30</text>
+<line x1="86" x2="932" y1="484" y2="484" stroke="#111827"/>
+<line x1="86" x2="86" y1="62" y2="484" stroke="#111827"/>
+<line x1="86.0" x2="86.0" y1="484" y2="489" stroke="#111827"/>
+<text x="86.0" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">-10</text>
+<line x1="128.3" x2="128.3" y1="484" y2="489" stroke="#111827"/>
+<line x1="170.6" x2="170.6" y1="484" y2="489" stroke="#111827"/>
+<text x="170.6" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">-8</text>
+<line x1="212.9" x2="212.9" y1="484" y2="489" stroke="#111827"/>
+<line x1="255.2" x2="255.2" y1="484" y2="489" stroke="#111827"/>
+<text x="255.2" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">-6</text>
+<line x1="297.5" x2="297.5" y1="484" y2="489" stroke="#111827"/>
+<text x="297.5" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">-5</text>
+<line x1="339.8" x2="339.8" y1="484" y2="489" stroke="#111827"/>
+<text x="339.8" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">-4</text>
+<line x1="382.1" x2="382.1" y1="484" y2="489" stroke="#111827"/>
+<line x1="424.4" x2="424.4" y1="484" y2="489" stroke="#111827"/>
+<text x="424.4" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">-2</text>
+<line x1="466.7" x2="466.7" y1="484" y2="489" stroke="#111827"/>
+<text x="466.7" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">-1</text>
+<line x1="509.0" x2="509.0" y1="484" y2="489" stroke="#111827"/>
+<text x="509.0" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">+0</text>
+<line x1="551.3" x2="551.3" y1="484" y2="489" stroke="#111827"/>
+<text x="551.3" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">+1</text>
+<line x1="593.6" x2="593.6" y1="484" y2="489" stroke="#111827"/>
+<text x="593.6" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">+2</text>
+<line x1="635.9" x2="635.9" y1="484" y2="489" stroke="#111827"/>
+<line x1="678.2" x2="678.2" y1="484" y2="489" stroke="#111827"/>
+<text x="678.2" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">+4</text>
+<line x1="720.5" x2="720.5" y1="484" y2="489" stroke="#111827"/>
+<text x="720.5" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">+5</text>
+<line x1="762.8" x2="762.8" y1="484" y2="489" stroke="#111827"/>
+<text x="762.8" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">+6</text>
+<line x1="805.1" x2="805.1" y1="484" y2="489" stroke="#111827"/>
+<line x1="847.4" x2="847.4" y1="484" y2="489" stroke="#111827"/>
+<text x="847.4" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">+8</text>
+<line x1="889.7" x2="889.7" y1="484" y2="489" stroke="#111827"/>
+<line x1="932.0" x2="932.0" y1="484" y2="489" stroke="#111827"/>
+<text x="932.0" y="506" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">+10</text>
+<text x="480.0" y="538" text-anchor="middle" font-family="Arial" font-size="15" fill="#111827">Event time relative to hit publication</text>
+<text transform="translate(22 280.0) rotate(-90)" text-anchor="middle" font-family="Arial" font-size="15" fill="#111827">Mean annual citations</text>
+<polyline points="86.0,483.5 128.3,482.3 170.6,480.3 212.9,478.6 255.2,476.5 297.5,473.9 339.8,466.1 382.1,457.8 424.4,448.1 466.7,434.7 509.0,422.1 551.3,418.9 593.6,419.1 635.9,421.4 678.2,426.8 720.5,432.5 762.8,440.3 805.1,444.8 847.4,448.0 889.7,452.2 932.0,458.0" fill="none" stroke="#2563eb" stroke-width="3"/>
+<circle cx="86.0" cy="483.5" r="3.5" fill="#2563eb"/>
+<circle cx="128.3" cy="482.3" r="3.5" fill="#2563eb"/>
+<circle cx="170.6" cy="480.3" r="3.5" fill="#2563eb"/>
+<circle cx="212.9" cy="478.6" r="3.5" fill="#2563eb"/>
+<circle cx="255.2" cy="476.5" r="3.5" fill="#2563eb"/>
+<circle cx="297.5" cy="473.9" r="3.5" fill="#2563eb"/>
+<circle cx="339.8" cy="466.1" r="3.5" fill="#2563eb"/>
+<circle cx="382.1" cy="457.8" r="3.5" fill="#2563eb"/>
+<circle cx="424.4" cy="448.1" r="3.5" fill="#2563eb"/>
+<circle cx="466.7" cy="434.7" r="3.5" fill="#2563eb"/>
+<circle cx="509.0" cy="422.1" r="3.5" fill="#2563eb"/>
+<circle cx="551.3" cy="418.9" r="3.5" fill="#2563eb"/>
+<circle cx="593.6" cy="419.1" r="3.5" fill="#2563eb"/>
+<circle cx="635.9" cy="421.4" r="3.5" fill="#2563eb"/>
+<circle cx="678.2" cy="426.8" r="3.5" fill="#2563eb"/>
+<circle cx="720.5" cy="432.5" r="3.5" fill="#2563eb"/>
+<circle cx="762.8" cy="440.3" r="3.5" fill="#2563eb"/>
+<circle cx="805.1" cy="444.8" r="3.5" fill="#2563eb"/>
+<circle cx="847.4" cy="448.0" r="3.5" fill="#2563eb"/>
+<circle cx="889.7" cy="452.2" r="3.5" fill="#2563eb"/>
+<circle cx="932.0" cy="458.0" r="3.5" fill="#2563eb"/>
+<polyline points="86.0,483.2 128.3,481.5 170.6,478.3 212.9,475.0 255.2,470.1 297.5,463.0 339.8,440.6 382.1,405.2 424.4,334.3 466.7,131.0 509.0,99.1 551.3,91.0 593.6,99.8 635.9,102.2 678.2,107.5 720.5,111.1 762.8,121.7 805.1,121.6 847.4,117.8 889.7,130.8 932.0,161.2" fill="none" stroke="#dc2626" stroke-width="3"/>
+<circle cx="86.0" cy="483.2" r="3.5" fill="#dc2626"/>
+<circle cx="128.3" cy="481.5" r="3.5" fill="#dc2626"/>
+<circle cx="170.6" cy="478.3" r="3.5" fill="#dc2626"/>
+<circle cx="212.9" cy="475.0" r="3.5" fill="#dc2626"/>
+<circle cx="255.2" cy="470.1" r="3.5" fill="#dc2626"/>
+<circle cx="297.5" cy="463.0" r="3.5" fill="#dc2626"/>
+<circle cx="339.8" cy="440.6" r="3.5" fill="#dc2626"/>
+<circle cx="382.1" cy="405.2" r="3.5" fill="#dc2626"/>
+<circle cx="424.4" cy="334.3" r="3.5" fill="#dc2626"/>
+<circle cx="466.7" cy="131.0" r="3.5" fill="#dc2626"/>
+<circle cx="509.0" cy="99.1" r="3.5" fill="#dc2626"/>
+<circle cx="551.3" cy="91.0" r="3.5" fill="#dc2626"/>
+<circle cx="593.6" cy="99.8" r="3.5" fill="#dc2626"/>
+<circle cx="635.9" cy="102.2" r="3.5" fill="#dc2626"/>
+<circle cx="678.2" cy="107.5" r="3.5" fill="#dc2626"/>
+<circle cx="720.5" cy="111.1" r="3.5" fill="#dc2626"/>
+<circle cx="762.8" cy="121.7" r="3.5" fill="#dc2626"/>
+<circle cx="805.1" cy="121.6" r="3.5" fill="#dc2626"/>
+<circle cx="847.4" cy="117.8" r="3.5" fill="#dc2626"/>
+<circle cx="889.7" cy="130.8" r="3.5" fill="#dc2626"/>
+<circle cx="932.0" cy="161.2" r="3.5" fill="#dc2626"/>
+<line x1="96" x2="124" y1="72" y2="72" stroke="#2563eb" stroke-width="3"/>
+<text x="134" y="77" font-family="Arial" font-size="14" fill="#111827">Missing counts_by_year = 0</text>
+<line x1="96" x2="124" y1="96" y2="96" stroke="#dc2626" stroke-width="3"/>
+<text x="134" y="101" font-family="Arial" font-size="14" fill="#111827">Observed counts_by_year only</text>
+</svg>
