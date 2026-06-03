@@ -8,6 +8,7 @@ import csv
 import gzip
 import json
 from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import mean
@@ -22,6 +23,7 @@ DEFAULT_CALCULATED_CITATIONS = (
 DEFAULT_OUTPUT_DIR = Path(
     "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects"
 )
+HIT_WORK_IDS: set[str] = set()
 
 
 @dataclass(frozen=True)
@@ -105,6 +107,27 @@ def extract_top_level_id(line: str) -> str:
     if end < 0:
         return ""
     return line[start:end]
+
+
+def init_hit_work_ids(hit_work_ids: set[str]) -> None:
+    global HIT_WORK_IDS
+    HIT_WORK_IDS = hit_work_ids
+
+
+def scan_hit_references_file(path: Path) -> dict[str, Any]:
+    references: dict[str, set[str]] = {}
+    seen = 0
+    with gzip.open(path, "rt", encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            seen += 1
+            work_id = extract_top_level_id(line)
+            if work_id not in HIT_WORK_IDS:
+                continue
+            work = json.loads(line)
+            references[work_id] = {str(item) for item in (work.get("referenced_works") or [])}
+    return {"path": str(path), "records_seen": seen, "references": references}
 
 
 def load_works(table_dir: Path) -> dict[str, Work]:
@@ -208,36 +231,39 @@ def collect_candidate_author_works(
     return works_by_author
 
 
-def load_hit_references(works_jsonl_dir: Path, hit_work_ids: set[str]) -> dict[str, set[str]]:
+def load_hit_references(
+    works_jsonl_dir: Path, hit_work_ids: set[str], workers: int
+) -> dict[str, set[str]]:
     references: dict[str, set[str]] = {}
     if not hit_work_ids:
         return references
     files = sorted(works_jsonl_dir.rglob("*.gz"))
+    workers = max(1, min(workers, len(files)))
     seen = 0
     next_progress_log = 1_000_000
-    for path in files:
-        with gzip.open(path, "rt", encoding="utf-8") as handle:
-            for line in handle:
-                if not line.strip():
-                    continue
-                seen += 1
-                work_id = extract_top_level_id(line)
-                if work_id not in hit_work_ids:
-                    continue
-                work = json.loads(line)
-                references[work_id] = {str(item) for item in (work.get("referenced_works") or [])}
-                if len(references) == len(hit_work_ids):
-                    print(
-                        f"found all hit references after records_seen={seen} files_scanned={path}",
-                        flush=True,
-                    )
-                    return references
-        if seen >= next_progress_log:
-            print(
-                f"reference_scan records_seen={seen} hit_references_found={len(references)}",
-                flush=True,
-            )
-            next_progress_log = ((seen // 1_000_000) + 1) * 1_000_000
+    print(f"reference_scan files={len(files)} workers={workers}", flush=True)
+    with ProcessPoolExecutor(
+        max_workers=workers,
+        initializer=init_hit_work_ids,
+        initargs=(hit_work_ids,),
+    ) as executor:
+        futures = [executor.submit(scan_hit_references_file, path) for path in files]
+        for future in as_completed(futures):
+            result = future.result()
+            seen += int_or_zero(result["records_seen"])
+            references.update(result["references"])
+            if seen >= next_progress_log:
+                print(
+                    f"reference_scan records_seen={seen} hit_references_found={len(references)}",
+                    flush=True,
+                )
+                next_progress_log = ((seen // 1_000_000) + 1) * 1_000_000
+            if len(references) == len(hit_work_ids):
+                print(
+                    f"found all hit references after records_seen={seen}",
+                    flush=True,
+                )
+                break
     return references
 
 
@@ -524,6 +550,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-hit-year", type=int, default=0)
     parser.add_argument("--pre-years", type=int, default=5)
     parser.add_argument("--post-years", type=int, default=5)
+    parser.add_argument("--reference-workers", type=int, default=8)
     parser.add_argument("--zero-missing-citations", action="store_true")
     return parser.parse_args()
 
@@ -565,7 +592,9 @@ def main() -> int:
     works_by_author = collect_candidate_author_works(args.table_dir, works, candidate_authors)
 
     print("loading hit references from JSONL", flush=True)
-    hit_references = load_hit_references(args.works_jsonl_dir, hit_work_ids)
+    hit_references = load_hit_references(
+        args.works_jsonl_dir, hit_work_ids, args.reference_workers
+    )
 
     hit_rows = []
     hit_focal_rows = []
@@ -658,6 +687,7 @@ def main() -> int:
             "max_hit_year": args.max_hit_year,
             "pre_years": args.pre_years,
             "post_years": args.post_years,
+            "reference_workers": args.reference_workers,
             "zero_missing_citations": zero_missing_citations,
             "citation_source": "calculated_references" if calculated_citations else "openalex_counts_by_year",
             "calculated_citations": str(calculated_citations) if calculated_citations else "",
