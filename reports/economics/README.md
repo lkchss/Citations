@@ -9,5 +9,7 @@ This folder is generated from the economics subject database on the SSD.
 
 ![Event-time means](event_time_means.svg)
 
+See [citation_zero_count_fix_comparison.md](citation_zero_count_fix_comparison.md) for the comparison between the earlier sparse `counts_by_year` run and the recalculated-reference citation run.
+
 Aggregated econometrics tables, when available, are copied into `econometrics_summaries/`.
 The large pair-level pre/post delta file is kept on the SSD and is not committed.
