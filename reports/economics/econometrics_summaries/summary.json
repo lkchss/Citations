@@ -1,0 +1,16 @@
+{
+  "input_panel": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/paper_author_hit_year_panel.csv.gz",
+  "mean_delta_observed_only": 0.31803577803815014,
+  "mean_delta_zero_missing": 0.31803577803815014,
+  "observed_pre_post_pairs": 75882,
+  "output_dir": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/econometrics_summaries",
+  "outputs": {
+    "author_position_event_time_cells": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/econometrics_summaries/author_position_event_time_cells.csv",
+    "event_time_cells": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/econometrics_summaries/event_time_cells.csv",
+    "focal_age_bin_event_time_cells": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/econometrics_summaries/focal_age_bin_event_time_cells.csv",
+    "hit_cohort_event_time_cells": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/econometrics_summaries/hit_cohort_event_time_cells.csv",
+    "pair_pre_post_deltas": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/econometrics_summaries/pair_pre_post_deltas.csv.gz"
+  },
+  "paper_author_hit_pairs": 75882,
+  "rows": 1597554
+}

@@ -1,0 +1,38 @@
+{
+  "authors": 4366507,
+  "candidate_authors": 25713,
+  "criteria": {
+    "calculated_citations": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/calculated_citations/calculated_citations_by_year.csv.gz",
+    "citation_source": "calculated_references",
+    "max_hit_year": 0,
+    "min_author_included_works": 4,
+    "min_focal_age_at_hit": 1,
+    "min_hit_author_citation_share": 0.5,
+    "min_hit_citations": 101,
+    "min_hit_year": 1990,
+    "min_unrelated_focal_works": 3,
+    "post_years": 10,
+    "pre_years": 10,
+    "reference_workers": 12,
+    "zero_missing_citations": true
+  },
+  "focal_work_ids": 70986,
+  "hit_candidates": 25724,
+  "hit_events": 11158,
+  "outputs": {
+    "event_panel": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/paper_author_hit_year_panel.csv.gz",
+    "event_time_summary": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/event_time_summary.csv",
+    "hit_events": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/hit_events.csv.gz",
+    "report": "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/economics_hit_effects_report.md"
+  },
+  "simple_estimates": {
+    "event_panel_rows": 1597554,
+    "mean_added_annual_citations_observed_only": 0.31724779939150155,
+    "mean_added_annual_citations_zero_missing": 0.31724779939150155,
+    "mean_post_annual_citations_zero_missing": 0.668781832043919,
+    "mean_pre_annual_citations_zero_missing": 0.3515340326524174,
+    "observed_only_pairs_with_pre_and_post": 76074,
+    "paper_author_hit_pairs": 76074
+  },
+  "works": 7924745
+}
