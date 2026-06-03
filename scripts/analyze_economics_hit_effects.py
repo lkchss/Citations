@@ -190,7 +190,7 @@ def collect_candidate_author_works(
     table_dir: Path, works: dict[str, Work], candidate_authors: set[str]
 ) -> dict[str, list[Authorship]]:
     works_by_author: dict[str, list[Authorship]] = defaultdict(list)
-    for row in read_csv_gz(table_dir / "work_authors.csv.gz"):
+    for row in iter_table_rows(table_dir, "work_authors"):
         author_id = row["author_id"]
         if author_id not in candidate_authors:
             continue
