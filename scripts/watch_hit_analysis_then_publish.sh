@@ -35,6 +35,7 @@ while true; do
   sleep "$CHECK_INTERVAL_SECONDS"
 done
 
+python3 scripts/summarize_hit_panel_for_econometrics.py
 python3 scripts/publish_economics_analysis_outputs.py
 
 git add reports/economics

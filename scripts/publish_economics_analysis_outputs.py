@@ -14,6 +14,13 @@ DEFAULT_ANALYSIS_DIR = Path(
     "/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects"
 )
 DEFAULT_REPORT_DIR = Path("/root/sdb1/projects/Citations/reports/economics")
+ECONOMETRICS_SUMMARY_FILES = (
+    "summary.json",
+    "event_time_cells.csv",
+    "hit_cohort_event_time_cells.csv",
+    "focal_age_bin_event_time_cells.csv",
+    "author_position_event_time_cells.csv",
+)
 
 
 def float_or_none(value: str) -> float | None:
@@ -126,6 +133,14 @@ def main() -> int:
     args.report_dir.mkdir(parents=True, exist_ok=True)
     for name in ("economics_hit_effects_report.md", "summary.json", "event_time_summary.csv"):
         shutil.copy2(args.analysis_dir / name, args.report_dir / name)
+    econometrics_dir = args.analysis_dir / "econometrics_summaries"
+    if econometrics_dir.exists():
+        report_econometrics_dir = args.report_dir / "econometrics_summaries"
+        report_econometrics_dir.mkdir(parents=True, exist_ok=True)
+        for name in ECONOMETRICS_SUMMARY_FILES:
+            source = econometrics_dir / name
+            if source.exists():
+                shutil.copy2(source, report_econometrics_dir / name)
     rows = load_event_rows(args.analysis_dir / "event_time_summary.csv")
     write_event_chart(rows, args.report_dir / "event_time_means.svg")
     summary = json.loads((args.analysis_dir / "summary.json").read_text(encoding="utf-8"))
@@ -142,6 +157,9 @@ def main() -> int:
                 f"- Mean added annual citations: {summary['simple_estimates']['mean_added_annual_citations_zero_missing']:.4f}",
                 "",
                 "![Event-time means](event_time_means.svg)",
+                "",
+                "Aggregated econometrics tables, when available, are copied into `econometrics_summaries/`.",
+                "The large pair-level pre/post delta file is kept on the SSD and is not committed.",
                 "",
             ]
         ),
