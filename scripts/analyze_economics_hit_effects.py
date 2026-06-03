@@ -214,6 +214,7 @@ def load_hit_references(works_jsonl_dir: Path, hit_work_ids: set[str]) -> dict[s
         return references
     files = sorted(works_jsonl_dir.rglob("*.gz"))
     seen = 0
+    next_progress_log = 1_000_000
     for path in files:
         with gzip.open(path, "rt", encoding="utf-8") as handle:
             for line in handle:
@@ -231,11 +232,12 @@ def load_hit_references(works_jsonl_dir: Path, hit_work_ids: set[str]) -> dict[s
                         flush=True,
                     )
                     return references
-        if seen and seen % 1_000_000 < 100_000:
+        if seen >= next_progress_log:
             print(
                 f"reference_scan records_seen={seen} hit_references_found={len(references)}",
                 flush=True,
             )
+            next_progress_log = ((seen // 1_000_000) + 1) * 1_000_000
     return references
 
 
