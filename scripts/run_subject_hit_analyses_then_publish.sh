@@ -26,10 +26,9 @@ for subject in "${subjects[@]}"; do
     continue
   fi
   echo "starting subject=$subject at $(date -Is)" | tee -a "$LOG_ROOT/pipeline.log"
-  python3 scripts/analyze_economics_hit_effects.py \
-    --table-dir "$SUBJECT_ROOT/$subject" \
+  python3 scripts/analyze_subject_hit_effects_streaming.py \
+    --subject-dir "$SUBJECT_ROOT/$subject" \
     --output-dir "$output_dir" \
-    --use-openalex-counts-by-year \
     --pre-years "$PRE_YEARS" \
     --post-years "$POST_YEARS" \
     --reference-workers "$REFERENCE_WORKERS" \
