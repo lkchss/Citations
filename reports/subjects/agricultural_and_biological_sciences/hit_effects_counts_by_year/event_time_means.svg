@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <line x1="70" y1="450" x2="830" y2="450" stroke="#333333"/>
+  <line x1="70" y1="70" x2="70" y2="450" stroke="#333333"/>
+  <line x1="450.0" y1="70" x2="450.0" y2="450" stroke="#999999" stroke-dasharray="6 6"/>
+  <text x="450.0" y="34" text-anchor="middle" font-family="Arial, sans-serif" font-size="22">Agricultural and Biological Sciences Hit-Effect Event-Time Means</text>
+  <text x="450.0" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Years relative to hit publication</text>
+  <text x="22" y="260.0" transform="rotate(-90 22 260.0)" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Mean annual citations</text>
+  <text x="70" y="474" text-anchor="middle" font-family="Arial, sans-serif" font-size="13">-10</text>
+  <text x="450.0" y="474" text-anchor="middle" font-family="Arial, sans-serif" font-size="13">0</text>
+  <text x="830" y="474" text-anchor="middle" font-family="Arial, sans-serif" font-size="13">10</text>
+  <text x="60" y="454" text-anchor="end" font-family="Arial, sans-serif" font-size="13">0</text>
+  <text x="60" y="74" text-anchor="end" font-family="Arial, sans-serif" font-size="13">4.14</text>
+  <polyline fill="none" stroke="#1f77b4" stroke-width="3" points="70.0,449.2 108.0,448.5 146.0,446.8 184.0,443.2 222.0,440.0 260.0,436.1 298.0,431.7 336.0,423.5 374.0,414.0 412.0,400.3 450.0,386.0 488.0,380.7 526.0,379.0 564.0,380.6 602.0,385.7 640.0,392.4 678.0,398.3 716.0,407.8 754.0,414.0 792.0,418.8 830.0,422.6"/>
+  <polyline fill="none" stroke="#d62728" stroke-width="3" points="70.0,448.8 108.0,447.5 146.0,444.4 184.0,437.2 222.0,429.2 260.0,417.7 298.0,400.4 336.0,364.2 374.0,299.9 412.0,146.7 450.0,114.1 488.0,104.6 526.0,104.5 564.0,109.2 602.0,120.9 640.0,133.8 678.0,142.4 716.0,160.8 754.0,168.5 792.0,175.9 830.0,181.6"/>
+  <rect x="635" y="64" width="210" height="58" fill="#ffffff" stroke="#dddddd"/>
+  <line x1="650" y1="84" x2="688" y2="84" stroke="#1f77b4" stroke-width="3"/>
+  <text x="698" y="89" font-family="Arial, sans-serif" font-size="14">Missing citation years=0</text>
+  <line x1="650" y1="107" x2="688" y2="107" stroke="#d62728" stroke-width="3"/>
+  <text x="698" y="112" font-family="Arial, sans-serif" font-size="14">Observed only</text>
+</svg>

@@ -1,0 +1,38 @@
+{
+  "authors": 9160206,
+  "candidate_authors": 88494,
+  "criteria": {
+    "calculated_citations": "",
+    "citation_source": "openalex_counts_by_year",
+    "max_hit_year": 0,
+    "min_author_included_works": 4,
+    "min_focal_age_at_hit": 1,
+    "min_hit_author_citation_share": 0.5,
+    "min_hit_citations": 101,
+    "min_hit_year": 1990,
+    "min_unrelated_focal_works": 3,
+    "post_years": 10,
+    "pre_years": 10,
+    "reference_workers": 12,
+    "zero_missing_citations": false
+  },
+  "focal_work_ids": 217699,
+  "hit_candidates": 88500,
+  "hit_events": 32578,
+  "outputs": {
+    "event_panel": "/root/sdb1/openalex/subjects/agricultural_and_biological_sciences/analysis/hit_effects_counts_by_year/paper_author_hit_year_panel.csv.gz",
+    "event_time_summary": "/root/sdb1/openalex/subjects/agricultural_and_biological_sciences/analysis/hit_effects_counts_by_year/event_time_summary.csv",
+    "hit_events": "/root/sdb1/openalex/subjects/agricultural_and_biological_sciences/analysis/hit_effects_counts_by_year/hit_events.csv.gz",
+    "report": "/root/sdb1/openalex/subjects/agricultural_and_biological_sciences/analysis/hit_effects_counts_by_year/economics_hit_effects_report.md"
+  },
+  "simple_estimates": {
+    "event_panel_rows": 4894260,
+    "mean_added_annual_citations_observed_only": 1.9318405091809565,
+    "mean_added_annual_citations_zero_missing": 0.3969407799786243,
+    "mean_post_annual_citations_zero_missing": 0.5783009447430627,
+    "mean_pre_annual_citations_zero_missing": 0.18136016476443834,
+    "observed_only_pairs_with_pre_and_post": 87996,
+    "paper_author_hit_pairs": 233060
+  },
+  "works": 13802779
+}
