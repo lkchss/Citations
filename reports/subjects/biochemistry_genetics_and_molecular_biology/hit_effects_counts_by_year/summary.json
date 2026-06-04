@@ -1,0 +1,38 @@
+{
+  "authors": 10728182,
+  "candidate_authors": 268923,
+  "criteria": {
+    "calculated_citations": "",
+    "citation_source": "openalex_counts_by_year",
+    "max_hit_year": 0,
+    "min_author_included_works": 4,
+    "min_focal_age_at_hit": 1,
+    "min_hit_author_citation_share": 0.5,
+    "min_hit_citations": 101,
+    "min_hit_year": 1990,
+    "min_unrelated_focal_works": 3,
+    "post_years": 10,
+    "pre_years": 10,
+    "reference_workers": 12,
+    "zero_missing_citations": false
+  },
+  "focal_work_ids": 516943,
+  "hit_candidates": 268935,
+  "hit_events": 93752,
+  "outputs": {
+    "event_panel": "/root/sdb1/openalex/subjects/biochemistry_genetics_and_molecular_biology/analysis/hit_effects_counts_by_year/paper_author_hit_year_panel.csv.gz",
+    "event_time_summary": "/root/sdb1/openalex/subjects/biochemistry_genetics_and_molecular_biology/analysis/hit_effects_counts_by_year/event_time_summary.csv",
+    "hit_events": "/root/sdb1/openalex/subjects/biochemistry_genetics_and_molecular_biology/analysis/hit_effects_counts_by_year/hit_events.csv.gz",
+    "report": "/root/sdb1/openalex/subjects/biochemistry_genetics_and_molecular_biology/analysis/hit_effects_counts_by_year/economics_hit_effects_report.md"
+  },
+  "simple_estimates": {
+    "event_panel_rows": 12148605,
+    "mean_added_annual_citations_observed_only": 2.769748845340535,
+    "mean_added_annual_citations_zero_missing": 0.7330380424149708,
+    "mean_post_annual_citations_zero_missing": 1.179532195447356,
+    "mean_pre_annual_citations_zero_missing": 0.4464941530323852,
+    "observed_only_pairs_with_pre_and_post": 266187,
+    "paper_author_hit_pairs": 578505
+  },
+  "works": 13360774
+}
