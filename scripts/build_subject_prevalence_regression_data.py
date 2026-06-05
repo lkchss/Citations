@@ -14,8 +14,10 @@ import csv
 import gzip
 import hashlib
 import json
+import multiprocessing as mp
 import sys
 from collections import Counter, defaultdict
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Iterable
 
@@ -29,6 +31,7 @@ DEFAULT_SUBJECTS = [
     "biochemistry_genetics_and_molecular_biology",
     "physics_and_astronomy",
 ]
+REFERENCE_TARGET_WORKS: set[str] = set()
 
 
 def log(message: str) -> None:
@@ -50,6 +53,10 @@ def int_or_zero(value: object) -> int:
 def stable_bucket(value: str, modulo: int) -> int:
     digest = hashlib.blake2b(value.encode("utf-8"), digest_size=8).hexdigest()
     return int(digest, 16) % modulo
+
+
+def chunked(items: list[Path], chunks: int) -> list[list[Path]]:
+    return [items[index::chunks] for index in range(chunks)]
 
 
 def load_sampled_author_works(
@@ -136,29 +143,79 @@ def load_calculated_citations(path: Path, target_works: set[str]) -> dict[str, d
     return citations
 
 
-def extract_reference_edges(
-    *,
-    snapshot_works_dir: Path,
-    target_works: set[str],
-    max_snapshot_files: int,
-) -> set[tuple[str, str]]:
-    files = sorted(snapshot_works_dir.rglob("*.gz"))
-    if max_snapshot_files:
-        files = files[:max_snapshot_files]
+def init_reference_targets(target_works: set[str]) -> None:
+    global REFERENCE_TARGET_WORKS
+    REFERENCE_TARGET_WORKS = target_works
+
+
+def process_reference_files(files: list[Path]) -> tuple[set[tuple[str, str]], int, int]:
     edges: set[tuple[str, str]] = set()
+    records = 0
+    records_with_target_source = 0
     for path in files:
         with gzip.open(path, "rt", encoding="utf-8") as handle:
             for line in handle:
                 if not line.strip():
                     continue
+                records += 1
                 work = json.loads(line)
                 source = str(work.get("id") or "")
-                if source not in target_works:
+                if source not in REFERENCE_TARGET_WORKS:
                     continue
+                records_with_target_source += 1
                 for target in work.get("referenced_works") or []:
                     target = str(target)
-                    if target in target_works:
+                    if target in REFERENCE_TARGET_WORKS:
                         edges.add((source, target))
+    return edges, records, records_with_target_source
+
+
+def extract_reference_edges(
+    *,
+    snapshot_works_dir: Path,
+    target_works: set[str],
+    max_snapshot_files: int,
+    reference_workers: int,
+) -> set[tuple[str, str]]:
+    files = sorted(snapshot_works_dir.rglob("*.gz"))
+    if max_snapshot_files:
+        files = files[:max_snapshot_files]
+    if not files:
+        return set()
+    workers = max(1, min(reference_workers, len(files)))
+    if workers == 1:
+        init_reference_targets(target_works)
+        edges, records, target_sources = process_reference_files(files)
+        log(
+            "reference scan complete: "
+            f"{records:,} records, {target_sources:,} target-source records"
+        )
+        return edges
+
+    edges: set[tuple[str, str]] = set()
+    completed = 0
+    total_records = 0
+    total_target_sources = 0
+    batches = chunked(files, workers)
+    context = mp.get_context("fork")
+    with ProcessPoolExecutor(
+        max_workers=workers,
+        mp_context=context,
+        initializer=init_reference_targets,
+        initargs=(target_works,),
+    ) as executor:
+        futures = [executor.submit(process_reference_files, batch) for batch in batches]
+        for future in as_completed(futures):
+            part_edges, records, target_sources = future.result()
+            edges.update(part_edges)
+            total_records += records
+            total_target_sources += target_sources
+            completed += 1
+            log(
+                "reference scan batch complete "
+                f"{completed}/{len(futures)}; records={total_records:,}; "
+                f"target-source records={total_target_sources:,}; edges={len(edges):,}"
+            )
     return edges
 
 
@@ -184,6 +241,7 @@ def build_subject(
     max_authors: int,
     min_author_papers: int,
     max_snapshot_files: int,
+    reference_workers: int,
     calculated_citations: Path | None,
 ) -> dict[str, object]:
     subject_dir = subject_root / subject
@@ -231,6 +289,7 @@ def build_subject(
         snapshot_works_dir=snapshot_works_dir,
         target_works=target_works,
         max_snapshot_files=max_snapshot_files,
+        reference_workers=reference_workers,
     )
     log(f"[{subject}] found {len(edges):,} sampled-work reference edges")
 
@@ -318,6 +377,7 @@ def build_subject(
         "max_authors": max_authors,
         "min_author_papers": min_author_papers,
         "max_snapshot_files": max_snapshot_files,
+        "reference_workers": reference_workers,
         "citation_source": citation_source,
     }
     output.with_name(f"{output.name}.summary.json").write_text(
@@ -340,6 +400,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-authors", type=int, default=5000)
     parser.add_argument("--min-author-papers", type=int, default=2)
     parser.add_argument("--max-snapshot-files", type=int, default=0)
+    parser.add_argument("--reference-workers", type=int, default=12)
     parser.add_argument(
         "--economics-calculated-citations",
         type=Path,
@@ -374,6 +435,7 @@ def main() -> int:
             max_authors=args.max_authors,
             min_author_papers=args.min_author_papers,
             max_snapshot_files=args.max_snapshot_files,
+            reference_workers=args.reference_workers,
             calculated_citations=calculated,
         )
         print(json.dumps(summary, indent=2, sort_keys=True), flush=True)

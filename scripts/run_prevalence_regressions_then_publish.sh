@@ -9,6 +9,7 @@ SAMPLE_MOD="${SAMPLE_MOD:-2000}"
 SAMPLE_KEEP="${SAMPLE_KEEP:-1}"
 MIN_AUTHOR_PAPERS="${MIN_AUTHOR_PAPERS:-2}"
 MAX_SNAPSHOT_FILES="${MAX_SNAPSHOT_FILES:-0}"
+REFERENCE_WORKERS="${REFERENCE_WORKERS:-12}"
 
 mkdir -p "$LOG_DIR"
 cd "$REPO_DIR"
@@ -20,6 +21,7 @@ python3 scripts/build_subject_prevalence_regression_data.py \
   --sample-keep "$SAMPLE_KEEP" \
   --min-author-papers "$MIN_AUTHOR_PAPERS" \
   --max-snapshot-files "$MAX_SNAPSHOT_FILES" \
+  --reference-workers "$REFERENCE_WORKERS" \
   > "$LOG_DIR/build.log" 2>&1
 
 Rscript scripts/render_prevalence_regressions_stargazer.R \
