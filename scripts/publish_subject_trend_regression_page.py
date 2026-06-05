@@ -5,13 +5,16 @@ from __future__ import annotations
 
 import csv
 import html
-import math
+import subprocess
 from pathlib import Path
 from typing import Any
 
 
 REPORT_ROOT = Path("/root/sdb1/projects/Citations/reports")
+REPO_ROOT = REPORT_ROOT.parent
 OUTPUT = REPORT_ROOT / "subjects" / "trend_regression_comparison.html"
+STARGAZER_OUTPUT = REPORT_ROOT / "subjects" / "trend_regression_stargazer_tables.html"
+STARGAZER_SCRIPT = REPO_ROOT / "scripts" / "render_subject_regressions_stargazer.R"
 
 SUBJECTS = [
     {
@@ -242,95 +245,12 @@ def line_chart(
     return "".join(parts)
 
 
-def transpose(matrix: list[list[float]]) -> list[list[float]]:
-    return [list(row) for row in zip(*matrix)]
-
-
-def matmul(a: list[list[float]], b: list[list[float]]) -> list[list[float]]:
-    return [[sum(x * y for x, y in zip(row, col)) for col in transpose(b)] for row in a]
-
-
-def inverse(matrix: list[list[float]]) -> list[list[float]]:
-    n = len(matrix)
-    aug = [row[:] + [1.0 if i == j else 0.0 for j in range(n)] for i, row in enumerate(matrix)]
-    for col in range(n):
-        pivot = max(range(col, n), key=lambda row: abs(aug[row][col]))
-        if abs(aug[pivot][col]) < 1e-12:
-            raise ValueError("Singular matrix")
-        aug[col], aug[pivot] = aug[pivot], aug[col]
-        factor = aug[col][col]
-        aug[col] = [value / factor for value in aug[col]]
-        for row in range(n):
-            if row == col:
-                continue
-            factor = aug[row][col]
-            aug[row] = [value - factor * pivot_value for value, pivot_value in zip(aug[row], aug[col])]
-    return [row[n:] for row in aug]
-
-
-def wls(rows: list[dict[str, Any]], features: list[str]) -> dict[str, Any]:
-    y = [row["mean_zero"] for row in rows]
-    weights = [float(row["pairs"]) for row in rows]
-    x = [[1.0] + [float(row[feature]) for feature in features] for row in rows]
-    xw = [[value * math.sqrt(weight) for value in row] for row, weight in zip(x, weights)]
-    yw = [[value * math.sqrt(weight)] for value, weight in zip(y, weights)]
-    xtx = matmul(transpose(xw), xw)
-    xty = matmul(transpose(xw), yw)
-    xtx_inv = inverse(xtx)
-    beta = [row[0] for row in matmul(xtx_inv, xty)]
-    fitted = [sum(coef * value for coef, value in zip(beta, row)) for row in x]
-    resid = [actual - pred for actual, pred in zip(y, fitted)]
-    weight_sum = sum(weights)
-    y_bar = sum(weight * value for weight, value in zip(weights, y)) / weight_sum
-    sse = sum(weight * err * err for weight, err in zip(weights, resid))
-    sst = sum(weight * (value - y_bar) ** 2 for weight, value in zip(weights, y))
-    dof = max(1, len(y) - len(beta))
-    sigma2 = sse / dof
-    se = [math.sqrt(max(0.0, sigma2 * xtx_inv[i][i])) for i in range(len(beta))]
-    return {
-        "names": ["Intercept"] + features,
-        "beta": beta,
-        "se": se,
-        "n": len(y),
-        "r2": 1 - sse / sst if sst else 0.0,
-    }
-
-
-def regression_rows(event_rows: list[dict[str, Any]]) -> list[list[str]]:
-    rows = []
-    model_rows = []
-    prepared = []
-    for row in event_rows:
-        item = dict(row)
-        item["event_time_sq"] = item["event_time"] ** 2
-        item["biology"] = 1 if item["group"] == "Biology" else 0
-        item["physics"] = 1 if item["group"] == "Physics" else 0
-        item["biochem"] = 1 if item["subject"] == "biochem" else 0
-        item["ag_bio"] = 1 if item["subject"] == "ag_bio" else 0
-        prepared.append(item)
-    specs = [
-        ("M1", ["post"]),
-        ("M2", ["post", "event_time"]),
-        ("M3", ["post", "event_time", "event_time_sq", "biology", "physics"]),
-        ("M4", ["post", "event_time", "event_time_sq", "biology", "physics", "missing_rate"]),
-        ("M5", ["post", "event_time", "event_time_sq", "ag_bio", "biochem", "physics", "missing_rate"]),
-    ]
-    for name, features in specs:
-        result = wls(prepared, features)
-        coefs = dict(zip(result["names"], result["beta"]))
-        ses = dict(zip(result["names"], result["se"]))
-        model_rows.append((name, features, result, coefs, ses))
-    for term in ["post", "event_time", "event_time_sq", "biology", "physics", "ag_bio", "biochem", "missing_rate"]:
-        row = [term]
-        for _, _, _, coefs, ses in model_rows:
-            if term in coefs:
-                row.append(f"{coefs[term]:.4f}<br><span>({ses[term]:.4f})</span>")
-            else:
-                row.append("")
-        rows.append(row)
-    rows.append(["N"] + [str(result["n"]) for _, _, result, _, _ in model_rows])
-    rows.append(["Weighted R2"] + [f"{result['r2']:.4f}" for _, _, result, _, _ in model_rows])
-    return rows
+def render_stargazer_tables() -> str:
+    subprocess.run(
+        ["Rscript", str(STARGAZER_SCRIPT), str(REPO_ROOT), str(STARGAZER_OUTPUT)],
+        check=True,
+    )
+    return STARGAZER_OUTPUT.read_text(encoding="utf-8")
 
 
 def main() -> int:
@@ -368,11 +288,7 @@ def main() -> int:
         ],
         "Summary statistics",
     )
-    regression_table = table(
-        ["Term", "M1", "M2", "M3", "M4", "M5"],
-        regression_rows(event_rows),
-        "Weighted OLS regressions",
-    )
+    regression_tables = render_stargazer_tables()
     missing_table = table(
         ["Subject", "Mean missing rate", "Pre missing rate", "Post missing rate"],
         [
@@ -409,7 +325,7 @@ span {{ color: #555; }}
 {line_chart(event_rows, value_key="missing_rate", caption="Citation-year missingness trends", y_label="Missing rate")}
 {summary_table}
 {missing_table}
-{regression_table}
+{regression_tables}
 </body>
 </html>
 """
