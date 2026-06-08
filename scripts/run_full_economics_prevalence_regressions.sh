@@ -7,6 +7,7 @@ WORK_DIR="${WORK_DIR:-/root/sdb1/openalex/subjects/prevalence_regressions_full_w
 LOG_DIR="${LOG_DIR:-/root/sdb1/openalex/subjects/prevalence_regressions_full_logs}"
 REPORT="${REPORT:-${REPO_DIR}/reports/subjects/full_economics_prevalence_regressions.html}"
 REFERENCE_WORKERS="${REFERENCE_WORKERS:-12}"
+REFERENCE_BACKEND="${REFERENCE_BACKEND:-thread}"
 
 mkdir -p "$DATA_ROOT" "$WORK_DIR" "$LOG_DIR"
 cd "$REPO_DIR"
@@ -19,6 +20,7 @@ python3 scripts/build_subject_prevalence_regression_data.py \
   --max-authors 0 \
   --min-author-papers 2 \
   --reference-workers "$REFERENCE_WORKERS" \
+  --reference-backend "$REFERENCE_BACKEND" \
   > "$LOG_DIR/build.log" 2>&1
 
 INPUT="${DATA_ROOT}/economics_econometrics_and_finance/paper_author_year_prevalence_regression.csv.gz"

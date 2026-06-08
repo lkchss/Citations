@@ -17,7 +17,7 @@ import json
 import multiprocessing as mp
 import sys
 from collections import Counter, defaultdict
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Iterable
 
@@ -176,6 +176,7 @@ def extract_reference_edges(
     target_works: set[str],
     max_snapshot_files: int,
     reference_workers: int,
+    reference_backend: str,
 ) -> set[tuple[str, str]]:
     files = sorted(snapshot_works_dir.rglob("*.gz"))
     if max_snapshot_files:
@@ -197,6 +198,29 @@ def extract_reference_edges(
     total_records = 0
     total_target_sources = 0
     batches = chunked(files, workers)
+    backend = reference_backend
+    if backend == "auto":
+        backend = "thread" if len(target_works) >= 500_000 else "process"
+    log(f"reference scan backend={backend}, workers={workers}")
+    if backend == "thread":
+        init_reference_targets(target_works)
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            futures = [executor.submit(process_reference_files, batch) for batch in batches]
+            for future in as_completed(futures):
+                part_edges, records, target_sources = future.result()
+                edges.update(part_edges)
+                total_records += records
+                total_target_sources += target_sources
+                completed += 1
+                log(
+                    "reference scan batch complete "
+                    f"{completed}/{len(futures)}; records={total_records:,}; "
+                    f"target-source records={total_target_sources:,}; edges={len(edges):,}"
+                )
+        return edges
+
+    if backend != "process":
+        raise ValueError(f"Unknown reference backend: {reference_backend}")
     context = mp.get_context("fork")
     with ProcessPoolExecutor(
         max_workers=workers,
@@ -242,6 +266,7 @@ def build_subject(
     min_author_papers: int,
     max_snapshot_files: int,
     reference_workers: int,
+    reference_backend: str,
     calculated_citations: Path | None,
 ) -> dict[str, object]:
     subject_dir = subject_root / subject
@@ -290,6 +315,7 @@ def build_subject(
         target_works=target_works,
         max_snapshot_files=max_snapshot_files,
         reference_workers=reference_workers,
+        reference_backend=reference_backend,
     )
     log(f"[{subject}] found {len(edges):,} sampled-work reference edges")
 
@@ -378,6 +404,7 @@ def build_subject(
         "min_author_papers": min_author_papers,
         "max_snapshot_files": max_snapshot_files,
         "reference_workers": reference_workers,
+        "reference_backend": reference_backend,
         "citation_source": citation_source,
     }
     output.with_name(f"{output.name}.summary.json").write_text(
@@ -401,6 +428,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-author-papers", type=int, default=2)
     parser.add_argument("--max-snapshot-files", type=int, default=0)
     parser.add_argument("--reference-workers", type=int, default=12)
+    parser.add_argument(
+        "--reference-backend",
+        choices=["auto", "process", "thread"],
+        default="auto",
+        help="Use process workers for small target sets and thread workers for large shared target sets by default.",
+    )
     parser.add_argument(
         "--economics-calculated-citations",
         type=Path,
@@ -436,6 +469,7 @@ def main() -> int:
             min_author_papers=args.min_author_papers,
             max_snapshot_files=args.max_snapshot_files,
             reference_workers=args.reference_workers,
+            reference_backend=args.reference_backend,
             calculated_citations=calculated,
         )
         print(json.dumps(summary, indent=2, sort_keys=True), flush=True)
