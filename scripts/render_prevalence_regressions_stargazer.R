@@ -30,6 +30,19 @@ subjects <- data.frame(
 tables <- c()
 summaries <- list()
 
+twoway_within <- function(values, paper_group, year_group, tolerance = 1e-10, max_iter = 200) {
+  residual <- values - mean(values)
+  for (iteration in seq_len(max_iter)) {
+    previous <- residual
+    residual <- residual - ave(residual, paper_group, FUN = mean)
+    residual <- residual - ave(residual, year_group, FUN = mean)
+    if (max(abs(residual - previous)) < tolerance) {
+      break
+    }
+  }
+  residual
+}
+
 for (i in seq_len(nrow(subjects))) {
   subject <- subjects$subject[[i]]
   label <- subjects$label[[i]]
@@ -41,15 +54,30 @@ for (i in seq_len(nrow(subjects))) {
   df <- read.csv(gzfile(path), stringsAsFactors = FALSE)
   df$work_id <- factor(df$work_id)
   df$year <- factor(df$year)
+  paper_group <- df$work_id
+  year_group <- df$year
+  regression_df <- data.frame(
+    citations_jt_fe = twoway_within(df$citations_jt, paper_group, year_group),
+    accumulated_unrelated_citations_jt_fe = twoway_within(
+      df$accumulated_unrelated_citations_jt,
+      paper_group,
+      year_group
+    ),
+    accumulated_related_citations_jt_fe = twoway_within(
+      df$accumulated_related_citations_jt,
+      paper_group,
+      year_group
+    )
+  )
 
   model_unrelated <- lm(
-    citations_jt ~ accumulated_unrelated_citations_jt + work_id + year,
-    data = df
+    citations_jt_fe ~ accumulated_unrelated_citations_jt_fe + 0,
+    data = regression_df
   )
   model_related <- lm(
-    citations_jt ~ accumulated_unrelated_citations_jt +
-      accumulated_related_citations_jt + work_id + year,
-    data = df
+    citations_jt_fe ~ accumulated_unrelated_citations_jt_fe +
+      accumulated_related_citations_jt_fe + 0,
+    data = regression_df
   )
 
   tables <- c(
@@ -66,12 +94,14 @@ for (i in seq_len(nrow(subjects))) {
           "Accumulated unrelated citations j,t",
           "Accumulated related citations j,t"
         ),
-        omit = c("work_id", "year"),
-        omit.labels = c("Paper fixed effects", "Year fixed effects"),
         omit.stat = c("ser", "f"),
         digits = 4,
         header = FALSE,
-        notes = "",
+        add.lines = list(
+          c("Paper fixed effects", "Absorbed", "Absorbed"),
+          c("Year fixed effects", "Absorbed", "Absorbed")
+        ),
+        notes = "Variables are residualized using iterative two-way demeaning by paper and year before estimation.",
         notes.append = FALSE
       )
     )
