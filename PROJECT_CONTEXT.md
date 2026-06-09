@@ -81,13 +81,21 @@ Pilot subjects:
 - `environmental_science`
 - `mathematics`
 
-Important caveat: the completed fast pilot used `--skip-reference-scan`.
-Therefore:
+Important caveat: the completed fast pilot used `--skip-reference-scan` and
+should be treated as a pipeline/data-shape diagnostic, not as a substantive
+estimate. Therefore:
 
 - full paper lifetimes are preserved;
 - author exposure stocks are computed;
 - related papers are self-only;
 - citation-network relatedness exclusions are not yet applied.
+
+Highly significant negative coefficients in this report are not reliable
+evidence against the hypothesis. The self-only related stock is the focal
+paper's own lagged cumulative citations, so after paper and year fixed effects
+it can mostly capture citation lifecycle/mean-reversion dynamics. Non-economics
+subjects also still use sparse OpenAlex `counts_by_year` rather than
+recalculated annual citations.
 
 ### Economics Citation Fix
 
