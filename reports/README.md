@@ -10,6 +10,7 @@ This directory contains GitHub-tracked outputs from the OpenAlex citation analys
 ## Prevalence Regressions
 
 - [Subject prevalence regression stargazer tables](subjects/prevalence_regression_stargazer_tables.html)
+- [Lifetime pilot prevalence regressions](subjects/lifetime_pilot_prevalence_regressions.html)
 
 These tables estimate, separately by subject pool:
 

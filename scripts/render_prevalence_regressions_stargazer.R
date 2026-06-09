@@ -11,7 +11,7 @@ output_path <- if (length(args) >= 3) {
   file.path(repo_dir, "reports", "subjects", "prevalence_regression_stargazer_tables.html")
 }
 
-subjects <- data.frame(
+default_subjects <- data.frame(
   subject = c(
     "economics_econometrics_and_finance",
     "agricultural_and_biological_sciences",
@@ -26,6 +26,27 @@ subjects <- data.frame(
   ),
   stringsAsFactors = FALSE
 )
+
+label_subject <- function(subject) {
+  known <- default_subjects$label[default_subjects$subject == subject]
+  if (length(known) == 1) {
+    return(known)
+  }
+  words <- strsplit(gsub("_", " ", subject), " ")[[1]]
+  paste(toupper(substr(words, 1, 1)), substring(words, 2), sep = "", collapse = " ")
+}
+
+subject_paths <- list.files(data_root, pattern = "paper_author_year_prevalence_regression.csv.gz$", recursive = TRUE, full.names = TRUE)
+if (length(subject_paths) > 0) {
+  discovered <- basename(dirname(subject_paths))
+  subjects <- data.frame(
+    subject = discovered,
+    label = vapply(discovered, label_subject, character(1)),
+    stringsAsFactors = FALSE
+  )
+} else {
+  subjects <- default_subjects
+}
 
 tables <- c()
 summaries <- list()

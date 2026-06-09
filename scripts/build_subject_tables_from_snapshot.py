@@ -115,6 +115,7 @@ def process_files(
     written = 0
     authors_written = 0
     citations_written = 0
+    references_written = 0
     try:
         for path in files:
             with gzip.open(path, "rt", encoding="utf-8") as input_handle:
@@ -206,6 +207,20 @@ def process_files(
                             {"work_id": work_id, "year": year, "citations": citations}
                         )
                         citations_written += 1
+
+                    references_writer = writers.writer(
+                        subject_slug,
+                        "work_references",
+                        ["work_id", "referenced_work_id"],
+                    )
+                    for referenced_work_id in work.get("referenced_works") or []:
+                        references_writer.writerow(
+                            {
+                                "work_id": work_id,
+                                "referenced_work_id": str(referenced_work_id),
+                            }
+                        )
+                        references_written += 1
     finally:
         writers.close()
 
@@ -216,6 +231,7 @@ def process_files(
         "works_written": written,
         "work_authors_written": authors_written,
         "work_citations_by_year_written": citations_written,
+        "work_references_written": references_written,
         "subject_counts": subject_counts,
     }
 
@@ -253,6 +269,7 @@ def main() -> int:
         "works_written": 0,
         "work_authors_written": 0,
         "work_citations_by_year_written": 0,
+        "work_references_written": 0,
         "subject_counts": {},
         "parts": [],
     }
@@ -277,6 +294,7 @@ def main() -> int:
                 "works_written",
                 "work_authors_written",
                 "work_citations_by_year_written",
+                "work_references_written",
             ):
                 totals[key] += part[key]
             for subject, count in part["subject_counts"].items():

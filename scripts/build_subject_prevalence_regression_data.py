@@ -18,6 +18,7 @@ import multiprocessing as mp
 import sys
 from collections import Counter, defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
@@ -32,6 +33,19 @@ DEFAULT_SUBJECTS = [
     "physics_and_astronomy",
 ]
 REFERENCE_TARGET_WORKS: set[str] = set()
+
+
+@dataclass
+class SubjectBuildData:
+    subject: str
+    table_parts: Path
+    output: Path
+    author_works: dict[str, set[str]]
+    target_works: set[str]
+    focal_works: set[str]
+    metadata: dict[str, dict[str, object]]
+    citations: dict[str, dict[int, int]]
+    citation_source: str
 
 
 def log(message: str) -> None:
@@ -143,6 +157,36 @@ def load_calculated_citations(path: Path, target_works: set[str]) -> dict[str, d
     return citations
 
 
+def select_focal_works(target_works: set[str], *, focal_sample_mod: int, focal_sample_keep: int) -> set[str]:
+    if focal_sample_mod <= 1:
+        return set(target_works)
+    return {
+        work_id
+        for work_id in target_works
+        if stable_bucket(work_id, focal_sample_mod) < focal_sample_keep
+    }
+
+
+def load_reference_edges_from_table_parts(table_parts: Path, target_works: set[str]) -> set[tuple[str, str]] | None:
+    paths = sorted(table_parts.glob("part_*_work_references.csv.gz"))
+    if not paths:
+        return None
+    edges: set[tuple[str, str]] = set()
+    rows_seen = 0
+    for path in paths:
+        for row in read_csv_gz(path):
+            rows_seen += 1
+            source = row.get("work_id") or ""
+            target = row.get("referenced_work_id") or ""
+            if source in target_works and target in target_works:
+                edges.add((source, target))
+    log(
+        f"loaded reference table parts from {table_parts}: "
+        f"rows_seen={rows_seen:,}; target_edges={len(edges):,}"
+    )
+    return edges
+
+
 def init_reference_targets(target_works: set[str]) -> None:
     global REFERENCE_TARGET_WORKS
     REFERENCE_TARGET_WORKS = target_works
@@ -252,6 +296,216 @@ def cumulative_by_year(citations: dict[int, int], *, start_year: int, end_year: 
     return cumulative
 
 
+def prepare_subject_data(
+    *,
+    subject: str,
+    subject_root: Path,
+    output_root: Path,
+    sample_mod: int,
+    sample_keep: int,
+    max_authors: int,
+    min_author_papers: int,
+    focal_sample_mod: int,
+    focal_sample_keep: int,
+    calculated_citations: Path | None,
+) -> SubjectBuildData:
+    subject_dir = subject_root / subject
+    table_parts = subject_dir / "tables_parts"
+    output_dir = output_root / subject
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output = output_dir / "paper_author_year_prevalence_regression.csv.gz"
+
+    log(f"[{subject}] sampling authors")
+    author_works = load_sampled_author_works(
+        table_parts,
+        sample_mod=sample_mod,
+        sample_keep=sample_keep,
+        max_authors=max_authors,
+        min_author_papers=min_author_papers,
+    )
+    target_works = {work_id for works in author_works.values() for work_id in works}
+    log(f"[{subject}] loading metadata for {len(target_works):,} sampled author works")
+    metadata = load_work_metadata(table_parts, target_works)
+    target_works = set(metadata)
+    author_works = {
+        author: {work_id for work_id in works if work_id in target_works}
+        for author, works in author_works.items()
+    }
+    author_works = {
+        author: works
+        for author, works in author_works.items()
+        if len(works) >= min_author_papers
+    }
+    target_works = {work_id for works in author_works.values() for work_id in works}
+    log(
+        f"[{subject}] retained {len(author_works):,} authors and "
+        f"{len(target_works):,} works after metadata/min-paper filters"
+    )
+    focal_works = select_focal_works(
+        target_works,
+        focal_sample_mod=focal_sample_mod,
+        focal_sample_keep=focal_sample_keep,
+    )
+    author_works = {
+        author: works
+        for author, works in author_works.items()
+        if works & focal_works
+    }
+    target_works = {work_id for works in author_works.values() for work_id in works}
+    focal_works &= target_works
+    log(
+        f"[{subject}] retained {len(focal_works):,} focal works for full-lifetime rows "
+        f"and {len(target_works):,} author-history works for exposure stocks"
+    )
+    if calculated_citations:
+        log(f"[{subject}] loading calculated annual citations")
+        citations = load_calculated_citations(calculated_citations, target_works)
+        citation_source = "calculated_references"
+    else:
+        log(f"[{subject}] loading OpenAlex counts_by_year citations")
+        citations = load_citations(table_parts, target_works)
+        citation_source = "openalex_counts_by_year"
+    return SubjectBuildData(
+        subject=subject,
+        table_parts=table_parts,
+        output=output,
+        author_works=author_works,
+        target_works=target_works,
+        focal_works=focal_works,
+        metadata=metadata,
+        citations=citations,
+        citation_source=citation_source,
+    )
+
+
+def write_subject_data(
+    *,
+    data: SubjectBuildData,
+    edges: set[tuple[str, str]],
+    start_year: int,
+    end_year: int,
+    sample_mod: int,
+    sample_keep: int,
+    max_authors: int,
+    min_author_papers: int,
+    max_snapshot_files: int,
+    reference_workers: int,
+    reference_backend: str,
+    focal_sample_mod: int,
+    focal_sample_keep: int,
+    reference_source: str,
+) -> dict[str, object]:
+    subject = data.subject
+    author_works = data.author_works
+    target_works = data.target_works
+    focal_works = data.focal_works
+    metadata = data.metadata
+    citations = data.citations
+    output = data.output
+
+    log(f"[{subject}] found {len(edges):,} sampled-work reference edges")
+    related: dict[str, set[str]] = {work_id: {work_id} for work_id in target_works}
+    for source, target in edges:
+        related.setdefault(source, {source}).add(target)
+        related.setdefault(target, {target}).add(source)
+
+    cumulative = {
+        work_id: cumulative_by_year(
+            citations.get(work_id, {}),
+            start_year=max(start_year, int(metadata[work_id]["publication_year"])),
+            end_year=end_year,
+        )
+        for work_id in target_works
+    }
+
+    rows = 0
+    observed_citations = 0
+    tmp_output = output.with_name(f"{output.name}.tmp")
+    fieldnames = [
+        "subject",
+        "author_id",
+        "work_id",
+        "year",
+        "publication_year",
+        "paper_age",
+        "citations_jt",
+        "accumulated_unrelated_citations_jt",
+        "accumulated_related_citations_jt",
+        "author_subject_papers",
+        "related_author_papers",
+        "citation_source",
+    ]
+    with gzip.open(tmp_output, "wt", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for author_id, works in sorted(author_works.items()):
+            works = sorted(works)
+            author_focal_works = [work_id for work_id in works if work_id in focal_works]
+            if not author_focal_works:
+                continue
+            author_total_by_year = Counter()
+            for work_id in works:
+                for year, value in cumulative.get(work_id, {}).items():
+                    author_total_by_year[year] += value
+            for focal in author_focal_works:
+                publication_year = int(metadata[focal]["publication_year"])
+                first_year = max(start_year, publication_year)
+                related_works = set(works) & related.get(focal, {focal})
+                for year in range(first_year, end_year + 1):
+                    related_stock = sum(cumulative.get(work_id, {}).get(year, 0) for work_id in related_works)
+                    total_stock = author_total_by_year.get(year, 0)
+                    citations_jt = citations.get(focal, {}).get(year, 0)
+                    observed_citations += citations_jt
+                    writer.writerow(
+                        {
+                            "subject": subject,
+                            "author_id": author_id,
+                            "work_id": focal,
+                            "year": year,
+                            "publication_year": publication_year,
+                            "paper_age": year - publication_year,
+                            "citations_jt": citations_jt,
+                            "accumulated_unrelated_citations_jt": max(0, total_stock - related_stock),
+                            "accumulated_related_citations_jt": related_stock,
+                            "author_subject_papers": len(works),
+                            "related_author_papers": len(related_works),
+                            "citation_source": data.citation_source,
+                        }
+                    )
+                    rows += 1
+                    if rows % 1_000_000 == 0:
+                        log(f"[{subject}] wrote {rows:,} regression rows")
+    tmp_output.replace(output)
+    summary = {
+        "subject": subject,
+        "output": str(output),
+        "authors": len(author_works),
+        "works": len(focal_works),
+        "author_history_works": len(target_works),
+        "rows": rows,
+        "observed_citations_sum": observed_citations,
+        "reference_edges_among_sample_works": len(edges),
+        "start_year": start_year,
+        "end_year": end_year,
+        "sample_mod": sample_mod,
+        "sample_keep": sample_keep,
+        "max_authors": max_authors,
+        "min_author_papers": min_author_papers,
+        "focal_sample_mod": focal_sample_mod,
+        "focal_sample_keep": focal_sample_keep,
+        "max_snapshot_files": max_snapshot_files,
+        "reference_workers": reference_workers,
+        "reference_backend": reference_backend,
+        "reference_source": reference_source,
+        "citation_source": data.citation_source,
+    }
+    output.with_name(f"{output.name}.summary.json").write_text(
+        json.dumps(summary, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+    return summary
+
+
 def build_subject(
     *,
     subject: str,
@@ -267,6 +521,9 @@ def build_subject(
     max_snapshot_files: int,
     reference_workers: int,
     reference_backend: str,
+    focal_sample_mod: int,
+    focal_sample_keep: int,
+    reference_source: str,
     calculated_citations: Path | None,
 ) -> dict[str, object]:
     subject_dir = subject_root / subject
@@ -301,6 +558,22 @@ def build_subject(
         f"[{subject}] retained {len(author_works):,} authors and "
         f"{len(target_works):,} works after metadata/min-paper filters"
     )
+    focal_works = select_focal_works(
+        target_works,
+        focal_sample_mod=focal_sample_mod,
+        focal_sample_keep=focal_sample_keep,
+    )
+    author_works = {
+        author: works
+        for author, works in author_works.items()
+        if works & focal_works
+    }
+    target_works = {work_id for works in author_works.values() for work_id in works}
+    focal_works &= target_works
+    log(
+        f"[{subject}] retained {len(focal_works):,} focal works for full-lifetime rows "
+        f"and {len(target_works):,} author-history works for exposure stocks"
+    )
     if calculated_citations:
         log(f"[{subject}] loading calculated annual citations")
         citations = load_calculated_citations(calculated_citations, target_works)
@@ -309,14 +582,27 @@ def build_subject(
         log(f"[{subject}] loading OpenAlex counts_by_year citations")
         citations = load_citations(table_parts, target_works)
         citation_source = "openalex_counts_by_year"
-    log(f"[{subject}] scanning snapshot references")
-    edges = extract_reference_edges(
-        snapshot_works_dir=snapshot_works_dir,
-        target_works=target_works,
-        max_snapshot_files=max_snapshot_files,
-        reference_workers=reference_workers,
-        reference_backend=reference_backend,
-    )
+    table_edges = None
+    if reference_source in {"auto", "table_parts"}:
+        table_edges = load_reference_edges_from_table_parts(table_parts, target_works)
+    if table_edges is not None:
+        edges = table_edges
+        reference_source_used = "table_parts"
+    elif reference_source == "table_parts":
+        raise SystemExit(f"No work_references table parts found for subject={subject}: {table_parts}")
+    elif reference_source == "none":
+        edges = set()
+        reference_source_used = "none"
+    else:
+        log(f"[{subject}] scanning snapshot references")
+        edges = extract_reference_edges(
+            snapshot_works_dir=snapshot_works_dir,
+            target_works=target_works,
+            max_snapshot_files=max_snapshot_files,
+            reference_workers=reference_workers,
+            reference_backend=reference_backend,
+        )
+        reference_source_used = "snapshot"
     log(f"[{subject}] found {len(edges):,} sampled-work reference edges")
 
     related: dict[str, set[str]] = {work_id: {work_id} for work_id in target_works}
@@ -355,11 +641,14 @@ def build_subject(
         writer.writeheader()
         for author_id, works in sorted(author_works.items()):
             works = sorted(works)
+            author_focal_works = [work_id for work_id in works if work_id in focal_works]
+            if not author_focal_works:
+                continue
             author_total_by_year = Counter()
             for work_id in works:
                 for year, value in cumulative.get(work_id, {}).items():
                     author_total_by_year[year] += value
-            for focal in works:
+            for focal in author_focal_works:
                 publication_year = int(metadata[focal]["publication_year"])
                 first_year = max(start_year, publication_year)
                 related_works = set(works) & related.get(focal, {focal})
@@ -392,7 +681,8 @@ def build_subject(
         "subject": subject,
         "output": str(output),
         "authors": len(author_works),
-        "works": len(target_works),
+        "works": len(focal_works),
+        "author_history_works": len(target_works),
         "rows": rows,
         "observed_citations_sum": observed_citations,
         "reference_edges_among_sample_works": len(edges),
@@ -402,9 +692,12 @@ def build_subject(
         "sample_keep": sample_keep,
         "max_authors": max_authors,
         "min_author_papers": min_author_papers,
+        "focal_sample_mod": focal_sample_mod,
+        "focal_sample_keep": focal_sample_keep,
         "max_snapshot_files": max_snapshot_files,
         "reference_workers": reference_workers,
         "reference_backend": reference_backend,
+        "reference_source": reference_source_used,
         "citation_source": citation_source,
     }
     output.with_name(f"{output.name}.summary.json").write_text(
@@ -426,6 +719,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--sample-keep", type=int, default=1)
     parser.add_argument("--max-authors", type=int, default=5000)
     parser.add_argument("--min-author-papers", type=int, default=2)
+    parser.add_argument(
+        "--focal-sample-mod",
+        type=int,
+        default=1,
+        help="Hash-sample retained works before writing rows; each kept focal paper keeps all years.",
+    )
+    parser.add_argument(
+        "--focal-sample-keep",
+        type=int,
+        default=1,
+        help="Number of focal-work hash buckets to keep.",
+    )
     parser.add_argument("--max-snapshot-files", type=int, default=0)
     parser.add_argument("--reference-workers", type=int, default=12)
     parser.add_argument(
@@ -435,6 +740,22 @@ def parse_args() -> argparse.Namespace:
         help="Use process workers for small target sets and thread workers for large shared target sets by default.",
     )
     parser.add_argument(
+        "--reference-source",
+        choices=["auto", "table_parts", "snapshot", "none"],
+        default="auto",
+        help="Where to load citing/cited relation edges from. Auto prefers table_parts and falls back to snapshot.",
+    )
+    parser.add_argument(
+        "--shared-reference-scan",
+        action="store_true",
+        help="For multiple subjects, prepare all samples first and scan snapshot references once over the union of target works.",
+    )
+    parser.add_argument(
+        "--skip-reference-scan",
+        action="store_true",
+        help="Skip citing/cited relation lookup and use only self-related papers. This is intended for fast pilots.",
+    )
+    parser.add_argument(
         "--economics-calculated-citations",
         type=Path,
         default=Path(
@@ -442,13 +763,155 @@ def parse_args() -> argparse.Namespace:
             "calculated_citations/calculated_citations_by_year.csv.gz"
         ),
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.focal_sample_mod < 1:
+        raise SystemExit("--focal-sample-mod must be at least 1")
+    if args.focal_sample_keep < 1 or args.focal_sample_keep > args.focal_sample_mod:
+        raise SystemExit("--focal-sample-keep must be between 1 and --focal-sample-mod")
+    return args
 
 
 def main() -> int:
     args = parse_args()
     subjects = args.subject or DEFAULT_SUBJECTS
     summaries = []
+    if args.skip_reference_scan and len(subjects) > 1:
+        for subject in subjects:
+            calculated = (
+                args.economics_calculated_citations
+                if subject == "economics_econometrics_and_finance"
+                and args.economics_calculated_citations.exists()
+                else None
+            )
+            data = prepare_subject_data(
+                subject=subject,
+                subject_root=args.subject_root,
+                output_root=args.output_root,
+                sample_mod=args.sample_mod,
+                sample_keep=args.sample_keep,
+                max_authors=args.max_authors,
+                min_author_papers=args.min_author_papers,
+                focal_sample_mod=args.focal_sample_mod,
+                focal_sample_keep=args.focal_sample_keep,
+                calculated_citations=calculated,
+            )
+            summary = write_subject_data(
+                data=data,
+                edges=set(),
+                start_year=args.start_year,
+                end_year=args.end_year,
+                sample_mod=args.sample_mod,
+                sample_keep=args.sample_keep,
+                max_authors=args.max_authors,
+                min_author_papers=args.min_author_papers,
+                max_snapshot_files=args.max_snapshot_files,
+                reference_workers=args.reference_workers,
+                reference_backend=args.reference_backend,
+                focal_sample_mod=args.focal_sample_mod,
+                focal_sample_keep=args.focal_sample_keep,
+                reference_source="none",
+            )
+            summary["skip_reference_scan"] = True
+            summary["relation_definition"] = "self_only_fast_pilot"
+            print(json.dumps(summary, indent=2, sort_keys=True), flush=True)
+            summaries.append(summary)
+        args.output_root.mkdir(parents=True, exist_ok=True)
+        (args.output_root / "summary.json").write_text(
+            json.dumps(summaries, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        return 0
+
+    if args.shared_reference_scan and len(subjects) > 1:
+        prepared: list[SubjectBuildData] = []
+        for subject in subjects:
+            calculated = (
+                args.economics_calculated_citations
+                if subject == "economics_econometrics_and_finance"
+                and args.economics_calculated_citations.exists()
+                else None
+            )
+            data = prepare_subject_data(
+                subject=subject,
+                subject_root=args.subject_root,
+                output_root=args.output_root,
+                sample_mod=args.sample_mod,
+                sample_keep=args.sample_keep,
+                max_authors=args.max_authors,
+                min_author_papers=args.min_author_papers,
+                focal_sample_mod=args.focal_sample_mod,
+                focal_sample_keep=args.focal_sample_keep,
+                calculated_citations=calculated,
+            )
+            if data.target_works:
+                prepared.append(data)
+        table_edges_by_subject: dict[str, set[tuple[str, str]]] = {}
+        missing_reference_tables = []
+        for data in prepared:
+            table_edges = load_reference_edges_from_table_parts(data.table_parts, data.target_works)
+            if table_edges is None:
+                missing_reference_tables.append(data.subject)
+            else:
+                table_edges_by_subject[data.subject] = table_edges
+
+        shared_edges: set[tuple[str, str]] = set()
+        reference_source_used = "table_parts"
+        if missing_reference_tables:
+            shared_target_works = {
+                work_id
+                for data in prepared
+                for work_id in data.target_works
+            }
+            log(
+                "shared reference scan across "
+                f"{len(prepared):,} subjects and {len(shared_target_works):,} target works; "
+                f"missing_reference_tables={','.join(missing_reference_tables)}"
+            )
+            shared_edges = extract_reference_edges(
+                snapshot_works_dir=args.snapshot_works_dir,
+                target_works=shared_target_works,
+                max_snapshot_files=args.max_snapshot_files,
+                reference_workers=args.reference_workers,
+                reference_backend=args.reference_backend,
+            )
+            log(f"shared reference scan found {len(shared_edges):,} target-work edges")
+            reference_source_used = "snapshot"
+        for data in prepared:
+            target_works = data.target_works
+            if reference_source_used == "table_parts":
+                subject_edges = table_edges_by_subject[data.subject]
+            else:
+                subject_edges = {
+                    (source, target)
+                    for source, target in shared_edges
+                    if source in target_works and target in target_works
+                }
+            summary = write_subject_data(
+                data=data,
+                edges=subject_edges,
+                start_year=args.start_year,
+                end_year=args.end_year,
+                sample_mod=args.sample_mod,
+                sample_keep=args.sample_keep,
+                max_authors=args.max_authors,
+                min_author_papers=args.min_author_papers,
+                max_snapshot_files=args.max_snapshot_files,
+                reference_workers=args.reference_workers,
+                reference_backend=args.reference_backend,
+                focal_sample_mod=args.focal_sample_mod,
+                focal_sample_keep=args.focal_sample_keep,
+                reference_source=reference_source_used,
+            )
+            summary["shared_reference_scan"] = True
+            print(json.dumps(summary, indent=2, sort_keys=True), flush=True)
+            summaries.append(summary)
+        args.output_root.mkdir(parents=True, exist_ok=True)
+        (args.output_root / "summary.json").write_text(
+            json.dumps(summaries, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        return 0
+
     for subject in subjects:
         calculated = (
             args.economics_calculated_citations
@@ -470,6 +933,9 @@ def main() -> int:
             max_snapshot_files=args.max_snapshot_files,
             reference_workers=args.reference_workers,
             reference_backend=args.reference_backend,
+            focal_sample_mod=args.focal_sample_mod,
+            focal_sample_keep=args.focal_sample_keep,
+            reference_source=args.reference_source,
             calculated_citations=calculated,
         )
         print(json.dumps(summary, indent=2, sort_keys=True), flush=True)
