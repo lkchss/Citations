@@ -1,6 +1,10 @@
 # Agent Handoff: Citations Project
 
-Last updated: 2026-06-08 UTC.
+Last updated: 2026-06-09 UTC.
+
+Start with `PROJECT_CONTEXT.md` for the durable GitHub-tracked project state.
+This handoff can include more operational detail, but durable context should be
+kept synchronized there because future models may only inspect GitHub.
 
 ## Repository and Data Locations
 

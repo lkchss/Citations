@@ -2,6 +2,12 @@
 
 Tools for collecting OpenAlex citation metadata related to economics.
 
+## Project Context
+
+Agents and other models should start with [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md).
+It records the current research goal, data layout, running jobs, completed
+outputs, and operating rules for what should be committed to GitHub.
+
 ## Pull Economics Works
 
 Set your OpenAlex API key locally:
