@@ -59,6 +59,8 @@ def chunked(items: list[Path], chunks: int) -> list[list[Path]]:
 def scan_files(files: list[Path], output_root: Path, part_id: int) -> dict[str, object]:
     handles: dict[str, object] = {}
     writers: dict[str, csv.DictWriter] = {}
+    final_paths: dict[str, Path] = {}
+    tmp_paths: dict[str, Path] = {}
     records_seen = 0
     target_records_seen = 0
     references_written = 0
@@ -67,12 +69,15 @@ def scan_files(files: list[Path], output_root: Path, part_id: int) -> dict[str, 
     def writer_for(subject: str) -> csv.DictWriter:
         if subject not in writers:
             path = output_root / subject / "tables_parts" / f"part_{part_id:04d}_work_references.csv.gz"
+            tmp_path = path.with_name(f"{path.name}.tmp")
             path.parent.mkdir(parents=True, exist_ok=True)
-            handle = gzip.open(path, "wt", encoding="utf-8", newline="")
+            handle = gzip.open(tmp_path, "wt", encoding="utf-8", newline="")
             writer = csv.DictWriter(handle, fieldnames=["work_id", "referenced_work_id"])
             writer.writeheader()
             handles[subject] = handle
             writers[subject] = writer
+            final_paths[subject] = path
+            tmp_paths[subject] = tmp_path
         return writers[subject]
 
     try:
@@ -104,6 +109,9 @@ def scan_files(files: list[Path], output_root: Path, part_id: int) -> dict[str, 
     finally:
         for handle in handles.values():
             handle.close()
+
+    for subject, tmp_path in tmp_paths.items():
+        tmp_path.replace(final_paths[subject])
 
     return {
         "part_id": part_id,

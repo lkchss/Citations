@@ -1,6 +1,6 @@
 # Agent Handoff: Citations Project
 
-Last updated: 2026-06-09 UTC.
+Last updated: 2026-06-10 UTC.
 
 Start with `PROJECT_CONTEXT.md` for the durable GitHub-tracked project state.
 This handoff can include more operational detail, but durable context should be
@@ -36,103 +36,48 @@ more diverse field set.
 
 ## Current Running Job
 
-As of this handoff, the full-sample economics prevalence regression pipeline was
-terminated to free memory and the lifetime pilot is running.
+The full-sample economics prevalence regression pipeline is paused/stopped. The
+active job is the low-memory sequential reference backfill that creates
+digestible `work_references` table parts for the 10 pilot subjects.
 
-Command used:
-
-```bash
-setsid -f env REFERENCE_WORKERS=12 REFERENCE_BACKEND=thread \
-  bash scripts/run_full_economics_prevalence_regressions.sh \
-  > /root/sdb1/openalex/subjects/prevalence_regressions_full_logs/launch.log 2>&1
-```
-
-Terminated full-economics process:
-
-- Former runner PID: `102086`
-- Former build PID: `102088`
-- Build command includes:
-  - `--subject economics_econometrics_and_finance`
-  - `--sample-mod 1`
-  - `--sample-keep 1`
-  - `--max-authors 0`
-  - `--min-author-papers 2`
-  - `--reference-workers 12`
-  - `--reference-backend thread`
-
-Full-economics log path:
-
-- `/root/sdb1/openalex/subjects/prevalence_regressions_full_logs/build.log`
-- Old process speed monitor log:
-  `/root/sdb1/openalex/subjects/prevalence_regressions_full_logs/process_speed_agent.log`
-
-The full-economics monitor was also stopped. Relaunch
-`scripts/run_full_economics_prevalence_regressions.sh` from scratch if the full
-economics run is needed later.
-
-At handoff the log had just restarted and showed:
-
-```text
-[economics_econometrics_and_finance] sampling authors
-```
-
-Check status with:
+Current command family:
 
 ```bash
-pgrep -af 'run_full_economics_prevalence|build_subject_prevalence|render_full_prevalence'
-tail -n 120 /root/sdb1/openalex/subjects/prevalence_regressions_full_logs/build.log
-tail -n 120 /root/sdb1/openalex/subjects/prevalence_regressions_full_logs/process_speed_agent.log
-tail -n 120 /root/sdb1/openalex/subjects/prevalence_regressions_full_logs/render.log
+env BACKFILL_WORKERS=4 ./scripts/run_reference_backfill_sequential.sh
 ```
 
-Expected outputs if successful:
+Current status at last check:
 
-- Data:
-  `/root/sdb1/openalex/subjects/prevalence_regressions_full/economics_econometrics_and_finance/paper_author_year_prevalence_regression.csv.gz`
-- Memmap work directory:
-  `/root/sdb1/openalex/subjects/prevalence_regressions_full_work/`
-- HTML report:
-  `/root/sdb1/projects/Citations/reports/subjects/full_economics_prevalence_regressions.html`
-- JSON summary:
-  `/root/sdb1/projects/Citations/reports/subjects/full_economics_prevalence_regressions.summary.json`
+- Runner PID: `127739`
+- Active Python PID: `127749`
+- Active subject: `economics_econometrics_and_finance`
+- Loaded economics work IDs: `7,924,745`
+- Opened atomic temp outputs:
+  `/root/sdb1/openalex/subjects/economics_econometrics_and_finance/tables_parts/part_000{0..3}_work_references.csv.gz.tmp`
 
-The runner should commit and push the full economics HTML and summary automatically if it reaches the end.
+Important: no valid final economics `work_references` output is expected until
+a worker finishes its snapshot chunk and atomically renames its temp file.
 
-## Active Lifetime Pilot
+## Completed Lifetime Pilot
 
-The active priority is now a smaller-sample, full-paper-lifetime prevalence
-pilot across a more diverse set of fields. The pilot samples authors, keeps each
+The smaller-sample, full-paper-lifetime prevalence pilot across a more diverse
+set of fields completed. The pilot samples authors, keeps each
 sampled author's complete subject-paper history for exposure stocks, then
 samples focal papers and writes each retained focal paper's complete lifetime
-rows. The pilot uses `--shared-reference-scan`, so it prepares all subject
-samples first and scans the 596 GiB snapshot once across the union of sampled
-target works instead of once per subject.
+rows.
 
-Command launched:
+The completed fast pilot used `--skip-reference-scan`, so it is a data-shape
+diagnostic only. Related-paper stocks are self-only and the negative regression
+coefficients are not substantive evidence.
+
+Command pattern:
 
 ```bash
 setsid -f env SAMPLE_MOD=1000 SAMPLE_KEEP=1 FOCAL_SAMPLE_MOD=4 FOCAL_SAMPLE_KEEP=1 \
-  REFERENCE_WORKERS=8 REFERENCE_BACKEND=thread SHARED_REFERENCE_SCAN=1 \
+  REFERENCE_WORKERS=8 REFERENCE_BACKEND=thread SKIP_REFERENCE_SCAN=1 \
   bash scripts/run_pilot_lifetime_prevalence_regressions.sh \
   >> /root/sdb1/openalex/subjects/prevalence_regressions_lifetime_pilot_logs/launch.log 2>&1
 ```
-
-Current pilot processes:
-
-- Runner PID: `107369`
-- Build PID: `107372`
-- Health monitor PID: check with `pgrep -af monitor_process_speed_agent.py`
-- Optimizer agent PID: `108062`
-
-The health monitor records CPU/RSS/I/O/memory and guards against memory stalls.
-The optimizer agent is the process-policy supervisor:
-
-- It requires `--shared-reference-scan` for this pilot data root.
-- It terminates matching unoptimized pilot builds.
-- It relaunches the optimized runner if the pilot is not running and the report
-  is not complete.
-- It logs phase/progress signals to:
-  `/root/sdb1/openalex/subjects/prevalence_regressions_lifetime_pilot_logs/optimizer_agent.log`
 
 Pilot subjects:
 
@@ -191,6 +136,21 @@ report exists, so the backfill does not compete with the active pilot:
   `/root/sdb1/openalex/subjects/reference_backfill_logs/watch.log`
 - Backfill log:
   `/root/sdb1/openalex/subjects/reference_backfill_logs/backfill.log`
+
+This watcher approach has been superseded operationally by
+`scripts/run_reference_backfill_sequential.sh`, which runs one subject at a time
+with bounded memory. The earlier all-subject backfill loaded 158.9M work IDs and
+was stopped after reaching about 13.5 GiB RSS.
+
+On 2026-06-10, corrupt partial economics final gzip outputs were moved aside
+under:
+
+```text
+/root/sdb1/openalex/subjects/economics_econometrics_and_finance/tables_parts/corrupt_work_references_20260610/
+```
+
+`scripts/backfill_subject_work_references.py` now writes temp gzip outputs and
+renames them atomically only after a worker finishes cleanly.
 
 ## Why the Full Economics Job Was Restarted
 

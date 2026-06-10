@@ -1,6 +1,6 @@
 # Project Context
 
-Last updated: 2026-06-09 UTC.
+Last updated: 2026-06-10 UTC.
 
 This file is the GitHub-tracked context entry point for future agents and
 models. Keep it current whenever workflow, outputs, running jobs, or data
@@ -115,6 +115,11 @@ Economics panel rebuilt with calculated citation counts:
 
 Low-memory sequential reference backfill is running so future analyses can use
 digestible `work_references` table parts rather than scanning the raw snapshot.
+It was restarted on 2026-06-10 after earlier partial economics gzip outputs
+were found to be corrupt. The backfill writer now writes
+`part_XXXX_work_references.csv.gz.tmp` and atomically renames it only after a
+worker finishes cleanly, so interrupted runs should not leave invalid final
+gzip files.
 
 Check status:
 
@@ -133,6 +138,12 @@ env BACKFILL_WORKERS=4 ./scripts/run_reference_backfill_sequential.sh
 This runs one subject at a time to avoid holding all subject work IDs in memory.
 The earlier all-subject backfill loaded 158.9M work IDs into one Python dict,
 used about 13.5 GiB RSS, and was stopped.
+
+As of the latest status check, the active subject is
+`economics_econometrics_and_finance`. It has loaded 7,924,745 subject work IDs
+and opened four atomic temp output files. No valid final economics
+`work_references` part should be expected until one worker finishes its snapshot
+chunk and renames its temp file.
 
 ## Digestible Data Plan
 
