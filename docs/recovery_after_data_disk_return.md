@@ -101,11 +101,22 @@ Incomplete atomic temp files look like:
 part_0000_work_references.csv.gz.tmp
 ```
 
-If only temp files exist, restart the sequential backfill:
+If only temp files exist, restart the sequential backfill. The runner now
+cleans stale temp files by default and does not overwrite final parts unless
+`BACKFILL_OVERWRITE=1` is set:
 
 ```bash
 cd /root/sdb1/projects/Citations
 setsid -f env BACKFILL_WORKERS=4 ./scripts/run_reference_backfill_sequential.sh \
+  >> /root/sdb1/openalex/subjects/reference_backfill_logs/sequential.launch.log 2>&1
+```
+
+If some final parts exist for a subject but the subject is incomplete, force a
+clean rebuild of that subject sequence:
+
+```bash
+setsid -f env BACKFILL_WORKERS=4 BACKFILL_OVERWRITE=1 \
+  ./scripts/run_reference_backfill_sequential.sh \
   >> /root/sdb1/openalex/subjects/reference_backfill_logs/sequential.launch.log 2>&1
 ```
 

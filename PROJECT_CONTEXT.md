@@ -195,6 +195,9 @@ Implemented:
   existing subject tables.
 - `scripts/run_reference_backfill_sequential.sh` runs that backfill one subject
   at a time with bounded memory.
+- `scripts/run_reference_backfill_sequential.sh` no longer overwrites final
+  reference parts by default. Set `BACKFILL_OVERWRITE=1` only when deliberately
+  rebuilding a partially completed subject.
 - `scripts/build_subject_prevalence_regression_data.py` prefers
   `work_references` table parts under `--reference-source auto`.
 

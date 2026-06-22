@@ -163,6 +163,9 @@ under:
 
 `scripts/backfill_subject_work_references.py` now writes temp gzip outputs and
 renames them atomically only after a worker finishes cleanly.
+`scripts/run_reference_backfill_sequential.sh` no longer overwrites final
+reference parts by default; set `BACKFILL_OVERWRITE=1` only for a deliberate
+clean rebuild.
 
 ## Why the Full Economics Job Was Restarted
 

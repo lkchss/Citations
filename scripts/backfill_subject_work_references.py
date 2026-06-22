@@ -135,6 +135,16 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Overwrite existing work_references parts for selected subjects.",
     )
+    parser.add_argument(
+        "--clean-temp",
+        action="store_true",
+        help="Remove stale part_*_work_references.csv.gz.tmp files before scanning.",
+    )
+    parser.add_argument(
+        "--skip-existing-subjects",
+        action="store_true",
+        help="Skip subjects that already have at least one final work_references part.",
+    )
     return parser.parse_args()
 
 
@@ -147,8 +157,14 @@ def main() -> int:
     if not subjects:
         raise SystemExit("No subjects selected.")
 
+    selected_subjects = []
     for subject in subjects:
-        existing = list((args.subject_root / subject / "tables_parts").glob("part_*_work_references.csv.gz"))
+        table_parts = args.subject_root / subject / "tables_parts"
+        existing = sorted(table_parts.glob("part_*_work_references.csv.gz"))
+        temp_existing = sorted(table_parts.glob("part_*_work_references.csv.gz.tmp"))
+        if existing and args.skip_existing_subjects:
+            log(f"skipping subject={subject} existing_reference_parts={len(existing)}")
+            continue
         if existing and not args.overwrite:
             raise SystemExit(
                 f"Existing work_references parts for subject={subject}; pass --overwrite to replace."
@@ -156,6 +172,32 @@ def main() -> int:
         if args.overwrite:
             for path in existing:
                 path.unlink()
+        if args.clean_temp or args.overwrite:
+            for path in temp_existing:
+                path.unlink()
+        selected_subjects.append(subject)
+
+    subjects = selected_subjects
+    if not subjects:
+        totals: dict[str, object] = {
+            "subject_root": str(args.subject_root),
+            "snapshot_works_dir": str(args.snapshot_works_dir),
+            "subjects": [],
+            "target_work_ids": 0,
+            "input_files": 0,
+            "workers": 0,
+            "records_seen": 0,
+            "target_records_seen": 0,
+            "references_written": 0,
+            "subject_counts": {},
+            "parts": [],
+            "skipped_all_subjects": True,
+        }
+        print(json.dumps(totals, indent=2, sort_keys=True))
+        return 0
+
+    if not args.snapshot_works_dir.exists():
+        raise SystemExit(f"Missing snapshot works directory: {args.snapshot_works_dir}")
 
     global TARGET_SUBJECT_BY_WORK_ID
     TARGET_SUBJECT_BY_WORK_ID = load_subject_work_ids(args.subject_root, subjects)
