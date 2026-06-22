@@ -1,6 +1,6 @@
 # Agent Handoff: Citations Project
 
-Last updated: 2026-06-10 UTC.
+Last updated: 2026-06-22 UTC.
 
 Start with `PROJECT_CONTEXT.md` for the durable GitHub-tracked project state.
 This handoff can include more operational detail, but durable context should be
@@ -13,6 +13,8 @@ kept synchronized there because future models may only inspect GitHub.
 - Large OpenAlex data: `/root/sdb1/openalex/`
 - Subject data root: `/root/sdb1/openalex/subjects/`
 - Snapshot works JSONL gzip files: `/root/sdb1/openalex/snapshot/data/works/`
+- Temporary editable repo while data disk is offline:
+  `/root/projects/Citations`
 
 Large raw/derived data stays on the SSD and is not committed. Scripts, reports, literature review, summary outputs, plots, and HTML tables should be committed/pushed to GitHub.
 
@@ -34,11 +36,15 @@ The immediate priority has now changed: the user asked to pause the full
 economics job and focus on a smaller-sample, full-paper-lifetime pilot across a
 more diverse field set.
 
-## Current Running Job
+## Current Running Job / Disk State
+
+As of 2026-06-22, the original OpenAlex data disk is not visible in the current
+environment. No OpenAlex data job is running. Use
+`scripts/check_openalex_environment.py` after the disk returns.
 
 The full-sample economics prevalence regression pipeline is paused/stopped. The
-active job is the low-memory sequential reference backfill that creates
-digestible `work_references` table parts for the 10 pilot subjects.
+next data job should be the low-memory sequential reference backfill that
+creates digestible `work_references` table parts for the 10 pilot subjects.
 
 Current command family:
 
@@ -46,7 +52,7 @@ Current command family:
 env BACKFILL_WORKERS=4 ./scripts/run_reference_backfill_sequential.sh
 ```
 
-Current status at last check:
+Last known active status before the disk disappeared:
 
 - Runner PID: `127739`
 - Active Python PID: `127749`
@@ -57,6 +63,12 @@ Current status at last check:
 
 Important: no valid final economics `work_references` output is expected until
 a worker finishes its snapshot chunk and atomically renames its temp file.
+
+Recovery runbook:
+
+```text
+docs/recovery_after_data_disk_return.md
+```
 
 ## Completed Lifetime Pilot
 

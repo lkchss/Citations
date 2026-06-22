@@ -1,6 +1,6 @@
 # Project Context
 
-Last updated: 2026-06-10 UTC.
+Last updated: 2026-06-22 UTC.
 
 This file is the GitHub-tracked context entry point for future agents and
 models. Keep it current whenever workflow, outputs, running jobs, or data
@@ -23,6 +23,19 @@ structure changes.
 - OpenAlex root: `/root/sdb1/openalex/`
 - Snapshot works: `/root/sdb1/openalex/snapshot/data/works/`
 - Subject tables: `/root/sdb1/openalex/subjects/<subject>/tables_parts/`
+
+Temporary staging repo while the original OpenAlex disk is offline:
+
+```text
+/root/projects/Citations
+```
+
+Staging notes:
+
+```text
+STAGING_CONTEXT.md
+docs/recovery_after_data_disk_return.md
+```
 
 The raw snapshot is gzip JSONL partitioned by `updated_date`, not by subject or
 publication year:
@@ -111,12 +124,24 @@ Economics panel rebuilt with calculated citation counts:
 /root/sdb1/openalex/subjects/economics_econometrics_and_finance/panels/paper_author_year.csv.gz
 ```
 
-## Current Running Job
+## Current Running Job / Disk State
 
-Low-memory sequential reference backfill is running so future analyses can use
-digestible `work_references` table parts rather than scanning the raw snapshot.
-It was restarted on 2026-06-10 after earlier partial economics gzip outputs
-were found to be corrupt. The backfill writer now writes
+As of 2026-06-22, the original OpenAlex data disk is not visible in the current
+environment, so no OpenAlex data job is running. The current visible disks do
+not contain `/root/sdb1/openalex`.
+
+Before resuming data work, remount the correct data disk and run:
+
+```bash
+python3 scripts/check_openalex_environment.py \
+  --repo-dir /root/sdb1/projects/Citations \
+  --openalex-root /root/sdb1/openalex
+```
+
+The low-memory sequential reference backfill should resume after the data disk
+returns so future analyses can use digestible `work_references` table parts
+rather than scanning the raw snapshot. It was restarted on 2026-06-10 after
+earlier partial economics gzip outputs were found to be corrupt. The backfill writer now writes
 `part_XXXX_work_references.csv.gz.tmp` and atomically renames it only after a
 worker finishes cleanly, so interrupted runs should not leave invalid final
 gzip files.
