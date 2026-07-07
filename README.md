@@ -8,6 +8,14 @@ Agents and other models should start with [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT
 It records the current research goal, data layout, running jobs, completed
 outputs, and operating rules for what should be committed to GitHub.
 
+## Tests
+
+Run the lightweight recovery and pipeline safety tests with:
+
+```bash
+python3 -m unittest discover -v
+```
+
 ## Pull Economics Works
 
 Set your OpenAlex API key locally:
