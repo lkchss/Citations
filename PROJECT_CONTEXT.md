@@ -1,6 +1,6 @@
 # Project Context
 
-Last updated: 2026-06-22 UTC.
+Last updated: 2026-07-17 UTC.
 
 This file is the GitHub-tracked context entry point for future agents and
 models. Keep it current whenever workflow, outputs, running jobs, or data
@@ -60,6 +60,11 @@ citations_jt ~ accumulated_unrelated_citations_jt + accumulated_related_citation
 Papers are related if `i = j`, `i cites j`, or `j cites i`. For the fast
 lifetime pilot below, relation lookup was deliberately skipped, so related means
 self-only.
+
+The canonical database architecture and research-linked execution plan are
+documented in `docs/research_warehouse_design.md`. The durable warehouse keeps
+normalized facts separate from versioned samples, relationship definitions,
+annual exposure components, and disposable specification-specific panels.
 
 ## Completed Outputs
 
@@ -126,16 +131,30 @@ Economics panel rebuilt with calculated citation counts:
 
 ## Current Running Job / Disk State
 
-As of 2026-06-22, the original OpenAlex data disk is not visible in the current
-environment, so no OpenAlex data job is running. The current visible disks do
-not contain `/root/sdb1/openalex`.
+As of 2026-07-17, the OpenAlex NTFS data disk is mounted at `/root/sdb1` and
+the 44 GB subject DuckDB is present. The canonical working checkout is
+`/root/projects/Citations`; the checkout stored on the data disk may lag it.
 
-Before resuming data work, remount the correct data disk and run:
+Check the environment with:
 
 ```bash
 python3 scripts/check_openalex_environment.py \
-  --repo-dir /root/sdb1/projects/Citations \
+  --repo-dir /root/projects/Citations \
   --openalex-root /root/sdb1/openalex
+```
+
+The resumable economics reference backfill was launched as systemd unit
+`openalex-economics-reference-backfill.service`. It divides 2,127 snapshot
+files into 266 deterministic eight-file chunks and publishes each chunk with
+an atomic output and checksum-backed manifest. Progress survives interruption.
+
+Check progress with:
+
+```bash
+pgrep -af 'backfill_subject_work_references_resumable'
+tail -n 40 /root/sdb1/openalex/subjects/reference_backfill_logs/economics_reference_backfill_resumable.log
+find /root/sdb1/openalex/subjects/economics_econometrics_and_finance/.reference_backfill/chunks \
+  -maxdepth 1 -name '*.json' | wc -l
 ```
 
 The low-memory sequential reference backfill should resume after the data disk

@@ -1,5 +1,8 @@
 # Citations
 
+The canonical subject-level warehouse structure and research execution plan are
+described in [docs/research_warehouse_design.md](docs/research_warehouse_design.md).
+
 Tools for collecting OpenAlex citation metadata related to economics.
 
 ## Project Context
