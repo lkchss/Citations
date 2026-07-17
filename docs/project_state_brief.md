@@ -1,12 +1,12 @@
-# Project State Brief
+# Database Project Direction
 
-This is the short project-status reference for presentations. The audience is
+This is the concise project-status reference for presentations. The audience is
 assumed to know the research question.
 
 ## Current Data State
 
-The OpenAlex snapshot is the source of truth: 596 GB across 2,127 compressed
-work files. The subject extraction is complete for 27 subjects and currently
+The OpenAlex structured snapshot is the source of truth: 596 GB across 2,127
+compressed work files. The subject extraction is complete for 27 subjects and currently
 contains:
 
 | Dataset | Rows |
@@ -19,6 +19,11 @@ contains:
 These tables are stored as bounded subject shards and queried through a 44 GB
 DuckDB database. Economics contains 7,924,745 works. Its annual citation
 counts have already been reconstructed from citation edges.
+
+The pipeline uses Python for streaming JSONL extraction, normalization,
+validation, and checkpointed processing. It is a structured-data ingestion
+system, not a web-scraping or search-engine workflow. DuckDB is the local
+analytical database and query engine.
 
 The database is deliberately layered:
 
@@ -59,4 +64,3 @@ pass. The existing DuckDB has not been overwritten during this backfill.
 The immediate research milestone is not a finished regression. It is a
 complete, validated economics fact layer from which multiple specifications can
 be generated without rescanning the raw snapshot.
-
