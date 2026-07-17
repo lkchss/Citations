@@ -3,6 +3,9 @@
 The canonical subject-level warehouse structure and research execution plan are
 described in [docs/research_warehouse_design.md](docs/research_warehouse_design.md).
 
+For a concise current-state briefing, see [docs/project_state_brief.md](docs/project_state_brief.md)
+and the [subject database architecture drawing](docs/assets/subject_database_architecture.svg).
+
 Tools for collecting OpenAlex citation metadata related to economics.
 
 ## Project Context

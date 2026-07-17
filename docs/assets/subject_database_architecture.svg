@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" role="img" aria-labelledby="title desc">
+  <title id="title">Subject-level research database architecture</title>
+  <desc id="desc">OpenAlex snapshot flows into canonical fact tables, research definitions, annual exposure components, and econometric panels.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      .title { font: 700 27px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 15px Arial, sans-serif; fill: #475569; }
+      .heading { font: 700 18px Arial, sans-serif; fill: #0f172a; }
+      .body { font: 15px Arial, sans-serif; fill: #1e293b; }
+      .small { font: 13px Arial, sans-serif; fill: #475569; }
+      .box { stroke: #334155; stroke-width: 2; rx: 12; }
+      .arrow { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1200" height="780" fill="#f8fafc"/>
+  <text x="60" y="55" class="title">Subject-Level Research Database</text>
+  <text x="60" y="82" class="subtitle">Facts are stored once; research definitions and econometric panels remain replaceable.</text>
+
+  <rect x="60" y="115" width="1080" height="82" class="box" fill="#e2e8f0"/>
+  <text x="90" y="148" class="heading">OpenAlex snapshot</text>
+  <text x="90" y="176" class="body">596 GB | 2,127 compressed work files | source of truth</text>
+
+  <path d="M600 197 L600 230" class="arrow"/>
+
+  <rect x="60" y="235" width="1080" height="190" class="box" fill="#dbeafe"/>
+  <text x="90" y="270" class="heading">Canonical fact layer</text>
+  <text x="90" y="305" class="body">works</text>
+  <text x="90" y="329" class="small">one row per paper</text>
+  <text x="325" y="305" class="body">work_authors</text>
+  <text x="325" y="329" class="small">paper-author links and order</text>
+  <text x="610" y="305" class="body">citations_by_year</text>
+  <text x="610" y="329" class="small">paper-year outcomes</text>
+  <text x="90" y="375" class="body">work_references</text>
+  <text x="90" y="399" class="small">directed citation edges</text>
+  <text x="325" y="375" class="body">subjects / authors</text>
+  <text x="325" y="399" class="small">stable entities and taxonomies</text>
+  <text x="610" y="375" class="body">sources / institutions</text>
+  <text x="610" y="399" class="small">controls and stratification</text>
+
+  <path d="M600 425 L600 458" class="arrow"/>
+
+  <rect x="60" y="463" width="1080" height="92" class="box" fill="#dcfce7"/>
+  <text x="90" y="497" class="heading">Versioned research definitions</text>
+  <text x="90" y="528" class="body">samples | relatedness rules | events | exclusions | snapshot and code lineage</text>
+
+  <path d="M600 555 L600 588" class="arrow"/>
+
+  <rect x="60" y="593" width="1080" height="92" class="box" fill="#fef3c7"/>
+  <text x="90" y="627" class="heading">Annual exposure layer</text>
+  <text x="90" y="658" class="body">focal outcomes | related exposure | unrelated exposure | self-citations | coverage status</text>
+
+  <path d="M600 685 L600 718" class="arrow"/>
+
+  <rect x="60" y="723" width="1080" height="42" class="box" fill="#fee2e2"/>
+  <text x="90" y="750" class="heading">Specification-specific panels: fixed effects | event studies | Poisson | robustness designs</text>
+</svg>
