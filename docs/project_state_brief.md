@@ -3,6 +3,25 @@
 This is the concise project-status reference for presentations. The audience is
 assumed to know the research question.
 
+## What The Database Is
+
+A relational database stores information in separate tables and connects those
+tables through shared identifiers. Each table records one kind of fact, and a
+key such as `work_id` or `author_id` tells us how facts in different tables
+refer to the same paper or person.
+
+For example, `works` has one row per paper. `work_authors` links papers to
+authors, and `work_citations_by_year` records how many citations a paper
+received in each year. We can join those tables to ask questions such as which
+authors are associated with a paper, how their other papers performed, and how
+those outcomes changed over time. `work_references` adds the paper-to-paper
+network needed to identify related and unrelated work.
+
+This structure avoids copying the same paper metadata into every author-year
+observation. It also keeps the underlying facts separate from choices made for
+one regression. New samples, exposure measures, fixed effects, and event-study
+panels can therefore be generated from the same source tables.
+
 ## Current Data State
 
 The OpenAlex structured snapshot is the source of truth: 596 GB across 2,127
