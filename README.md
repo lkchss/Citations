@@ -6,6 +6,8 @@ described in [docs/research_warehouse_design.md](docs/research_warehouse_design.
 For a concise current-state briefing, see [docs/project_state_brief.md](docs/project_state_brief.md)
 and the [subject database architecture drawing](docs/assets/subject_database_architecture.svg).
 
+The technical opportunity summary is in [docs/opportunity_summary.md](docs/opportunity_summary.md).
+
 Tools for collecting OpenAlex citation metadata related to economics.
 
 ## Project Context
