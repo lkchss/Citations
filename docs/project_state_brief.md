@@ -74,6 +74,14 @@ post-publication paper-author-year rows, 2,853 authors, and 14,675 focal works.
 It is a sample construction product pending citation-coverage and econometric
 diagnostics, not yet a final estimate.
 
+A provisional fixed-effects diagnostic has now been run on this panel using
+reconstructed annual citations. With paper and year effects absorbed, the
+joint specification gives a related-exposure coefficient of 0.00492 and an
+unrelated-exposure coefficient of -0.000511. These are engineering diagnostics,
+not research estimates: the current renderer uses normal-approximation,
+non-clustered standard errors, and the citation-total reconciliation below is
+not yet closed.
+
 Initial outcome validation finds exact lifetime-total agreement for 14,544 of
 14,675 sampled focal works. The remaining 131 works have reconstructed totals
 that exceed OpenAlex totals by 277 citations in aggregate; this discrepancy is
@@ -96,6 +104,8 @@ writes only the final compressed panel in bounded Python batches.
 | Robustness and identification | 2–4 days | Leads/lags, alternative relations, self-citation and placebo tests |
 | Extend to other subjects | 1–2 weeks | Same validated pipeline produces comparable estimates |
 
-The immediate research milestone is not a finished regression. It is a
-complete, validated economics fact layer from which multiple specifications can
-be generated without rescanning the raw snapshot.
+The immediate research milestone is to close citation reconciliation, freeze
+the economics sample, and replace the provisional regression renderer with a
+specification-aware estimator that supports clustered inference and explicit
+identification checks. The resulting fact layer should generate multiple
+specifications without rescanning the raw snapshot.
