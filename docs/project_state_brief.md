@@ -59,21 +59,19 @@ See the [database architecture drawing](assets/subject_database_architecture.svg
 
 ## Current Engineering State
 
-The economics reference backfill is the active blocker. The previous process
-used four long-running outputs and lost nearly all progress after interruption.
-It has been replaced with 266 deterministic eight-file checkpoints, atomic
-outputs, checksums, manifests, locking, and restart support.
+The economics reference layer is complete. The replacement backfill used 266
+deterministic eight-file checkpoints with atomic outputs, checksums, manifests,
+locking, and restart support. All 2,127 snapshot files were scanned, producing
+47,277,988 economics reference edges for 7,924,745 economics works.
 
-As of 2026-07-17, the persistent process is running with 51/266 checkpoints
-complete. The code and recovery tests are committed as `8c86669`; all 11 tests
-pass. The existing DuckDB has not been overwritten during this backfill.
+The reference shards have been imported into DuckDB. Post-import checks match
+the shard manifest and report zero orphan citing-paper IDs. The code and
+recovery tests are committed as `8c86669`; all 11 tests pass.
 
 ## Plan And Timeline
 
 | Stage | Expected duration | Completion condition |
 |---|---:|---|
-| Finish economics reference scan | ~1–2 days | All 266 checkpoints valid |
-| Validate and import economics references | 0.5–1 day | Transactional DuckDB import passes checks |
 | Freeze economics sample | 0.5 day | Versioned sample and exclusion report |
 | Build annual exposure components | 1–2 days | Related/unrelated exposure table with timing checks |
 | Descriptive diagnostics and baseline models | 1–2 days | Reproducible panels and baseline estimates |

@@ -143,12 +143,14 @@ python3 scripts/check_openalex_environment.py \
   --openalex-root /root/sdb1/openalex
 ```
 
-The resumable economics reference backfill was launched as systemd unit
-`openalex-economics-reference-backfill.service`. It divides 2,127 snapshot
-files into 266 deterministic eight-file chunks and publishes each chunk with
-an atomic output and checksum-backed manifest. Progress survives interruption.
+The economics reference backfill completed on 2026-07-18 as systemd unit
+`openalex-economics-reference-backfill.service`. It divided 2,127 snapshot
+files into 266 deterministic eight-file chunks and published each chunk with
+an atomic output and checksum-backed manifest. It produced 47,277,988
+economics reference edges for 7,924,745 works, and those shards were imported
+into DuckDB with zero orphan citing-paper IDs.
 
-Check progress with:
+Historical backfill logs and manifests are available with:
 
 ```bash
 pgrep -af 'backfill_subject_work_references_resumable'
