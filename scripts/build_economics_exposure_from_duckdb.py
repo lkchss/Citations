@@ -68,6 +68,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--start-year", type=int, default=1900)
     parser.add_argument("--end-year", type=int, default=2026)
+    parser.add_argument("--min-publication-year", type=int, default=1990)
+    parser.add_argument("--max-publication-year", type=int, default=2020)
+    parser.add_argument("--max-focal-publication-year", type=int, default=2019)
+    parser.add_argument("--min-pre-focal-papers", type=int, default=3)
+    parser.add_argument("--min-paper-age", type=int, default=1)
+    parser.add_argument("--work-types", default="article,review")
     parser.add_argument("--sample-mod", type=int, default=2000)
     parser.add_argument("--sample-keep", type=int, default=1)
     parser.add_argument(
@@ -91,6 +97,12 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     if args.start_year > args.end_year:
         parser.error("--start-year must not exceed --end-year")
+    if args.min_publication_year > args.max_publication_year:
+        parser.error("--min-publication-year must not exceed --max-publication-year")
+    if args.max_focal_publication_year > args.max_publication_year:
+        parser.error("--max-focal-publication-year must not exceed --max-publication-year")
+    if args.min_pre_focal_papers < 0 or args.min_paper_age < 0:
+        parser.error("--min-pre-focal-papers and --min-paper-age cannot be negative")
     if args.sample_mod < 1 or not 1 <= args.sample_keep <= args.sample_mod:
         parser.error("require 1 <= --sample-keep <= --sample-mod")
     if args.max_authors < 1 or args.min_author_papers < 1:
@@ -105,6 +117,10 @@ def parse_args() -> argparse.Namespace:
 def build_query(args: argparse.Namespace) -> str:
     # The only Python-side result is the final ordered SELECT.  Temp tables are
     # deliberately used to prevent CTE inlining from repeating expensive joins.
+    work_types = [value.strip().replace("'", "''") for value in args.work_types.split(",") if value.strip()]
+    if not work_types:
+        raise SystemExit("--work-types must contain at least one work type")
+    work_type_sql = ", ".join(f"'{value}'" for value in work_types)
     return f"""
         CREATE OR REPLACE TEMP TABLE sampled_authorships AS
         WITH author_counts AS (
@@ -113,9 +129,10 @@ def build_query(args: argparse.Namespace) -> str:
             JOIN subject_works w
               ON w.subject = a.subject AND w.work_id = a.work_id
             WHERE a.subject = ? AND a.author_id IS NOT NULL AND a.author_id <> ''
-              AND w.publication_year IS NOT NULL
+              AND w.publication_year BETWEEN {args.min_publication_year} AND {args.max_publication_year}
+              AND w.type IN ({work_type_sql})
               AND a.work_id IS NOT NULL AND a.work_id <> ''
-              AND mod(hash(a.author_id), {args.sample_mod}) < {args.sample_keep}
+              AND mod(abs(hash(a.author_id)), {args.sample_mod}) < {args.sample_keep}
             GROUP BY author_id
             HAVING count(DISTINCT a.work_id) >= {args.min_author_papers}
         ), retained_authors AS (
@@ -129,8 +146,10 @@ def build_query(args: argparse.Namespace) -> str:
         JOIN retained_authors r USING (author_id)
         JOIN subject_works w
           ON w.subject = a.subject AND w.work_id = a.work_id
-        WHERE a.subject = ? AND w.publication_year IS NOT NULL
-          AND mod(hash(a.author_id), {args.sample_mod}) < {args.sample_keep}
+        WHERE a.subject = ?
+          AND w.publication_year BETWEEN {args.min_publication_year} AND {args.max_publication_year}
+          AND w.type IN ({work_type_sql})
+          AND mod(abs(hash(a.author_id)), {args.sample_mod}) < {args.sample_keep}
         """
 
 
@@ -158,9 +177,19 @@ def run(args: argparse.Namespace) -> dict[str, object]:
                count(*) OVER (PARTITION BY a.author_id) AS author_subject_papers
         FROM sampled_authorships a
         JOIN subject_works w USING (subject, work_id)
-        WHERE mod(hash(a.work_id), ?) < ?
+        WHERE mod(abs(hash(a.work_id)), ?) < ?
+          AND w.publication_year <= ?
+          AND (
+              SELECT count(DISTINCT prior.work_id)
+              FROM sampled_authorships prior
+              JOIN subject_works prior_w
+                ON prior_w.subject = prior.subject AND prior_w.work_id = prior.work_id
+              WHERE prior.subject = a.subject
+                AND prior.author_id = a.author_id
+                AND prior_w.publication_year < w.publication_year
+          ) >= ?
         """,
-        [args.focal_sample_mod, args.focal_sample_keep],
+        [args.focal_sample_mod, args.focal_sample_keep, args.max_focal_publication_year, args.min_pre_focal_papers],
     )
     con.execute(
         """
@@ -194,7 +223,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
             SELECT f.subject, f.author_id, f.work_id, f.publication_year,
                    y.year, f.author_subject_papers
             FROM focal_authorships f CROSS JOIN years y
-            WHERE y.year >= greatest(?, f.publication_year)
+            WHERE y.year >= greatest(?, f.publication_year + ?)
         ), author_work_pairs AS (
             SELECT f.subject, f.author_id, f.work_id AS focal_work_id,
                    h.work_id AS history_work_id,
@@ -202,7 +231,6 @@ def run(args: argparse.Namespace) -> dict[str, object]:
             FROM focal_authorships f
             JOIN sampled_authorships h
               ON h.subject = f.subject AND h.author_id = f.author_id
-             AND h.work_id <> f.work_id
             LEFT JOIN related_pairs rp
               ON rp.subject = f.subject AND rp.focal_work_id = f.work_id
              AND rp.related_work_id = h.work_id
@@ -248,7 +276,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
         with gzip.open(tmp_name, "wt", encoding="utf-8", newline="") as handle:
             writer = csv.writer(handle)
             writer.writerow(FIELDNAMES)
-            result = con.execute(query, [args.start_year, args.end_year, args.start_year, args.start_year])
+            result = con.execute(query, [args.start_year, args.end_year, args.start_year, args.min_paper_age, args.start_year])
             while batch := result.fetchmany(args.batch_size):
                 for row in batch:
                     writer.writerow(row)
@@ -277,6 +305,12 @@ def run(args: argparse.Namespace) -> dict[str, object]:
         "author_history_works": int(history_works),
         "start_year": args.start_year,
         "end_year": args.end_year,
+        "min_publication_year": args.min_publication_year,
+        "max_publication_year": args.max_publication_year,
+        "max_focal_publication_year": args.max_focal_publication_year,
+        "min_pre_focal_papers": args.min_pre_focal_papers,
+        "min_paper_age": args.min_paper_age,
+        "work_types": [value.strip() for value in args.work_types.split(",") if value.strip()],
         "sample_mod": args.sample_mod,
         "sample_keep": args.sample_keep,
         "max_authors": args.max_authors,
