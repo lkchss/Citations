@@ -224,7 +224,8 @@ Implemented:
 
 ## Next Recommended Steps
 
-1. Let the sequential reference backfill finish for the 10 pilot subjects.
+1. Freeze a larger economics sample and build the annual related/unrelated
+   exposure layer from the completed economics reference table.
 2. Rerun the lifetime pilot with real relation edges using the new table parts:
 
    ```bash
@@ -235,7 +236,7 @@ Implemented:
    raw snapshot scans.
 
 3. Compare the self-only fast pilot against the relation-aware pilot.
-4. Continue non-economics calculated citation backfills for annual citation
+4. Continue non-economics reference and calculated citation backfills for annual citation
    counts from `referenced_works`.
 
 ## Key Scripts

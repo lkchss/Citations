@@ -33,7 +33,7 @@ contains:
 | Works | 266,352,099 |
 | Work-author links | 654,286,310 |
 | Work-year citation counts | 413,082,787 |
-| Existing reference edges | 23,561,066, incomplete by subject |
+| Reference edges | 70,839,054; economics complete, other subjects incomplete |
 
 These tables are stored as bounded subject shards and queried through a 44 GB
 DuckDB database. Economics contains 7,924,745 works. Its annual citation
@@ -67,6 +67,11 @@ locking, and restart support. All 2,127 snapshot files were scanned, producing
 The reference shards have been imported into DuckDB. Post-import checks match
 the shard manifest and report zero orphan citing-paper IDs. The code and
 recovery tests are committed as `8c86669`; all 11 tests pass.
+
+A relation-aware economics smoke-test panel now builds directly from the
+DuckDB-backed reference shards. It is intentionally too small for estimation;
+the next step is to freeze a larger economics sample and build the full annual
+exposure layer.
 
 ## Plan And Timeline
 
