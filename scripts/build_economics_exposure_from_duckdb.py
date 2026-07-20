@@ -319,7 +319,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
         "focal_sample_keep": args.focal_sample_keep,
         "memory_limit": args.memory_limit,
         "temp_directory": str(temp_directory),
-        "relation_definition": "self_or_direct_reference_either_direction",
+        "relation_definition": "direct_reference_either_direction; focal_excluded_from_exposure",
         "lag_definition": "citation_year >= max(start_year, publication_year) and citation_year < row_year",
     }
     atomic_json(args.output.with_name(f"{args.output.name}.summary.json"), summary)

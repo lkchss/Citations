@@ -68,10 +68,11 @@ The reference shards have been imported into DuckDB. Post-import checks match
 the shard manifest and report zero orphan citing-paper IDs. The code and
 recovery tests are committed as `8c86669`; all 11 tests pass.
 
-A relation-aware economics smoke-test panel now builds directly from the
-DuckDB-backed reference shards. It is intentionally too small for estimation;
-the next step is to freeze a larger economics sample and build the full annual
-exposure layer.
+A relation-aware economics panel now builds directly from the DuckDB-backed
+reference shards. The first substantive construction contains 211,825
+post-publication paper-author-year rows, 2,853 authors, and 14,675 focal works.
+It is a sample construction product pending citation-coverage and econometric
+diagnostics, not yet a final estimate.
 
 The research-layer entry point is
 `scripts/build_economics_exposure_from_duckdb.py`. It performs sampling, joins,
