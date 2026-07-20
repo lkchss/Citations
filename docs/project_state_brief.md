@@ -73,6 +73,11 @@ DuckDB-backed reference shards. It is intentionally too small for estimation;
 the next step is to freeze a larger economics sample and build the full annual
 exposure layer.
 
+The research-layer entry point is
+`scripts/build_economics_exposure_from_duckdb.py`. It performs sampling, joins,
+relatedness classification, and lagged exposure aggregation in DuckDB, then
+writes only the final compressed panel in bounded Python batches.
+
 ## Plan And Timeline
 
 | Stage | Expected duration | Completion condition |
