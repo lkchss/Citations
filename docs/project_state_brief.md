@@ -74,6 +74,11 @@ post-publication paper-author-year rows, 2,853 authors, and 14,675 focal works.
 It is a sample construction product pending citation-coverage and econometric
 diagnostics, not yet a final estimate.
 
+Initial outcome validation finds exact lifetime-total agreement for 14,544 of
+14,675 sampled focal works. The remaining 131 works have reconstructed totals
+that exceed OpenAlex totals by 277 citations in aggregate; this discrepancy is
+being investigated before the panel is used for substantive estimates.
+
 The research-layer entry point is
 `scripts/build_economics_exposure_from_duckdb.py`. It performs sampling, joins,
 relatedness classification, and lagged exposure aggregation in DuckDB, then
