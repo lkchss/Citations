@@ -97,13 +97,13 @@ def run(args: argparse.Namespace) -> dict[str, object]:
             WITH targets AS (
                 SELECT w.work_id,
                        max(coalesce(w.cited_by_count, 0))::BIGINT AS cited_by_count,
-                       max(coalesce(w.referenced_works_count, 0))::BIGINT AS referenced_works_count
+                       max(coalesce(w.cited_by_count, 0))::BIGINT AS cited_by_count_source
                 FROM subject_works w
                 JOIN focal_work_ids f ON f.work_id = w.work_id
                 WHERE w.subject = ?
                 GROUP BY w.work_id
             ), comparison AS (
-                SELECT f.work_id, t.cited_by_count, t.referenced_works_count,
+                SELECT f.work_id, t.cited_by_count, t.cited_by_count_source,
                        c.calculated_total,
                        CASE WHEN c.calculated_total IS NULL
                             THEN 0 ELSE c.calculated_total END AS effective_total
@@ -114,18 +114,18 @@ def run(args: argparse.Namespace) -> dict[str, object]:
             SELECT
                 count(*)::BIGINT AS focal_count,
                 count(*) FILTER (WHERE (calculated_total IS NOT NULL
-                    OR coalesce(referenced_works_count, 0) = 0)
+                    OR coalesce(cited_by_count_source, 0) = 0)
                     AND effective_total = coalesce(cited_by_count, 0))::BIGINT AS exact_matches,
                 count(*) FILTER (WHERE calculated_total IS NULL
-                    AND coalesce(referenced_works_count, 0) > 0)::BIGINT AS missing_calculated_totals,
+                    AND coalesce(cited_by_count_source, 0) > 0)::BIGINT AS missing_calculated_totals,
                 count(*) FILTER (WHERE (calculated_total IS NOT NULL
-                    OR coalesce(referenced_works_count, 0) = 0)
+                    OR coalesce(cited_by_count_source, 0) = 0)
                     AND effective_total > coalesce(cited_by_count, 0))::BIGINT AS calculated_higher,
                 count(*) FILTER (WHERE (calculated_total IS NOT NULL
-                    OR coalesce(referenced_works_count, 0) = 0)
+                    OR coalesce(cited_by_count_source, 0) = 0)
                     AND effective_total < coalesce(cited_by_count, 0))::BIGINT AS calculated_lower,
                 coalesce(sum(CASE WHEN calculated_total IS NOT NULL
-                    OR coalesce(referenced_works_count, 0) = 0
+                    OR coalesce(cited_by_count_source, 0) = 0
                     THEN abs(effective_total - coalesce(cited_by_count, 0)) ELSE 0 END), 0)::BIGINT
                     AS absolute_difference
             FROM comparison
