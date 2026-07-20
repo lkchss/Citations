@@ -66,6 +66,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--database", type=Path, default=DEFAULT_DATABASE)
     parser.add_argument("--subject", default=DEFAULT_SUBJECT)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--calculated-citations", type=Path, default=None)
     parser.add_argument("--start-year", type=int, default=1900)
     parser.add_argument("--end-year", type=int, default=2026)
     parser.add_argument("--min-publication-year", type=int, default=1990)
@@ -169,6 +170,25 @@ def run(args: argparse.Namespace) -> dict[str, object]:
     con.execute(f"SET threads TO {args.threads}")
     con.execute("SET memory_limit = ?", [args.memory_limit])
     con.execute("SET temp_directory = ?", [str(temp_directory)])
+    citation_table = "subject_work_citations_by_year"
+    citation_source = "duckdb_subject_work_citations_by_year"
+    if args.calculated_citations:
+        if not args.calculated_citations.is_file():
+            raise SystemExit(f"Calculated citations file does not exist: {args.calculated_citations}")
+        con.execute(
+            """
+            CREATE OR REPLACE TEMP TABLE exposure_citations AS
+            SELECT ? AS subject,
+                   trim(work_id) AS work_id,
+                   TRY_CAST(year AS INTEGER) AS year,
+                   TRY_CAST(calculated_citations AS BIGINT) AS citations
+            FROM read_csv_auto(?, compression='gzip')
+            WHERE work_id IS NOT NULL AND year IS NOT NULL
+            """,
+            [args.subject, str(args.calculated_citations)],
+        )
+        citation_table = "exposure_citations"
+        citation_source = "calculated_references"
     con.execute(build_query(args), [args.subject, args.subject])
     con.execute(
         """
@@ -216,7 +236,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
         "SELECT count(DISTINCT author_id), count(DISTINCT work_id) FROM sampled_authorships"
     ).fetchone()
     focal_works = con.execute("SELECT count(DISTINCT work_id) FROM focal_authorships").fetchone()[0]
-    query = """
+    query = f"""
         WITH years AS (
             SELECT unnest(range(?, ? + 1))::INTEGER AS year
         ), focal_years AS (
@@ -245,7 +265,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
              AND p.focal_work_id = fy.work_id
             JOIN subject_works hw
               ON hw.subject = p.subject AND hw.work_id = p.history_work_id
-            LEFT JOIN subject_work_citations_by_year c
+            LEFT JOIN {citation_table} c
               ON c.subject = hw.subject AND c.work_id = hw.work_id
              AND c.year >= greatest(?, hw.publication_year)
              AND c.year < fy.year
@@ -257,9 +277,9 @@ def run(args: argparse.Namespace) -> dict[str, object]:
                coalesce(s.unrelated_stock, 0) AS accumulated_unrelated_citations_jt,
                coalesce(s.related_stock, 0) AS accumulated_related_citations_jt,
                fy.author_subject_papers, coalesce(s.related_papers, 0) AS related_author_papers,
-               'duckdb_subject_work_citations_by_year' AS citation_source
+               '{citation_source}' AS citation_source
         FROM focal_years fy
-        LEFT JOIN subject_work_citations_by_year fc
+        LEFT JOIN {citation_table} fc
           ON fc.subject = fy.subject AND fc.work_id = fy.work_id AND fc.year = fy.year
         LEFT JOIN stocks s
           ON s.subject = fy.subject AND s.author_id = fy.author_id
@@ -298,6 +318,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
         "database": str(args.database),
         "subject": args.subject,
         "output": str(args.output),
+        "calculated_citations": str(args.calculated_citations) if args.calculated_citations else "",
         "rows": rows,
         "observed_citations_sum": citations_sum,
         "authors": int(authors),
@@ -320,6 +341,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
         "memory_limit": args.memory_limit,
         "temp_directory": str(temp_directory),
         "relation_definition": "direct_reference_either_direction; focal_excluded_from_exposure",
+        "citation_source": citation_source,
         "lag_definition": "citation_year >= max(start_year, publication_year) and citation_year < row_year",
     }
     atomic_json(args.output.with_name(f"{args.output.name}.summary.json"), summary)
