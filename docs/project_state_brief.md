@@ -77,7 +77,10 @@ diagnostics, not yet a final estimate.
 Initial outcome validation finds exact lifetime-total agreement for 14,544 of
 14,675 sampled focal works. The remaining 131 works have reconstructed totals
 that exceed OpenAlex totals by 277 citations in aggregate; this discrepancy is
-being investigated before the panel is used for substantive estimates.
+being investigated before the panel is used for substantive estimates. A
+repeatable coverage validator also flags 1,095 focal works with nonzero OpenAlex
+reference counts but no reconstructed annual total; these observations require
+explicit coverage handling rather than being silently treated as zero.
 
 The research-layer entry point is
 `scripts/build_economics_exposure_from_duckdb.py`. It performs sampling, joins,
