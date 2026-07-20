@@ -79,7 +79,7 @@ reconstructed annual citations. With paper and year effects absorbed, the
 joint specification gives a related-exposure coefficient of 0.00492 and an
 unrelated-exposure coefficient of -0.000511. These are engineering diagnostics,
 not research estimates: the current renderer uses normal-approximation,
-non-clustered standard errors, and the citation-total reconciliation below is
+work-clustered standard errors, and the citation-total reconciliation below is
 not yet closed.
 
 Initial outcome validation finds exact lifetime-total agreement for 14,544 of

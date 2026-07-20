@@ -156,14 +156,44 @@ def crossprod(y: np.memmap, xs: list[np.memmap], *, chunk_size: int) -> tuple[np
     return xtx, xty, yty
 
 
-def estimate(y: np.memmap, xs: list[np.memmap], *, df_absorbed: int, chunk_size: int) -> dict[str, object]:
+def estimate(
+    y: np.memmap,
+    xs: list[np.memmap],
+    *,
+    df_absorbed: int,
+    cluster_idx: np.memmap | None,
+    cluster_count: int,
+    chunk_size: int,
+) -> dict[str, object]:
+    k = len(xs)
     xtx, xty, yty = crossprod(y, xs, chunk_size=chunk_size)
     inv_xtx = np.linalg.pinv(xtx)
     beta = inv_xtx @ xty
     sse = float(yty - beta.T @ xty)
     df_resid = max(1, len(y) - df_absorbed - len(xs))
-    sigma2 = sse / df_resid
-    vcov = sigma2 * inv_xtx
+    if cluster_idx is None:
+        sigma2 = sse / df_resid
+        vcov = sigma2 * inv_xtx
+        inference = "normal-approximation, non-clustered"
+    else:
+        scores = np.zeros((cluster_count, k), dtype="float64")
+        for start in range(0, len(y), chunk_size):
+            end = min(start + chunk_size, len(y))
+            group = np.asarray(cluster_idx[start:end])
+            residual = np.asarray(y[start:end]) - np.column_stack(
+                [np.asarray(x[start:end]) for x in xs]
+            ) @ beta
+            for column, x in enumerate(xs):
+                scores[:, column] += np.bincount(
+                    group, weights=np.asarray(x[start:end]) * residual,
+                    minlength=cluster_count,
+                )
+        meat = scores.T @ scores
+        correction = (cluster_count / max(1, cluster_count - 1)) * (
+            (len(y) - 1) / max(1, df_resid)
+        )
+        vcov = correction * inv_xtx @ meat @ inv_xtx
+        inference = f"work-clustered ({cluster_count:,} clusters)"
     se = np.sqrt(np.diag(vcov))
     t_stats = beta / se
     p_values = np.array([math.erfc(abs(float(t)) / math.sqrt(2.0)) for t in t_stats])
@@ -177,6 +207,7 @@ def estimate(y: np.memmap, xs: list[np.memmap], *, df_absorbed: int, chunk_size:
         "df_resid": df_resid,
         "r2_within": r2,
         "sse": sse,
+        "inference": inference,
     }
 
 
@@ -241,7 +272,7 @@ def model_table(title: str, model1: dict[str, object], model2: dict[str, object]
     {''.join(rows)}
   </tbody>
 </table>
-<p class="note">Standard errors in parentheses. Variables are residualized by paper and year before OLS. Significance uses normal-approximation p-values: * p&lt;0.1, ** p&lt;0.05, *** p&lt;0.01.</p>
+<p class="note">Standard errors in parentheses. Variables are residualized by paper and year before OLS. {html.escape(str(model2['inference']))}. Significance uses normal-approximation p-values: * p&lt;0.1, ** p&lt;0.05, *** p&lt;0.01.</p>
 """
 
 
@@ -288,6 +319,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--chunk-size", type=int, default=5_000_000)
     parser.add_argument("--max-iter", type=int, default=30)
     parser.add_argument("--tolerance", type=float, default=1e-8)
+    parser.add_argument(
+        "--cluster-by-work",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="use work-clustered standard errors (default: enabled)",
+    )
     return parser.parse_args()
 
 
@@ -318,8 +355,15 @@ def main() -> int:
     )
 
     df_absorbed = int(arrays["works"]) + int(arrays["years"]) - 1
-    model1 = estimate(y_res, [x1_res], df_absorbed=df_absorbed, chunk_size=args.chunk_size)
-    model2 = estimate(y_res, [x1_res, x2_res], df_absorbed=df_absorbed, chunk_size=args.chunk_size)
+    cluster_idx = work_idx if args.cluster_by_work else None
+    model1 = estimate(
+        y_res, [x1_res], df_absorbed=df_absorbed, cluster_idx=cluster_idx,
+        cluster_count=int(arrays["works"]), chunk_size=args.chunk_size,
+    )
+    model2 = estimate(
+        y_res, [x1_res, x2_res], df_absorbed=df_absorbed, cluster_idx=cluster_idx,
+        cluster_count=int(arrays["works"]), chunk_size=args.chunk_size,
+    )
     summary = {
         "subject": "economics_econometrics_and_finance",
         "rows": row_count,
@@ -327,6 +371,7 @@ def main() -> int:
         "years": int(arrays["years"]),
         "authors": int(arrays["authors"]),
         "citation_source": "calculated_references",
+        "inference": "work-clustered" if args.cluster_by_work else "non-clustered",
         "model1": model1,
         "model2": model2,
     }
