@@ -93,6 +93,9 @@ The research-layer entry point is
 `scripts/build_economics_exposure_from_duckdb.py`. It performs sampling, joins,
 relatedness classification, and lagged exposure aggregation in DuckDB, then
 writes only the final compressed panel in bounded Python batches.
+The current baseline definition is recorded in
+`configs/economics_baseline_exposure.json`; it remains marked pending until the
+citation reconciliation is resolved.
 
 ## Plan And Timeline
 

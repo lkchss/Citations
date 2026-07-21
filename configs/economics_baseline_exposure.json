@@ -1,0 +1,25 @@
+{
+  "subject": "economics_econometrics_and_finance",
+  "work_types": ["article", "review"],
+  "min_publication_year": 1990,
+  "max_publication_year": 2020,
+  "max_focal_publication_year": 2019,
+  "min_pre_focal_papers": 3,
+  "min_author_papers": 5,
+  "max_authors": 5000,
+  "sample_mod": 250,
+  "sample_keep": 4,
+  "focal_sample_mod": 2,
+  "focal_sample_keep": 1,
+  "start_year": 1990,
+  "end_year": 2025,
+  "min_paper_age": 1,
+  "citation_source": "calculated_references",
+  "relatedness": "direct_reference_either_direction",
+  "exposure_exclusions": [
+    "focal_work_excluded_from_author_history",
+    "pre_publication_rows_excluded",
+    "subject_author_sample_restricted"
+  ],
+  "status": "baseline_freeze_pending_citation_reconciliation"
+}
