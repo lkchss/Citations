@@ -1,127 +1,93 @@
-# Economics Results From The Two Specified Models
+# Basic Economics Hit Event Study
 
-This document reports a fresh analysis of the current economics panel using
-only the two specified fixed-effects models. It does not carry forward the
-earlier results narrative or use previous subgroup conclusions as assumptions.
+This document reports the descriptive event study aligned with the research
+question: does an author's hit paper increase citations to the author's
+pre-existing, unrelated papers?
 
-## Models
+The earlier regressions with focal-paper citations on the left-hand side do
+not answer this question and are not used here.
 
-The outcome is annual citations to focal paper `j`. Unrelated and related
-exposures are accumulated citations, through the prior year, to the author's
-other economics papers. Related papers have a direct reference edge with the
-focal paper in either direction.
+## Design
 
-```text
-Model 1:
-citations_jt ~ unrelated_exposure_jt + paper FE + year FE
+The treatment event is the first year a hit paper reaches 101 cumulative
+reconstructed citations. Candidate hits come from the existing hit sample:
 
-Model 2:
-citations_jt ~ unrelated_exposure_jt
-             + related_exposure_jt
-             + paper FE + year FE
-```
+- at least 101 lifetime citations;
+- at least 50% of the author's included economics citations;
+- at least 3 eligible pre-existing unrelated papers.
 
-Both models absorb focal-paper and calendar-year effects. Standard errors are
-clustered by focal work. The coefficient therefore uses changes within a focal
-paper over time after removing common calendar-year movements.
+For each hit-author event, the outcome papers:
 
-## Data Used
+- were published before the hit crossed the threshold;
+- belong to the same author;
+- are not the hit paper;
+- are not referenced by the hit.
+
+The outcome is each unrelated paper's annual citation count. The event window
+is balanced from `t = -5` through `t = 5`, where `t = 0` is threshold crossing.
+Every retained paper-author-hit pair appears at all 11 event times. Results are
+reported as pair-level changes from `t = -1`, with confidence intervals
+clustered by author.
+
+This is a basic descriptive event study. It does not use a control group or
+difference-in-differences design.
+
+## Sample
 
 | Quantity | Value |
 |---|---:|
-| Paper-author-year rows | 211,825 |
-| Focal works | 14,675 |
-| Authors | 2,853 |
-| Focal paper-author units | 14,796 |
-| Zero annual-citation outcomes | 70.3% |
-| Zero unrelated exposure | 10.4% |
-| Zero related exposure | 43.5% |
+| Hit authors | 5,515 |
+| Hit-author events | 5,515 |
+| Distinct hit works | 4,446 |
+| Unrelated paper-author-hit pairs | 39,789 |
+| Balanced event-panel rows | 437,679 |
+| Event window | -5 to +5 |
 
-The outcome is reconstructed from reference edges across the OpenAlex
-snapshot. A focal paper can appear once for each sampled author, so its
-paper-year outcome can be repeated across coauthors. Work-clustered inference
-accounts for dependence among those repeated observations, while the point
-estimate remains paper-author weighted.
+## Results
 
-## Primary Estimates
+| Event time | Mean annual citations | Change from `t = -1` | Author-clustered 95% interval |
+|---:|---:|---:|---:|
+| -5 | 0.7631 | -0.1725 | [-0.2129, -0.1321] |
+| -4 | 0.8316 | -0.1039 | [-0.1370, -0.0709] |
+| -3 | 0.8810 | -0.0545 | [-0.0803, -0.0288] |
+| -2 | 0.9259 | -0.0096 | [-0.0309, 0.0117] |
+| -1 | 0.9355 | 0.0000 | [0.0000, 0.0000] |
+| 0 | 0.9465 | 0.0109 | [-0.0094, 0.0313] |
+| 1 | 0.9140 | -0.0215 | [-0.0457, 0.0026] |
+| 2 | 0.8891 | -0.0464 | [-0.0773, -0.0155] |
+| 3 | 0.8803 | -0.0552 | [-0.1053, -0.0051] |
+| 4 | 0.8440 | -0.0915 | [-0.1562, -0.0268] |
+| 5 | 0.8005 | -0.1350 | [-0.2096, -0.0604] |
 
-| Variable | Model 1 | Model 2 |
-|---|---:|---:|
-| Unrelated exposure | 0.000344 (0.000215) | -0.000511 (0.000306) |
-| Related exposure | — | 0.004917 (0.002513) |
-| Within R-squared | 0.0039 | 0.2053 |
-| Observations | 211,825 | 211,825 |
+![Basic hit event study](assets/basic_hit_event_study.svg)
 
-Model 1 does not provide precise evidence of an unrelated-exposure
-association (`p = 0.109`). In Model 2, unrelated exposure is negative
-(`p = 0.095`) and related exposure is positive but lies almost exactly on the
-conventional 5% boundary (`p = 0.0504`).
+## Interpretation
 
-The within-paper correlation between related and unrelated exposure is `0.329`.
-This is meaningful but not high enough to explain the coefficient change as
-severe collinearity by itself.
+Citations to unrelated papers rise steadily before the hit crosses the
+threshold. At `t = 0`, the mean increase relative to `t = -1` is only `0.0109`
+citations per paper and its confidence interval includes zero. Citations then
+decline after the threshold year.
 
-![Binned within-paper relationships](assets/two_model_within_relationships.svg)
+The graph therefore shows no discrete increase in unrelated-paper citations
+when the hit reaches 101 cumulative citations. Instead, threshold crossing
+occurs near the peak of an already rising citation path.
 
-The binned relationships show the same decomposition as the regressions.
-Unrelated exposure slopes upward when entered alone. Conditional on related
-exposure, its slope turns downward. Conditional related exposure slopes upward.
-The end bins carry much of each relationship, motivating direct tail checks.
-
-## Tail And Balance Checks
-
-The models were re-estimated on a balanced paper-age panel and after separate
-99th-percentile caps. The outcome cap is 26 annual citations. The exposure caps
-are 13,844 unrelated citations and 1,402.76 related citations.
-
-| Analysis | Model 1: unrelated | Model 2: unrelated | Model 2: related | Model 1 R² | Model 2 R² |
-|---|---:|---:|---:|---:|---:|
-| Full panel | 0.000344 (0.000215) | -0.000511 (0.000306) | 0.004917 (0.002513) | 0.0039 | 0.2053 |
-| Balanced ages 1–5 | 0.000746 (0.000537) | 0.000049 (0.000226) | 0.004724 (0.002182) | 0.0075 | 0.0532 |
-| Outcome capped at 99% | -0.000041 (0.000012) | -0.000044 (0.000013) | 0.000015 (0.000015) | 0.0015 | 0.0015 |
-| Exposures capped at 99% | 0.001280 (0.000911) | 0.001165 (0.000889) | 0.003474 (0.001767) | 0.0106 | 0.0114 |
-| Outcome and exposures capped | -0.000142 (0.000024) | -0.000103 (0.000025) | -0.001180 (0.000390) | 0.0034 | 0.0056 |
-
-![Coefficient stability across samples](assets/two_model_coefficient_stability.svg)
-
-The balanced age-1-to-5 panel contains all 14,796 paper-author units at each of
-five ages, for 73,980 observations. Its related coefficient remains positive.
-This rules out changing paper-age composition as the sole explanation for the
-full-panel result.
-
-The tail checks are more consequential:
-
-1. Capping only exposure values preserves a positive related coefficient:
-   `0.003474` with standard error `0.001767`.
-2. Capping only the annual focal-paper citation outcome removes the related
-   association: `0.000015` with standard error `0.000015`.
-3. Model 2's within R-squared falls from `0.2053` to `0.0015` when only the
-   outcome is capped.
-4. When the outcome and exposures are all capped, both Model 2 coefficients
-   are negative.
-
-These comparisons identify extreme focal-paper citation years, rather than
-extreme exposure stocks alone, as the primary source of the positive related
-coefficient and Model 2's high fit in the uncapped data.
-
-## Result
-
-The data support a narrow conclusion. Separating related from unrelated
-exposure changes the regression substantially, but the positive related
-coefficient in levels is not distributionally stable. It survives a balanced
-early-age panel and exposure-only capping, yet disappears when the top 1% of
-annual focal-paper citation outcomes are capped.
-
-The two models are therefore detecting a relationship concentrated among
-extreme citation outcomes. They do not currently establish a general increase
-in focal-paper citations associated with related or unrelated citation
-exposure.
+Because this analysis has no untreated comparison group, the post-hit decline
+cannot be interpreted as a negative causal effect. Paper aging, author career
+timing, field trends, and the mechanical selection of hits can all shape the
+event path. The defensible conclusion is descriptive: this basic event study
+does not show the prominence increase hypothesized at the hit threshold.
 
 ## Reproducibility
 
-The independent analysis is generated by
-`scripts/analyze_two_model_research.py`. Exact estimates and figure data are
-stored in:
+The event study is generated by `scripts/build_basic_hit_event_study.py`.
 
-- `reports/subjects/two_model_research.csv`
-- `reports/subjects/two_model_research.json`
+Repository outputs:
+
+- `reports/subjects/basic_hit_event_study.csv`
+- `reports/subjects/basic_hit_event_study.json`
+- `docs/assets/basic_hit_event_study.svg`
+
+The balanced micro-panel is stored outside Git at:
+
+`/root/sdb1/openalex/subjects/economics_econometrics_and_finance/analysis/hit_event_study_threshold/panel.csv.gz`
