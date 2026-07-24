@@ -58,6 +58,8 @@ The database is deliberately layered:
 See the [database architecture drawing](assets/subject_database_architecture.svg).
 Current exploratory economics estimates and figures are collected in the
 [economics results brief](economics_results_brief.md).
+The earlier two-model exposure regressions are retained separately in the
+[economics regression results](economics_regression_results.md).
 
 ## Current Engineering State
 
