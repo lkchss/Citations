@@ -49,6 +49,42 @@ database; it shows that the relationship is sensitive to the scale used for
 highly skewed count variables. The current evidence therefore supports using
 these outputs to choose and test specifications, not to claim a stable effect.
 
+## Full-Subject Event Study
+
+The full economics subject event study uses all eligible article/review
+focal-paper-author pairs rather than the author hash sample. Focal papers are
+published 1995–2020, authors must have at least 3 earlier subject papers, and
+the balanced window is `t = -5,...,5`, where `t = 0` is focal-paper publication.
+Each unit contributes all 11 event times. Related history papers are removed
+using direct reference edges in either direction; the outcome is the change in
+accumulated citations to the remaining unrelated history papers relative to
+`t = -1`.
+
+| Event time | Mean change in unrelated citations |
+|---:|---:|
+| -5 | -102.20 |
+| -4 | -81.11 |
+| -3 | -57.23 |
+| -2 | -30.30 |
+| -1 | 0.00 |
+| 0 | 34.08 |
+| 1 | 71.34 |
+| 2 | 110.11 |
+| 3 | 149.16 |
+| 4 | 187.98 |
+| 5 | 225.88 |
+
+![Full-subject unrelated-citation event study](assets/economics_unrelated_event_study.svg)
+
+The panel is balanced across 2,042,381 focal-paper-author units, producing
+22,466,191 event-time observations. The pre-treatment values are negative by
+construction because cumulative citation stock is being compared with the
+later `t = -1` baseline. The post-treatment increase is descriptive and should
+not be read as a causal treatment effect: the graph has no cohort controls,
+calendar-year adjustment, author fixed effects, or inference bands. Its current
+purpose is to show the subject-wide timing pattern and provide a diagnostic
+target for the next event-study specification.
+
 The level diagnostic estimates:
 
 ```text
@@ -66,3 +102,10 @@ Live outputs are stored under `/root/sdb1/openalex/subjects/prevalence_regressio
 - `economics_prevalence_regressions.html`
 - `economics_prevalence_regressions_log1p.html`
 - `economics_exposure.diagnostics.json`
+
+The event-study generator is `scripts/build_economics_unrelated_event_study.py`.
+Its live outputs are:
+
+- `event_study/unrelated_citation_change_by_event_time.csv`
+- `event_study/unrelated_citation_change_event_study.svg`
+- `event_study/summary.json`
