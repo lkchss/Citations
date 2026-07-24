@@ -44,7 +44,9 @@ def count_rows(path: Path) -> int:
     return rows
 
 
-def create_memmaps(input_path: Path, work_dir: Path, row_count: int) -> dict[str, object]:
+def create_memmaps(
+    input_path: Path, work_dir: Path, row_count: int, *, transform: str
+) -> dict[str, object]:
     work_dir.mkdir(parents=True, exist_ok=True)
     y = np.memmap(work_dir / "y.float64", dtype="float64", mode="w+", shape=(row_count,))
     x_unrelated = np.memmap(
@@ -70,9 +72,14 @@ def create_memmaps(input_path: Path, work_dir: Path, row_count: int) -> dict[str
         author_id = row.get("author_id") or ""
         if author_id:
             author_ids.add(author_id)
-        y[idx] = float_or_zero(row["citations_jt"])
-        x_unrelated[idx] = float_or_zero(row["accumulated_unrelated_citations_jt"])
-        x_related[idx] = float_or_zero(row["accumulated_related_citations_jt"])
+        raw_values = [
+            float_or_zero(row["citations_jt"]),
+            float_or_zero(row["accumulated_unrelated_citations_jt"]),
+            float_or_zero(row["accumulated_related_citations_jt"]),
+        ]
+        if transform == "log1p":
+            raw_values = [float(np.log1p(value)) for value in raw_values]
+        y[idx], x_unrelated[idx], x_related[idx] = raw_values
         work_idx[idx] = work_codes[work_id]
         year_idx[idx] = year_codes[year]
         idx += 1
@@ -301,6 +308,7 @@ def render_html(output: Path, summary: dict[str, object], model1: dict[str, obje
       <tr><td>Papers</td><td>{summary["works"]:,}</td></tr>
       <tr><td>Authors</td><td>{summary["authors"]:,}</td></tr>
       <tr><td>Citation source</td><td>{html.escape(str(summary["citation_source"]))}</td></tr>
+      <tr><td>Transform</td><td>{html.escape(str(summary["transform"]))}</td></tr>
     </tbody>
   </table>
   {model_table("Economics", model1, model2)}
@@ -325,6 +333,7 @@ def parse_args() -> argparse.Namespace:
         default=True,
         help="use work-clustered standard errors (default: enabled)",
     )
+    parser.add_argument("--transform", choices=("levels", "log1p"), default="levels")
     return parser.parse_args()
 
 
@@ -332,7 +341,7 @@ def main() -> int:
     args = parse_args()
     row_count = args.row_count or count_rows(args.input)
     log(f"row_count={row_count:,}")
-    arrays = create_memmaps(args.input, args.work_dir, row_count)
+    arrays = create_memmaps(args.input, args.work_dir, row_count, transform=args.transform)
     y = arrays["y"]
     x_unrelated = arrays["x_unrelated"]
     x_related = arrays["x_related"]
@@ -372,6 +381,7 @@ def main() -> int:
         "authors": int(arrays["authors"]),
         "citation_source": "calculated_references",
         "inference": "work-clustered" if args.cluster_by_work else "non-clustered",
+        "transform": args.transform,
         "model1": model1,
         "model2": model2,
     }

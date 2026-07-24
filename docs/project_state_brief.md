@@ -108,7 +108,10 @@ SSD. The panel has no invalid timing rows or negative exposures; annual outcome
 citations are zero in 70.3% of observations, related exposure is zero in 43.5%,
 and unrelated exposure is zero in 10.4%. Exposure variables are strongly
 right-skewed, so the next estimator comparison must include count models or
-transformations rather than relying on a single linear specification.
+transformations rather than relying on a single linear specification. The
+levels diagnostic estimates positive related exposure in the joint model,
+whereas the log1p diagnostic reverses that sign; this specification sensitivity
+must be resolved with count-model and timing robustness checks.
 
 ## Plan And Timeline
 
