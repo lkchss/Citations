@@ -49,6 +49,45 @@ database; it shows that the relationship is sensitive to the scale used for
 highly skewed count variables. The current evidence therefore supports using
 these outputs to choose and test specifications, not to claim a stable effect.
 
+## Heterogeneity Within The Two Models
+
+The same two levels specifications were re-estimated by paper age and focal
+publication cohort. Paper and calendar-year effects are absorbed again within
+each subsample, and standard errors remain clustered by focal work. The table
+scales coefficients to the change in annual focal-paper citations associated
+with 100 additional accumulated citations to the author's other papers.
+
+| Group | Model 1: unrelated | Model 2: unrelated | Model 2: related |
+|---|---:|---:|---:|
+| Paper age 1–5 | 0.0746 (0.0537) | 0.0049 (0.0226) | 0.4724 (0.2182) |
+| Paper age 6–10 | 0.0149 (0.0330) | -0.0270 (0.0136) | 0.2552 (0.2147) |
+| Paper age 11+ | 0.0022 (0.0181) | -0.0434 (0.0279) | 0.2676 (0.2442) |
+| 1990s focal cohort | 0.0581 (0.0357) | -0.0442 (0.0313) | 0.6075 (0.3001) |
+| 2000s focal cohort | -0.0128 (0.0053) | -0.0195 (0.0069) | 0.0371 (0.0359) |
+| 2010s focal cohort | 0.0448 (0.0612) | -0.0019 (0.0202) | 0.2572 (0.2579) |
+
+![Economics specification heterogeneity](assets/economics_specification_heterogeneity.svg)
+
+Three patterns stand out:
+
+1. Adding related exposure changes the unrelated coefficient materially. In
+   the full levels sample it moves from `+0.000344` in Model 1 to `-0.000511`
+   in Model 2, while the related coefficient is `+0.00492`. The broad exposure
+   measure in Model 1 therefore combines citation stocks with different
+   relationships to the focal paper.
+2. The clearest related-exposure association occurs during paper ages 1–5:
+   `0.00472` with a work-clustered standard error of `0.00218`. The estimates
+   at ages 6–10 and 11+ are smaller and imprecise.
+3. The 1990s cohort has the clearest related coefficient (`0.00608`, standard
+   error `0.00300`). Estimates for later cohorts are not distinguishable from
+   zero. This may reflect citation-window length, cohort composition, or
+   changing reference coverage; it should not yet be interpreted as a secular
+   decline in the mechanism.
+
+These are exploratory subgroup tests and have not been adjusted for multiple
+comparisons. Exact estimates are in
+`reports/subjects/economics_specification_heterogeneity.csv`.
+
 ## Full-Subject Event Study
 
 The full economics subject event study uses all eligible article/review
