@@ -56,6 +56,8 @@ The database is deliberately layered:
    than stored as the permanent database.
 
 See the [database architecture drawing](assets/subject_database_architecture.svg).
+Current exploratory economics estimates and figures are collected in the
+[economics results brief](economics_results_brief.md).
 
 ## Current Engineering State
 
