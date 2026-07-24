@@ -17,6 +17,38 @@ The resulting panel contains 211,825 rows, 14,675 focal works, and 2,853 authors
 
 ## Outputs
 
+### Sample Diagnostics
+
+| Quantity | Value |
+|---|---:|
+| Panel rows | 211,825 |
+| Focal works | 14,675 |
+| Authors | 2,853 |
+| Years | 1992–2025 |
+| Zero annual outcome share | 70.3% |
+| Zero related-exposure share | 43.5% |
+| Zero unrelated-exposure share | 10.4% |
+
+### Regression Results
+
+Coefficients are reported with work-clustered standard errors in parentheses.
+
+| Variable | Levels: unrelated only | Levels: joint | log1p: unrelated only | log1p: joint |
+|---|---:|---:|---:|---:|
+| Unrelated exposure | 0.000344 (0.000215) | -0.000511 (0.000306) | 0.01219 (0.00298) | 0.02492 (0.00296) |
+| Related exposure | — | 0.00492 (0.00251) | — | -0.03839 (0.00477) |
+| Observations | 211,825 | 211,825 | 211,825 | 211,825 |
+| Paper/year FE | Yes | Yes | Yes | Yes |
+
+![Economics exposure coefficient comparison](assets/economics_results.svg)
+
+The levels joint model shows a positive conditional association for related
+exposure and a small negative coefficient for unrelated exposure. The log1p
+joint model reverses both signs. The result is not a contradiction in the
+database; it shows that the relationship is sensitive to the scale used for
+highly skewed count variables. The current evidence therefore supports using
+these outputs to choose and test specifications, not to claim a stable effect.
+
 The level diagnostic estimates:
 
 ```text

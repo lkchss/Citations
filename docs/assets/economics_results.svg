@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500" role="img" aria-labelledby="title desc">
+  <title id="title">Economics exposure coefficient comparison</title>
+  <desc id="desc">Work-clustered coefficient estimates with 95 percent normal-approximation confidence intervals for levels and log1p specifications.</desc>
+  <rect width="900" height="500" fill="#ffffff"/>
+  <style>
+    .title { font: 700 20px sans-serif; fill: #111827; }
+    .subtitle { font: 13px sans-serif; fill: #4b5563; }
+    .axis { font: 12px sans-serif; fill: #374151; }
+    .label { font: 13px sans-serif; fill: #111827; }
+    .grid { stroke: #e5e7eb; stroke-width: 1; }
+    .zero { stroke: #6b7280; stroke-width: 1.5; }
+    .unrelated { stroke: #1769aa; fill: #1769aa; }
+    .related { stroke: #c2410c; fill: #c2410c; }
+  </style>
+  <text x="40" y="34" class="title">Economics exposure estimates</text>
+  <text x="40" y="56" class="subtitle">Paper and year fixed effects; work-clustered standard errors; 95% normal-approximation intervals</text>
+
+  <text x="220" y="94" class="title" font-size="16">Levels</text>
+  <text x="680" y="94" class="title" font-size="16">log1p</text>
+  <line x1="80" y1="120" x2="430" y2="120" class="grid"/>
+  <line x1="520" y1="120" x2="870" y2="120" class="grid"/>
+  <line x1="80" y1="260" x2="430" y2="260" class="grid"/>
+  <line x1="520" y1="260" x2="870" y2="260" class="grid"/>
+  <line x1="80" y1="400" x2="430" y2="400" class="grid"/>
+  <line x1="520" y1="400" x2="870" y2="400" class="grid"/>
+
+  <!-- level scale: -0.001 to 0.006 -->
+  <line x1="130" y1="110" x2="130" y2="420" class="zero"/>
+  <line x1="80" y1="420" x2="430" y2="420" stroke="#374151"/>
+  <text x="75" y="444" class="axis">-0.001</text><text x="122" y="444" class="axis">0</text><text x="220" y="444" class="axis">0.002</text><text x="320" y="444" class="axis">0.004</text><text x="415" y="444" class="axis">0.006</text>
+  <text x="40" y="176" class="label">Unrelated</text><text x="40" y="316" class="label">Related</text>
+  <line x1="126" y1="170" x2="168" y2="170" stroke-width="3" class="unrelated"/><circle cx="147" cy="170" r="5" class="unrelated"/>
+  <line x1="130" y1="310" x2="430" y2="310" stroke-width="3" class="related"/><circle cx="376" cy="310" r="5" class="related"/>
+  <text x="80" y="472" class="subtitle">Joint model: unrelated -0.00051; related 0.00492</text>
+
+  <!-- log scale: -0.05 to 0.04 -->
+  <line x1="714" y1="110" x2="714" y2="420" class="zero"/>
+  <line x1="520" y1="420" x2="870" y2="420" stroke="#374151"/>
+  <text x="510" y="444" class="axis">-0.05</text><text x="706" y="444" class="axis">0</text><text x="794" y="444" class="axis">0.02</text><text x="862" y="444" class="axis">0.04</text>
+  <text x="480" y="176" class="label">Unrelated</text><text x="480" y="316" class="label">Related</text>
+  <line x1="789" y1="170" x2="840" y2="170" stroke-width="3" class="unrelated"/><circle cx="812" cy="170" r="5" class="unrelated"/>
+  <line x1="529" y1="310" x2="602" y2="310" stroke-width="3" class="related"/><circle cx="565" cy="310" r="5" class="related"/>
+  <text x="520" y="472" class="subtitle">Joint model: unrelated 0.02492; related -0.03839</text>
+</svg>
