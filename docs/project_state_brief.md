@@ -87,7 +87,12 @@ Initial outcome validation finds exact lifetime-total agreement for 14,544 of
 that exceed OpenAlex totals by 277 citations in aggregate; this discrepancy is
 being investigated before the panel is used for substantive estimates. A
 repeatable coverage validator confirms that all sampled focal works have a
-reconstructed total; the remaining issue is the 131-work overcount discrepancy.
+reconstructed total. A snapshot-wide audit of 492 million work records found
+zero repeated incoming reference IDs for those 131 works, so the remaining gap
+is consistent with OpenAlex count semantics or version timing rather than a
+duplicate-reference extraction error. Both measures remain available, with
+reconstructed references used for the baseline panel and OpenAlex totals kept
+as a validation benchmark.
 
 The research-layer entry point is
 `scripts/build_economics_exposure_from_duckdb.py`. It performs sampling, joins,
