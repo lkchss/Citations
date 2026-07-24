@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1110" height="460" viewBox="0 0 1110 460" role="img">
+<rect width="100%" height="100%" fill="#fff"/>
+<style>.title{font:700 20px sans-serif;fill:#111827}.panel{font:700 14px sans-serif;fill:#111827}.axis{font:11px sans-serif;fill:#374151}.note{font:13px sans-serif;fill:#4b5563}.grid{stroke:#e5e7eb}.line{stroke:#c2410c;stroke-width:2}.point{fill:#1769aa}</style>
+<text x="38" y="34" class="title">Within-paper exposure relationships</text>
+<text x="38" y="57" class="note">Equal-count bins after absorbing paper and year effects; Model 2 panels partial out the other exposure</text>
+<text x="42" y="88" class="panel">Model 1: unrelated</text>
+<line x1="78" y1="108.0" x2="365" y2="108.0" class="grid"/>
+<line x1="78" y1="174.8" x2="365" y2="174.8" class="grid"/>
+<line x1="78" y1="241.5" x2="365" y2="241.5" class="grid"/>
+<line x1="78" y1="308.2" x2="365" y2="308.2" class="grid"/>
+<line x1="78" y1="375.0" x2="365" y2="375.0" class="grid"/>
+<line x1="78.0" y1="343.8" x2="365.0" y2="179.5" class="line"/>
+<circle cx="97.8" cy="349.2" r="3.5" class="point"/>
+<circle cx="183.6" cy="269.1" r="3.5" class="point"/>
+<circle cx="192.9" cy="265.7" r="3.5" class="point"/>
+<circle cx="198.7" cy="268.2" r="3.5" class="point"/>
+<circle cx="202.8" cy="264.0" r="3.5" class="point"/>
+<circle cx="206.1" cy="264.5" r="3.5" class="point"/>
+<circle cx="208.8" cy="254.1" r="3.5" class="point"/>
+<circle cx="211.2" cy="261.7" r="3.5" class="point"/>
+<circle cx="213.4" cy="260.7" r="3.5" class="point"/>
+<circle cx="215.4" cy="257.8" r="3.5" class="point"/>
+<circle cx="217.3" cy="262.4" r="3.5" class="point"/>
+<circle cx="219.3" cy="260.3" r="3.5" class="point"/>
+<circle cx="221.7" cy="265.8" r="3.5" class="point"/>
+<circle cx="224.3" cy="274.0" r="3.5" class="point"/>
+<circle cx="227.4" cy="276.9" r="3.5" class="point"/>
+<circle cx="231.0" cy="278.0" r="3.5" class="point"/>
+<circle cx="235.9" cy="285.4" r="3.5" class="point"/>
+<circle cx="243.0" cy="277.9" r="3.5" class="point"/>
+<circle cx="254.5" cy="249.7" r="3.5" class="point"/>
+<circle cx="345.2" cy="133.8" r="3.5" class="point"/>
+<text x="78" y="399" class="axis">-2.84e+03</text>
+<text x="365" y="399" text-anchor="end" class="axis">3e+03</text>
+<text x="220" y="428" text-anchor="middle" class="axis">Within unrelated exposure</text>
+<text x="402" y="88" class="panel">Model 2: unrelated | related</text>
+<line x1="438" y1="108.0" x2="725" y2="108.0" class="grid"/>
+<line x1="438" y1="174.8" x2="725" y2="174.8" class="grid"/>
+<line x1="438" y1="241.5" x2="725" y2="241.5" class="grid"/>
+<line x1="438" y1="308.2" x2="725" y2="308.2" class="grid"/>
+<line x1="438" y1="375.0" x2="725" y2="375.0" class="grid"/>
+<line x1="438.0" y1="119.5" x2="725.0" y2="397.6" class="line"/>
+<circle cx="457.8" cy="133.8" r="3.5" class="point"/>
+<circle cx="544.6" cy="216.3" r="3.5" class="point"/>
+<circle cx="554.0" cy="225.6" r="3.5" class="point"/>
+<circle cx="559.7" cy="229.9" r="3.5" class="point"/>
+<circle cx="563.8" cy="235.6" r="3.5" class="point"/>
+<circle cx="567.0" cy="239.7" r="3.5" class="point"/>
+<circle cx="569.6" cy="245.4" r="3.5" class="point"/>
+<circle cx="572.0" cy="246.5" r="3.5" class="point"/>
+<circle cx="574.1" cy="252.5" r="3.5" class="point"/>
+<circle cx="576.1" cy="250.0" r="3.5" class="point"/>
+<circle cx="577.9" cy="251.1" r="3.5" class="point"/>
+<circle cx="580.0" cy="244.8" r="3.5" class="point"/>
+<circle cx="582.3" cy="253.0" r="3.5" class="point"/>
+<circle cx="585.0" cy="266.3" r="3.5" class="point"/>
+<circle cx="588.0" cy="276.3" r="3.5" class="point"/>
+<circle cx="591.5" cy="286.6" r="3.5" class="point"/>
+<circle cx="596.2" cy="306.4" r="3.5" class="point"/>
+<circle cx="603.1" cy="303.7" r="3.5" class="point"/>
+<circle cx="614.0" cy="292.4" r="3.5" class="point"/>
+<circle cx="705.2" cy="349.2" r="3.5" class="point"/>
+<text x="438" y="399" class="axis">-2.66e+03</text>
+<text x="725" y="399" text-anchor="end" class="axis">2.79e+03</text>
+<text x="580" y="428" text-anchor="middle" class="axis">Partial unrelated exposure</text>
+<text x="762" y="88" class="panel">Model 2: related | unrelated</text>
+<line x1="798" y1="108.0" x2="1085" y2="108.0" class="grid"/>
+<line x1="798" y1="174.8" x2="1085" y2="174.8" class="grid"/>
+<line x1="798" y1="241.5" x2="1085" y2="241.5" class="grid"/>
+<line x1="798" y1="308.2" x2="1085" y2="308.2" class="grid"/>
+<line x1="798" y1="375.0" x2="1085" y2="375.0" class="grid"/>
+<line x1="798.0" y1="435.6" x2="1085.0" y2="53.7" class="line"/>
+<circle cx="817.8" cy="349.2" r="3.5" class="point"/>
+<circle cx="928.7" cy="253.9" r="3.5" class="point"/>
+<circle cx="935.3" cy="255.2" r="3.5" class="point"/>
+<circle cx="938.0" cy="250.5" r="3.5" class="point"/>
+<circle cx="939.4" cy="253.0" r="3.5" class="point"/>
+<circle cx="940.1" cy="251.5" r="3.5" class="point"/>
+<circle cx="940.5" cy="249.2" r="3.5" class="point"/>
+<circle cx="940.9" cy="245.0" r="3.5" class="point"/>
+<circle cx="941.3" cy="244.6" r="3.5" class="point"/>
+<circle cx="941.6" cy="243.7" r="3.5" class="point"/>
+<circle cx="941.8" cy="243.4" r="3.5" class="point"/>
+<circle cx="942.1" cy="242.8" r="3.5" class="point"/>
+<circle cx="942.5" cy="243.1" r="3.5" class="point"/>
+<circle cx="942.9" cy="240.9" r="3.5" class="point"/>
+<circle cx="943.4" cy="238.5" r="3.5" class="point"/>
+<circle cx="944.1" cy="236.7" r="3.5" class="point"/>
+<circle cx="945.4" cy="240.0" r="3.5" class="point"/>
+<circle cx="949.0" cy="242.3" r="3.5" class="point"/>
+<circle cx="957.4" cy="226.0" r="3.5" class="point"/>
+<circle cx="1065.2" cy="133.8" r="3.5" class="point"/>
+<text x="798" y="399" class="axis">-876</text>
+<text x="1085" y="399" text-anchor="end" class="axis">872</text>
+<text x="940" y="428" text-anchor="middle" class="axis">Partial related exposure</text>
+</svg>
