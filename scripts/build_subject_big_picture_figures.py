@@ -64,10 +64,10 @@ def main() -> None:
         "Observed citations; papers before publication are excluded",
     )
     draw(
-        [("Authors' older papers", "#175cd3", fixed), ("Typical comparable economics papers", "#f79009", typical)],
+        [("Authors' older papers", "#175cd3", fixed), ("Other economics papers at the same age", "#f79009", typical)],
         OUTPUT / "same_papers_vs_typical.svg",
-        "Fixed older papers do not rise relative to comparable papers",
-        "Same 14,076 author-paper-hit units observed from -10 through +10",
+        "Controlling for normal paper aging",
+        "Comparison papers have the same exact age, calendar year, and document type",
     )
 
 

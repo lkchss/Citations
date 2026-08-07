@@ -17,21 +17,24 @@
 | Papers available in each year | 21,244 | 75,882 | 0.660 | 0.870 | +0.210 |
 | Same papers in every year | 14,076 | 14,076 | 0.519 | 0.461 | −0.058 |
 
-## Same papers versus typical papers
+## Controlling for paper age
 
-![Same papers and typical-paper time series](../8.7.26/economics_paper_level_normalized/same_papers_vs_typical.svg)
+![Older papers and same-age comparison time series](../8.7.26/economics_paper_level_normalized/same_papers_vs_typical.svg)
 
 | Series | Pre mean | Post mean | Change |
 |---|---:|---:|---:|
 | Authors' same older papers | 0.519 | 0.461 | −0.058 |
-| Typical comparable papers | 0.525 | 0.529 | +0.004 |
-| Authors minus typical papers | −0.006 | −0.068 | −0.063 |
+| Other economics papers at the same age | 0.525 | 0.529 | +0.004 |
+| Difference | −0.006 | −0.068 | −0.063 |
 
-Typical papers: same calendar year, paper age, and document type.
+For every author paper-year, the comparison is calculated from deduplicated
+economics papers with the exact same paper age, calendar year, and document
+type. The comparison therefore follows the normal citation lifecycle as both
+sets of papers grow older.
 
 ## Big picture
 
 - Original: citations rise before year 0, peak near years 0:+1, then decline.
 - Changing paper set: positive pre/post change.
 - Same paper set: no positive trend around year 0.
-- Same papers versus typical papers: no positive relative trend.
+- Exact paper-age comparison: no positive relative trend.
