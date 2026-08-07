@@ -1,115 +1,180 @@
-# Author-level results
+# Author-level presentation results
 
-## Question
+## Research question
 
-Does an author's rise in prominence increase citations to their older papers
-that are unrelated to the work producing the rise?
+When an economist becomes prominent, do their older papers receive additional
+citations—even when those papers are unrelated to the work producing the rise?
 
-The current operational definition treats an older paper as unrelated when the
-candidate hit does not reference it. Treatment begins in the hit paper's
-publication year.
+For the current descriptive work:
 
-## Candidate classification depends on the denominator
+- An older paper is called unrelated when the candidate hit does not cite it.
+- The event begins in the candidate paper's publication year.
+- A baseline big hit receives more than 50% of the author's citations, subject
+  to a provisional minimum career-citation threshold.
 
-The initial screen defined a big hit as a paper receiving more than 50% of an
-author's economics-portfolio citations. OpenAlex's author-page total instead
-covers all works attributed to the author entity across fields.
+These definitions are useful for screening. They are not yet a causal research
+design.
 
-| Author | Candidate hit | Economics share | Live all-field share | Passes all-field 50% rule? |
+## Presentation takeaway
+
+The author cases show patterns consistent with citation spillovers, but none is
+currently a clean causal example. The most valuable result is diagnostic:
+
+1. John List illustrates gradual prominence and a visible rise in citations to
+   older work, but he never meets the 50% big-hit rule.
+2. Michael Jensen has the largest raw increase, but it begins before the event.
+3. Manuel Arellano is the only provisional all-field 50% case, but his author
+   record needs identity cleaning and his matched estimate is negative.
+4. Robert Solow's older-paper citation counts are too sparse for a persuasive
+   individual estimate.
+
+The cases therefore motivate the subject-level analysis; they should not be
+presented as four independent demonstrations of an effect.
+
+## Result 1: the definition of a big hit matters
+
+The initial screen used citations within the economics database. The broader
+OpenAlex author total covers all works assigned to the author across fields.
+Changing this denominator changes who qualifies.
+
+| Author | Candidate paper | Economics share | Recorded all-field share | All-field share above 50%? |
 |---|---|---:|---:|---|
 | Michael Jensen | *Theory of the Firm* (1976) | 69.5% | 35.2% | No |
-| Manuel Arellano | *Some Tests of Specification for Panel Data* (1991) | 57.7% | 52.8% | Yes, provisionally |
+| Manuel Arellano | *Some Tests of Specification for Panel Data* (1991) | 57.7% | 52.8% | Provisionally |
 | Robert Solow | *A Contribution to the Theory of Economic Growth* (1956) | 56.0% | 35.8% | No |
 
-Only Arellano remains above 50% using the live all-field author denominator.
-Even that classification is provisional because his OpenAlex entity contains
-an obvious 1912 namesake record.
+![The candidate-hit denominator changes classification](../8.7.26/author_hit_profiles/hit_share_denominator_comparison.svg)
 
-![Hit-share denominator comparison](../8.7.26/author_hit_profiles/hit_share_denominator_comparison.svg)
+Presentation interpretation: the 50% rule cannot be applied to a
+subject-restricted portfolio without changing its meaning. The preferred
+screen should use a cleaned, all-field author portfolio and report alternative
+thresholds rather than treating 50% as immutable.
 
-Underlying results:
-[author profiles](../8.7.26/author_hit_profiles/author_hit_profiles.csv).
+## Result 2: John List is the best prominence-path illustration
 
-## John List
+John List is substantively useful because his prominence developed over time,
+not because a single paper dominates his career citations.
 
-John List is a gradual-prominence case rather than a baseline big-hit case.
+| Quantity | Result |
+|---|---:|
+| Economics works in the local profile | 187 |
+| Local economics work citations | 11,977 |
+| Reconstructed economics citations | 12,030 |
+| Difference between local totals | 53 (0.44%) |
+| Recorded all-field OpenAlex citations | 46,684 |
+| Top economics-paper share | 10.1% |
+| Fixed cohort of older unrelated papers | 49 |
 
-- Local economics works: 187
-- Local economics work citations: 11,977
-- Reconstructed economics citations: 12,030
-- Difference between local calculations: 53 citations, or 0.44%
-- Live OpenAlex author total: 46,684 citations across 900 attributed works
-- Top economics-paper share: 10.1%
+The local citation calculation is internally consistent. Its difference from
+the author-page total is principally a universe problem: the local profile is
+economics-only, whereas the author page is all-field and contains many more
+assigned works.
 
-The local work-level and reconstructed totals agree closely. The difference
-from the OpenAlex author page reflects the economics-only universe plus likely
-author-entity contamination, not a failure of the local citation summation.
+For the fixed cohort of 49 older papers, mean annual citations increase from
+1.18 in 2002 to approximately 3.02 in 2007–09.
 
-For the fixed cohort of 49 older papers, mean annual citations rise from 1.18
-in 2002 to 3.02 in 2007–09. The increase is concentrated: the top five focal
-papers account for 87.4% of the net change.
+![John List: citations to a fixed cohort of older papers](../8.7.26/john_list_case_study/unrelated_prior_citations.svg)
 
-![John List original profile](../8.7.26/john_list_case_study/unrelated_prior_citations.svg)
+The increase is highly concentrated:
 
-This pattern is not clean evidence of spillovers. Citations were already
-rising, the breakthrough consisted of several papers rather than a single
-event, and List moved to Chicago in 2005.
+| Concentration diagnostic | Result |
+|---|---:|
+| Total change across 49 papers | +90.0 citations |
+| Share attributable to the largest contributor | 35.9% |
+| Share attributable to the five largest contributors | 87.4% |
+| Papers with positive / zero / negative changes | 21 / 20 / 8 |
 
-## Original profiles for Jensen, Arellano, and Solow
+This is more consistent with a heterogeneous spillover than a uniform lift to
+the entire back catalog. It could also reflect renewed interest in particular
+topics, several contemporaneous breakthrough papers, or List's 2005 move to
+Chicago. Citations were already rising before the 2003 candidate event.
 
-The unadjusted author profiles compare mean annual citations to
-version-clustered older papers before and after the candidate hit.
+## Result 3: the other candidate profiles are not equally credible
 
-| Author | Older-paper clusters | Pre mean | Post mean | Raw change |
-|---|---:|---:|---:|---:|
-| Michael Jensen | 10 | 3.100 | 8.840 | +5.740 |
-| Manuel Arellano | 12 | 0.167 | 0.317 | +0.150 |
-| Robert Solow | 15 | 0.187 | 0.280 | +0.093 |
+Unadjusted means compare event years −5:−1 with 0:+4 for a fixed cohort of
+older papers.
 
-![Michael Jensen original profile](../8.7.26/author_hit_profiles/michael_c_jensen_event_time.svg)
+| Author | Older-paper clusters | Pre mean | Post mean | Raw change | Main limitation |
+|---|---:|---:|---:|---:|---|
+| Michael Jensen | 10 | 3.100 | 8.840 | +5.740 | Strong upward pretrend |
+| Manuel Arellano | 12 | 0.167 | 0.317 | +0.150 | Identity contamination; very small counts |
+| Robert Solow | 15 | 0.187 | 0.280 | +0.093 | Very sparse outcome |
 
-![Manuel Arellano original profile](../8.7.26/author_hit_profiles/manuel_arellano_event_time.svg)
+Jensen's large raw change is visually striking, but the rise is underway before
+1976. Arellano's OpenAlex entity contains an obvious 1912 namesake record.
+Solow's mean changes by less than one tenth of a citation per paper-year.
 
-![Robert Solow original profile](../8.7.26/author_hit_profiles/robert_m_solow_event_time.svg)
+The original profiles remain available for inspection:
 
-These are before/after descriptions. Jensen in particular has a strong upward
-pre-event trajectory.
+- [Michael Jensen](../8.7.26/author_hit_profiles/michael_c_jensen_event_time.svg)
+- [Manuel Arellano](../8.7.26/author_hit_profiles/manuel_arellano_event_time.svg)
+- [Robert Solow](../8.7.26/author_hit_profiles/robert_m_solow_event_time.svg)
 
-## Matched-control comparisons
+## Result 4: metadata-matched controls do not resolve the design
 
-Each focal paper was paired with one unique OpenAlex control matching
-publication year and document type, plus primary topic when available. Changes
-compare event years −5:−1 with 0:+4.
+Each focal paper was paired with one control having the same publication year
+and document type, and the same primary topic when available. The comparison
+again uses event years −5:−1 and 0:+4.
 
-| Author | Focal change | Control change | Difference in changes | Pretrend check |
+| Author | Focal change | Control change | Difference in changes | Pretrend assessment |
 |---|---:|---:|---:|---|
 | John List | +1.686 | +0.710 | +0.976 | Fails |
 | Michael Jensen | +5.740 | +0.520 | +5.220 | Fails |
-| Manuel Arellano | +0.150 | +0.400 | −0.250 | Passes loose check |
-| Robert Solow | +0.093 | −0.013 | +0.107 | Passes loose check |
+| Manuel Arellano | +0.150 | +0.400 | −0.250 | Passes loose screen |
+| Robert Solow | +0.093 | −0.013 | +0.107 | Passes loose screen |
 
-![John List matched controls](../8.7.26/author_matched_controls/john_a_list_matched.svg)
+The two large positive differences are precisely the cases that fail the
+pretrend screen. Among the two cases passing the loose screen, one estimate is
+negative and the other is close to zero in absolute citation units. Matching
+only on metadata is therefore inadequate.
 
-![Michael Jensen matched controls](../8.7.26/author_matched_controls/michael_c_jensen_matched.svg)
+For presentation, use John List's comparison to illustrate the problem rather
+than treating the table as causal evidence:
 
-![Manuel Arellano matched controls](../8.7.26/author_matched_controls/manuel_arellano_matched.svg)
+![John List and metadata-matched papers](../8.7.26/author_matched_controls/john_a_list_matched.svg)
 
-![Robert Solow matched controls](../8.7.26/author_matched_controls/robert_m_solow_matched.svg)
+## What can be claimed
 
-The large positive differences for List and Jensen cannot be interpreted as
-effects because their focal and control pretrends are not parallel. Arellano's
-comparison is negative. Solow's is slightly positive, but the matched controls
-have extremely low citation levels.
+The current author-level results support three claims:
 
-Underlying results:
-[matched-control summary](../8.7.26/author_matched_controls/matched_control_summary.csv)
-and [matched pairs](../8.7.26/author_matched_controls/matched_pairs.csv).
+- Citation growth to an author's older work can accompany rising prominence.
+- That growth may be concentrated in a small subset of older papers.
+- Naive before/after and metadata-matched comparisons do not separate a
+  prominence spillover from prior trends, topic demand, and career changes.
 
-## Current conclusion
+They do **not** establish that publication of a hit causes additional citations
+to unrelated work.
 
-The author cases are useful diagnostics but do not yet provide persuasive
-causal evidence. They establish three priorities:
+## Recommended presentation sequence
 
-1. Use complete all-field portfolios when classifying big hits.
-2. Validate author identities and cluster versions before selecting cases.
-3. Match controls on pre-event citation trajectories, not metadata alone.
+1. Show the denominator figure to explain why candidate classification is
+   provisional.
+2. Use John List as the motivating career narrative and show his fixed-cohort
+   time series.
+3. Show the concentration statistics to explain that any effect is unlikely to
+   be uniform across papers.
+4. Show the matched comparison and emphasize the failed pretrend.
+5. Transition to the subject-level analysis as the attempt to move beyond
+   selected anecdotes.
+
+## Immediate author-level improvements
+
+Before elevating any case to primary evidence:
+
+1. Clean and freeze each author's all-field OpenAlex identity and portfolio.
+2. Cluster duplicate work versions before calculating hit shares or outcomes.
+3. Replace one metadata control with a donor pool matched on the entire
+   pre-event citation path.
+4. Normalize each focal paper against papers of the same age, calendar year,
+   type, and topic.
+5. Estimate leave-one-paper-out results and report the distribution of
+   paper-level effects, not only the author mean.
+6. Add placebo event years and alternative prominence events, including
+   threshold crossing, institutional moves, awards, and clusters of hits.
+
+## Supporting files
+
+- [Author profiles](../8.7.26/author_hit_profiles/author_hit_profiles.csv)
+- [John List paper contributions](../8.7.26/john_list_case_study/paper_contributions.csv)
+- [Matched-control summary](../8.7.26/author_matched_controls/matched_control_summary.csv)
+- [Matched pairs](../8.7.26/author_matched_controls/matched_pairs.csv)
