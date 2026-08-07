@@ -55,8 +55,15 @@ def draw(series: list[tuple[str, str, list[tuple[int, float]]]], path: Path, tit
 def main() -> None:
     rows = list(csv.DictReader(SOURCE.open()))
     changing = [(int(r["event_time"]), float(r["mean_citations"])) for r in rows if r["sample_name"] == "at_risk"]
+    changing_typical = [(int(r["event_time"]), float(r["mean_expected_citations"])) for r in rows if r["sample_name"] == "at_risk"]
     fixed = [(int(r["event_time"]), float(r["mean_citations"])) for r in rows if r["sample_name"] == "balanced_full_window"]
     typical = [(int(r["event_time"]), float(r["mean_expected_citations"])) for r in rows if r["sample_name"] == "balanced_full_window"]
+    draw(
+        [("Authors' older papers", "#175cd3", changing), ("Other economics papers at the same age", "#f79009", changing_typical)],
+        OUTPUT / "original_pattern_with_age_control.svg",
+        "Original pattern with a normal-aging comparison",
+        "Comparison papers have the same exact age, calendar year, and document type",
+    )
     draw(
         [("Papers available in each year", "#175cd3", changing), ("Same papers in every year", "#039855", fixed)],
         OUTPUT / "changing_vs_same_papers.svg",
