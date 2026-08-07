@@ -1,61 +1,37 @@
 # Economics subject time series
 
-| Sample | Units | Authors | Event window |
-|---|---:|---:|---:|
-| Original hit panel | 75,882 | 11,155 | −10:+10 |
-| Balanced paper-level panel | 14,076 | 3,667 | −10:+10 |
+## Original pattern
 
-## Original
+![Original economics time series](../8.7.26/economics_subject_level/economics_big_hit_event_time.svg)
 
-![Original economics event time series](../8.7.26/economics_subject_level/economics_big_hit_event_time.svg)
+| Year | −5 | −2 | −1 | 0 | +1 | +2 | +4 |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| Mean citations | 0.310 | 0.610 | 0.781 | 0.912 | 0.922 | 0.890 | 0.761 |
 
-| Pre window | Post window | Pre mean | Post mean | Change |
-|---:|---:|---:|---:|---:|
-| −5:−1 | 0:+4 | 0.516 | 0.864 | +0.348 |
+## Same papers over time
 
-## Publication risk
+![Changing paper set and same-paper time series](../8.7.26/economics_paper_level_normalized/changing_vs_same_papers.svg)
 
-![Original and publication-at-risk time series](../8.7.26/economics_adjusted/raw_vs_at_risk.svg)
+| Sample | Units at −10 | Units at 0 | Pre mean | Post mean | Change |
+|---|---:|---:|---:|---:|---:|
+| Papers available in each year | 21,244 | 75,882 | 0.660 | 0.870 | +0.210 |
+| Same papers in every year | 14,076 | 14,076 | 0.519 | 0.461 | −0.058 |
 
-| Event time | Rows before focal-paper publication |
-|---:|---:|
-| −10 | 72.0% |
-| −5 | 44.0% |
-| −2 | 13.4% |
-| −1 | 0.0% |
+## Same papers versus typical papers
 
-At risk: focal paper observed only at paper age ≥ 0.
-
-## Age-standardized
-
-![Age-standardized time series](../8.7.26/economics_adjusted/mature_age_standardized.svg)
+![Same papers and typical-paper time series](../8.7.26/economics_paper_level_normalized/same_papers_vs_typical.svg)
 
 | Series | Pre mean | Post mean | Change |
 |---|---:|---:|---:|
-| Original | 0.516 | 0.864 | +0.348 |
-| Age-standardized | 0.636 | 0.849 | +0.213 |
+| Authors' same older papers | 0.519 | 0.461 | −0.058 |
+| Typical comparable papers | 0.525 | 0.529 | +0.004 |
+| Authors minus typical papers | −0.006 | −0.068 | −0.063 |
 
-Age bins: 3–5, 6–10, 11–20, and 21+ years. Weights fixed at event −1.
+Typical papers: same calendar year, paper age, and document type.
 
-## Paper-level excess citations
+## Big picture
 
-![Paper-level excess-citation time series](../8.7.26/economics_paper_level_normalized/paper_level_excess_citations.svg)
-
-| Sample | Pre | Post | Change |
-|---|---:|---:|---:|
-| Publication at risk | 0.137 | 0.252 | +0.114 |
-| Balanced −10:+10 | −0.006 | −0.068 | −0.063 |
-
-Excess citations = observed annual citations − expected annual citations.
-
-## Paper-level observed/expected ratio
-
-![Paper-level observed/expected time series](../8.7.26/economics_paper_level_normalized/paper_level_observed_expected_ratio.svg)
-
-| Sample | Pre | Post | Change |
-|---|---:|---:|---:|
-| Publication at risk | 1.260 | 1.406 | +0.146 |
-| Balanced −10:+10 | 0.989 | 0.871 | −0.119 |
-
-Expected citations: deduplicated economics works matched on calendar year,
-exact paper age, and document type.
+- Original: citations rise before year 0, peak near years 0:+1, then decline.
+- Changing paper set: positive pre/post change.
+- Same paper set: no positive trend around year 0.
+- Same papers versus typical papers: no positive relative trend.
