@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-08-07T14:18:25.529109+00:00",
+  "panel": "/home/compute/citations-instance/citations/workspace/ssd/openalex/subjects/economics_econometrics_and_finance/analysis/hit_effects/paper_author_hit_year_panel.csv.gz",
+  "rows": 1593522,
+  "authors": 11155,
+  "hit_works": 8667,
+  "author_hit_events": 11155,
+  "focal_pairs": 75882,
+  "pre_mean_event_minus_5_to_minus_1": 0.5160934081863947,
+  "post_mean_event_0_to_4": 0.8643051052950634,
+  "difference": 0.3482116971086687,
+  "design": "descriptive publication-year event summary without controls",
+  "caveats": [
+    "economics-only author denominator",
+    "OpenAlex identity errors",
+    "version duplication",
+    "no counterfactual group"
+  ]
+}

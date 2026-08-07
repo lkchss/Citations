@@ -46,6 +46,31 @@ requires at least 100 economics-portfolio citations, a strict top-paper share
 above 50%, and at least three earlier research works. These are provisional
 economics-portfolio shares, not final all-field author shares.
 
+## Economics Subject-Level Summary
+
+Directory: [`economics_subject_level/`](economics_subject_level/)
+
+- [`economics_big_hit_subject_summary.html`](economics_subject_level/economics_big_hit_subject_summary.html):
+  full economics publication-year event summary.
+- [`economics_big_hit_event_time.csv`](economics_subject_level/economics_big_hit_event_time.csv):
+  event-time estimates.
+- [`economics_big_hit_event_time.svg`](economics_subject_level/economics_big_hit_event_time.svg):
+  event-time figure.
+- [`economics_big_hit_subject_summary.json`](economics_subject_level/economics_big_hit_subject_summary.json):
+  counts, estimates, and caveats.
+
+The deduplicated panel contains 75,882 author–focal-paper–hit units across
+11,155 authors. Mean annual citations rise descriptively from 0.516 in event
+years -5 through -1 to 0.864 in years 0 through +4, a difference of 0.348.
+
+## John List Citation Reconciliation
+
+[`john_list_citation_reconciliation.md`](john_list_citation_reconciliation.md)
+explains why the current 46,684-citation OpenAlex author total does not match
+the local economics portfolio. The OpenAlex author entity contains 900 works
+and appears merged; the local work-level and reconstructed economics totals
+agree within 0.44%.
+
 ## Audit And Plan
 
 [`exploratory_audit_2026-08-07.md`](exploratory_audit_2026-08-07.md) records the
@@ -68,3 +93,4 @@ outputs, and immediate execution plan.
 
 - [`scripts/build_author_case_study.py`](../../scripts/build_author_case_study.py)
 - [`scripts/screen_economics_big_hit_authors.py`](../../scripts/screen_economics_big_hit_authors.py)
+- [`scripts/build_economics_subject_big_hit_summary.py`](../../scripts/build_economics_subject_big_hit_summary.py)
