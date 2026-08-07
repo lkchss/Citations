@@ -2,12 +2,12 @@
 
 Each focal paper is paired to one randomly sampled OpenAlex control with the
 same publication year and work type, and the same primary topic when available.
-Annual outcomes count citing works by publication year. The table compares
-event -5:-1 with 0:+4.
+Annual outcomes count citing works by publication year. Figures span event
+-10:+10; the table compares event -5:-1 with 0:+4.
 
 ## Original unadjusted figures
 
-The original author figures are preserved unchanged:
+The original figures are preserved unchanged:
 
 - [John List original figure](../john_list_case_study/unrelated_prior_citations.svg)
 - [Michael Jensen original figure](../author_hit_profiles/michael_c_jensen_event_time.svg)

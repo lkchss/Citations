@@ -19,9 +19,7 @@
 
 ## Michael Jensen
 
-![Michael Jensen time series](../8.7.26/author_hit_profiles/michael_c_jensen_event_time.svg)
-
-![Michael Jensen with matched-control time series](../8.7.26/author_matched_controls/michael_c_jensen_matched.svg)
+![Michael Jensen focal and control time series](../8.7.26/author_matched_controls/michael_c_jensen_matched.svg)
 
 | Focal papers | Focal change | Control change | Difference | Pretrend slope gap |
 |---:|---:|---:|---:|---:|
@@ -29,9 +27,7 @@
 
 ## Manuel Arellano
 
-![Manuel Arellano time series](../8.7.26/author_hit_profiles/manuel_arellano_event_time.svg)
-
-![Manuel Arellano with matched-control time series](../8.7.26/author_matched_controls/manuel_arellano_matched.svg)
+![Manuel Arellano focal and control time series](../8.7.26/author_matched_controls/manuel_arellano_matched.svg)
 
 | Focal papers | Focal change | Control change | Difference | Pretrend slope gap |
 |---:|---:|---:|---:|---:|
@@ -39,10 +35,14 @@
 
 ## Robert Solow
 
-![Robert Solow time series](../8.7.26/author_hit_profiles/robert_m_solow_event_time.svg)
-
-![Robert Solow with matched-control time series](../8.7.26/author_matched_controls/robert_m_solow_matched.svg)
+![Robert Solow focal and control time series](../8.7.26/author_matched_controls/robert_m_solow_matched.svg)
 
 | Focal papers | Focal change | Control change | Difference | Pretrend slope gap |
 |---:|---:|---:|---:|---:|
 | 15 | +0.093 | −0.013 | +0.107 | +0.020 |
+
+## Controls
+
+One control per focal paper: same publication year and work type; same primary
+OpenAlex topic when available. The focal author is excluded. One control is not
+reused within an author. Annual citations are citing-work counts by year.

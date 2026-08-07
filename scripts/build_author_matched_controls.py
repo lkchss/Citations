@@ -56,18 +56,22 @@ def control_for(work: dict, author_id: str, excluded: set[str], cache: Path) -> 
     if not candidates and topic:
         payload = get("/works", {"filter":f"publication_year:{year},type:{work_type}", "sample":25,
                                   "seed":int(str(year)+"17"), "select":"id,title,publication_year,type,cited_by_count,primary_topic,authorships"}, cache)
-        candidates=[c for c in payload["results"] if c["id"] not in excluded]
+        candidates=[]
+        for candidate in payload["results"]:
+            candidate_authors={a["author"]["id"].rsplit("/",1)[-1] for a in candidate.get("authorships") or [] if (a.get("author") or {}).get("id")}
+            if candidate["id"] not in excluded and author_id not in candidate_authors:
+                candidates.append(candidate)
     return candidates[0] if candidates else None
 
 
 def svg(rows: list[dict], path: Path, author: str) -> None:
     width,height,left,right,top,bottom=980,500,85,35,75,70
     ymax=max(max(float(r["focal_mean_citations"]),float(r["control_mean_citations"])) for r in rows)*1.12 or 1
-    sx=lambda x:left+(x+5)*(width-left-right)/10; sy=lambda y:height-bottom-y*(height-top-bottom)/ymax
+    sx=lambda x:left+(x+10)*(width-left-right)/20; sy=lambda y:height-bottom-y*(height-top-bottom)/ymax
     grid=[]
     for f in (0,.25,.5,.75,1):
         v=ymax*f;grid.append(f"<line x1='{left}' y1='{sy(v):.1f}' x2='{width-right}' y2='{sy(v):.1f}' stroke='#e4e7ec'/><text x='{left-8}' y='{sy(v)+4:.1f}' text-anchor='end' font-size='12'>{v:.2f}</text>")
-    for e in range(-5,6):grid.append(f"<text x='{sx(e):.1f}' y='{height-bottom+24}' text-anchor='middle' font-size='12'>{e:+d}</text>")
+    for e in range(-10,11,2):grid.append(f"<text x='{sx(e):.1f}' y='{height-bottom+24}' text-anchor='middle' font-size='12'>{e:+d}</text>")
     focal=" ".join(f"{sx(int(r['event_time'])):.1f},{sy(float(r['focal_mean_citations'])):.1f}" for r in rows)
     control=" ".join(f"{sx(int(r['event_time'])):.1f},{sy(float(r['control_mean_citations'])):.1f}" for r in rows)
     path.write_text(f"""<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {width} {height}'><rect width='100%' height='100%' fill='white'/><text x='{width/2}' y='28' text-anchor='middle' font-size='21' font-weight='700'>{author}: focal papers and matched controls</text><text x='{width/2}' y='49' text-anchor='middle' font-size='13' fill='#475467'>Controls match publication year, work type, and primary topic where available</text>{''.join(grid)}<line x1='{sx(0)}' y1='{top}' x2='{sx(0)}' y2='{height-bottom}' stroke='#b42318' stroke-dasharray='6 5'/><polyline points='{focal}' fill='none' stroke='#175cd3' stroke-width='3'/><polyline points='{control}' fill='none' stroke='#f79009' stroke-width='3'/><line x1='{left}' y1='65' x2='{left+25}' y2='65' stroke='#175cd3' stroke-width='3'/><text x='{left+32}' y='69' font-size='12'>Author focal papers</text><line x1='{left+180}' y1='65' x2='{left+205}' y2='65' stroke='#f79009' stroke-width='3'/><text x='{left+212}' y='69' font-size='12'>Matched controls</text><text x='{width/2}' y='{height-18}' text-anchor='middle' font-size='14'>Event time</text><text transform='translate(18 {height/2}) rotate(-90)' text-anchor='middle' font-size='14'>Mean annual citations</text></svg>""",encoding="utf-8")
@@ -102,14 +106,14 @@ def main() -> None:
             matches.append({"author_name":author,"focal_work_id":wid,"focal_title":details[wid]["title"],"control_work_id":control["id"],"control_title":control["title"],"publication_year":details[wid]["publication_year"],"focal_type":details[wid]["type"],"focal_topic":((details[wid].get("primary_topic") or {}).get("display_name") or ""),"control_topic":((control.get("primary_topic") or {}).get("display_name") or "")})
             print(f"{author}: matched {index}/{len(focal_ids)}",flush=True)
         rows=[]
-        for event in range(-5,6):
+        for event in range(-10,11):
             year=hit_year+event
             focal_mean=sum(h.get(year,0) for h in focal_histories.values())/len(focal_histories)
             control_mean=sum(h.get(year,0) for _,h in controls)/len(controls) if controls else 0
             rows.append({"author_name":author,"hit_year":hit_year,"event_time":event,"year":year,"focal_papers":len(focal_histories),"matched_controls":len(controls),"focal_mean_citations":focal_mean,"control_mean_citations":control_mean,"focal_minus_control":focal_mean-control_mean,"causal":0})
-        fpre=sum(r["focal_mean_citations"] for r in rows if r["event_time"]<0)/5;cpre=sum(r["control_mean_citations"] for r in rows if r["event_time"]<0)/5
+        fpre=sum(r["focal_mean_citations"] for r in rows if -5<=r["event_time"]<=-1)/5;cpre=sum(r["control_mean_citations"] for r in rows if -5<=r["event_time"]<=-1)/5
         fpost=sum(r["focal_mean_citations"] for r in rows if 0<=r["event_time"]<=4)/5;cpost=sum(r["control_mean_citations"] for r in rows if 0<=r["event_time"]<=4)/5
-        pre_rows=[r for r in rows if r["event_time"]<0]
+        pre_rows=[r for r in rows if -5<=r["event_time"]<=-1]
         fslope=slope([(r["event_time"],r["focal_mean_citations"]) for r in pre_rows]);cslope=slope([(r["event_time"],r["control_mean_citations"]) for r in pre_rows])
         summary.append({"author_name":author,"focal_papers":len(focal_histories),"matched_controls":len(controls),"focal_pre":fpre,"focal_post":fpost,"control_pre":cpre,"control_post":cpost,"focal_change":fpost-fpre,"control_change":cpost-cpre,"difference_in_changes":(fpost-fpre)-(cpost-cpre),"focal_pretrend_slope":fslope,"control_pretrend_slope":cslope,"pretrend_slope_gap":fslope-cslope,"parallel_pretrend_flag":int(abs(fslope-cslope)<.1),"causal":0})
         panel.extend(rows);svg(rows,args.output_dir/(author.lower().replace(" ","_").replace(".","")+"_matched.svg"),author)
@@ -122,8 +126,8 @@ def main() -> None:
 
 Each focal paper is paired to one randomly sampled OpenAlex control with the
 same publication year and work type, and the same primary topic when available.
-Annual outcomes count citing works by publication year. The table compares
-event -5:-1 with 0:+4.
+Annual outcomes count citing works by publication year. Figures span event
+-10:+10; the table compares event -5:-1 with 0:+4.
 
 ## Original unadjusted figures
 
