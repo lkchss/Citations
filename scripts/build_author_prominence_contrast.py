@@ -26,18 +26,25 @@ def main() -> None:
         {
             "author": "John List",
             "economics_hit_share": 0.10136094180512649,
+            "economics_top5_share": 0.35476329631794273,
             "all_field_hit_share": "",
             "raw_change": float(matched["John A. List"]["focal_change"]),
             "pretrend": "fails",
             "case_type": "gradual prominence",
         }
     ]
+    top5_shares = {
+        "Michael C. Jensen": 0.8400891002077673,
+        "Manuel Arellano": 0.9495960534782298,
+        "Robert M. Solow": 0.7383461501946265,
+    }
     for name in ("Michael C. Jensen", "Manuel Arellano", "Robert M. Solow"):
         profile = profiles[name]
         rows.append(
             {
                 "author": name.replace(" C.", "").replace(" M.", ""),
                 "economics_hit_share": float(profile["local_economics_hit_share"]),
+                "economics_top5_share": top5_shares[name],
                 "all_field_hit_share": float(profile["live_all_field_hit_share"]),
                 "raw_change": float(profile["raw_difference"]),
                 "pretrend": "fails" if name == "Michael C. Jensen" else "passes loose screen",
@@ -59,7 +66,7 @@ def main() -> None:
     colors = ["#6941c6", "#175cd3", "#039855", "#f79009"]
     bar_height = 42
     y_positions = [top + 28 + i * 92 for i in range(len(rows))]
-    share_x = lambda value: left + value / 0.75 * panel_width
+    share_x = lambda value: left + value * panel_width
     change_left = left + panel_width + panel_gap
     change_x = lambda value: change_left + value / 6.0 * panel_width
 
@@ -70,7 +77,7 @@ def main() -> None:
         f"<text x='{left + panel_width/2}' y='76' text-anchor='middle' font-size='14' font-weight='700'>Largest-paper share</text>",
         f"<text x='{change_left + panel_width/2}' y='76' text-anchor='middle' font-size='14' font-weight='700'>Post-minus-pre change</text>",
     ]
-    for value in (0, 0.25, 0.5, 0.75):
+    for value in (0, 0.25, 0.5, 0.75, 1):
         x = share_x(value)
         elements.append(f"<line x1='{x:.1f}' y1='{top}' x2='{x:.1f}' y2='{height-bottom}' stroke='#eaecf0'/>")
         elements.append(f"<text x='{x:.1f}' y='{height-bottom+24}' text-anchor='middle' font-size='12'>{value:.0%}</text>")
@@ -81,17 +88,20 @@ def main() -> None:
     elements.append(f"<line x1='{share_x(.5):.1f}' y1='{top}' x2='{share_x(.5):.1f}' y2='{height-bottom}' stroke='#b42318' stroke-width='2' stroke-dasharray='6 5'/>")
     for row, name, color, y in zip(rows, names, colors, y_positions):
         share = row["economics_hit_share"]
+        top5 = row["economics_top5_share"]
         change = row["raw_change"]
         elements.extend(
             [
                 f"<text x='{left-14}' y='{y+27}' text-anchor='end' font-size='14'>{name}</text>",
-                f"<rect x='{left}' y='{y}' width='{share_x(share)-left:.1f}' height='{bar_height}' rx='3' fill='{color}'/>",
-                f"<text x='{share_x(share)+7:.1f}' y='{y+27}' font-size='13'>{share:.1%}</text>",
+                f"<rect x='{left}' y='{y}' width='{share_x(top5)-left:.1f}' height='18' rx='3' fill='{color}' opacity='.35'/>",
+                f"<rect x='{left}' y='{y+24}' width='{share_x(share)-left:.1f}' height='18' rx='3' fill='{color}'/>",
+                f"<text x='{share_x(top5)+6:.1f}' y='{y+14}' font-size='11'>top 5: {top5:.1%}</text>",
+                f"<text x='{share_x(share)+6:.1f}' y='{y+38}' font-size='11'>top 1: {share:.1%}</text>",
                 f"<rect x='{change_left}' y='{y}' width='{change_x(change)-change_left:.1f}' height='{bar_height}' rx='3' fill='{color}'/>",
                 f"<text x='{change_x(change)+7:.1f}' y='{y+27}' font-size='13'>+{change:.2f}</text>",
             ]
         )
-    elements.append(f"<text x='{width/2}' y='{height-14}' text-anchor='middle' font-size='12' fill='#475467'>Descriptive comparison; event definitions differ for gradual-prominence List and candidate-hit authors</text>")
+    elements.append(f"<text x='{width/2}' y='{height-14}' text-anchor='middle' font-size='12' fill='#475467'>Top-five shares use deduplicated economics works; event definitions differ for List and candidate-hit authors</text>")
     (OUTPUT / "author_prominence_contrast.svg").write_text(
         "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1080 540' role='img'>"
         + "".join(elements)

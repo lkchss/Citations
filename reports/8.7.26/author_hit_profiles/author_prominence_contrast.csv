@@ -1,5 +1,5 @@
-author,economics_hit_share,all_field_hit_share,raw_change,pretrend,case_type
-John List,0.10136094180512649,,1.6857142857142855,fails,gradual prominence
-Michael Jensen,0.6952812849608438,0.35221381515545386,5.74,fails,candidate single hit
-Manuel Arellano,0.5770894401944663,0.5278591441670912,0.14999999999999997,passes loose screen,candidate single hit
-Robert Solow,0.560429127504035,0.35754876135791874,0.09333333333333335,passes loose screen,candidate single hit
+author,economics_hit_share,economics_top5_share,all_field_hit_share,raw_change,pretrend,case_type
+John List,0.10136094180512649,0.35476329631794273,,1.6857142857142855,fails,gradual prominence
+Michael Jensen,0.6952812849608438,0.8400891002077673,0.35221381515545386,5.74,fails,candidate single hit
+Manuel Arellano,0.5770894401944663,0.9495960534782298,0.5278591441670912,0.14999999999999997,passes loose screen,candidate single hit
+Robert Solow,0.560429127504035,0.7383461501946265,0.35754876135791874,0.09333333333333335,passes loose screen,candidate single hit

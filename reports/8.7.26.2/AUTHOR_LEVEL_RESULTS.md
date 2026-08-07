@@ -22,18 +22,23 @@ more concentrated in one paper.
 
 ![Hit concentration and citation changes across author cases](../8.7.26/author_hit_profiles/author_prominence_contrast.svg)
 
-| Author | Largest economics-paper share | Raw older-paper change | Interpretation |
-|---|---:|---:|---|
-| John List | 10.1% | +1.686 | Gradual, multi-paper prominence; pretrend fails |
-| Michael Jensen | 69.5% | +5.740 | Concentrated hit; large rise but pretrend fails |
-| Manuel Arellano | 57.7% | +0.150 | Concentrated hit; small rise |
-| Robert Solow | 56.0% | +0.093 | Concentrated hit; sparse, near-zero rise |
+| Author | Top-paper share | Top-five share | Raw older-paper change | Interpretation |
+|---|---:|---:|---:|---|
+| John List | 10.1% | 35.5% | +1.686 | Gradual, multi-paper prominence; pretrend fails |
+| Michael Jensen | 69.5% | 84.0% | +5.740 | Concentrated hit; large rise but pretrend fails |
+| Manuel Arellano | 57.7% | 95.0% | +0.150 | Highly concentrated portfolio; small rise |
+| Robert Solow | 56.0% | 73.8% | +0.093 | Concentrated portfolio; sparse, near-zero rise |
 
 This juxtaposition is more informative than presenting the authors as four
 versions of the same treatment. A dominant paper is not necessary for a visible
 rise in older-paper citations, and a dominant paper does not guarantee a large
 rise. The result is descriptive because List's event represents a breakthrough
 period, while the other events represent publication of a candidate hit.
+
+Top-five shares use deduplicated works in the same economics portfolio: 4,249
+of 11,977 citations for List; 84,103 of 100,112 for Jensen; 53,128 of 55,948 for
+Arellano; and 31,108 of 42,132 for Solow. The contrast is therefore not driven
+only by the arbitrary choice to report the single largest paper.
 
 The author cases show patterns consistent with citation spillovers, but none is
 currently a clean causal example:
