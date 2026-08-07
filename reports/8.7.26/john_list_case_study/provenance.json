@@ -1,0 +1,20 @@
+{
+  "author_id": "https://openalex.org/A5083530241",
+  "author_name": "John A. List",
+  "subject_dir": "/home/compute/citations-instance/citations/workspace/ssd/openalex/subjects/economics_econometrics_and_finance",
+  "citation_source": "/home/compute/citations-instance/citations/workspace/ssd/openalex/subjects/economics_econometrics_and_finance/calculated_citations/calculated_citations_by_year.csv.gz",
+  "works": 187,
+  "missing_work_metadata": [],
+  "portfolio_citations": 11977,
+  "hit_work_id": "https://openalex.org/W2030360026",
+  "hit_year": 2003,
+  "hit_share": 0.10136094180512649,
+  "eligible_unrelated_prior_papers": 49,
+  "fixed_cohort_mean_2002": 1.183673469387755,
+  "fixed_cohort_mean_2003_2004": 1.8673469387755102,
+  "fixed_cohort_mean_2005_2006": 2.2448979591836733,
+  "fixed_cohort_mean_2007_2009": 3.0204081632653064,
+  "growth_concentration_top_1": 0.3592592592592593,
+  "growth_concentration_top_5": 0.8740740740740741,
+  "growth_concentration_top_10": 1.0407407407407407
+}

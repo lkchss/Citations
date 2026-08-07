@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-08-07T13:31:31.631611+00:00",
+  "database": "/home/compute/citations-instance/citations/workspace/ssd/openalex/subjects/subject_level.duckdb",
+  "definition": "economics research-work portfolio",
+  "work_types": [
+    "article",
+    "preprint",
+    "review"
+  ],
+  "minimum_author_citations": 100,
+  "minimum_hit_share_strict": 0.5,
+  "minimum_prior_works": 3,
+  "rows_written": 5000,
+  "shortlist_rows": 2181,
+  "limit": 5000,
+  "temp_directory": "/tmp/citations-duckdb-screen",
+  "caveat": "Requires all-field denominator, deduplication, and hit-reference validation before final classification."
+}

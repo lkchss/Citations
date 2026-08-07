@@ -1,0 +1,188 @@
+citation_rank,work_id,title,publication_year,type,cited_by_count,portfolio_citation_share,author_position,is_top_hit_candidate,hit_cites_focal,eligible_unrelated_prior
+1,https://openalex.org/W2030360026,Does Market Experience Eliminate Market Anomalies?,2003,article,1214,0.10136094180512649,first,1,0,0
+2,https://openalex.org/W1524056198,What Experimental Protocol Influence Disparities Between Actual and Hypothetical Stated Values?,2001,article,973,0.08123904149620105,first,0,0,1
+3,https://openalex.org/W2165584372,Do Professional Traders Exhibit Myopic Loss Aversion? An Experimental Analysis,2005,article,777,0.06487434248977206,last,0,0,0
+4,https://openalex.org/W2148440443,The behavioralist as tax collector: Using natural field experiments to enhance tax compliance,2017,article,730,0.060950154462720216,middle,0,0,0
+5,https://openalex.org/W2102907642,Gender differences in revealed risk taking: evidence from mutual fund investors,2002,article,555,0.0463388160641229,last,0,0,1
+6,https://openalex.org/W2086118679,The Effects of Environmental Regulations on Foreign Direct Investment,2000,article,484,0.04041078734240628,first,0,0,1
+7,https://openalex.org/W2054357326,The environmental Kuznets curve: does one size fit all?,1999,article,466,0.0389079068214077,first,0,0,1
+8,https://openalex.org/W1987211636,Do Explicit Warnings Eliminate the Hypothetical Bias in Elicitation Procedures? Evidence from Field Auctions for Sportscards,2001,article,454,0.03790598647407531,first,0,1,0
+9,https://openalex.org/W2059852495,Effects of Environmental Regulations on Manufacturing Plant Births: Evidence from a Propensity Score Matching Estimator,2003,article,402,0.033564331635634964,first,0,0,0
+10,https://openalex.org/W2142117488,Are CO2 Emission Levels Converging Among Industrial Countries?,2003,article,391,0.03264590465058028,last,0,0,0
+11,https://openalex.org/W2140872471,The Environmental Kuznets Curve: Real Progress or Misspecified Models?,2003,article,355,0.02964014360858312,middle,0,0,0
+12,https://openalex.org/W2023672597,"Bureaucratic corruption, environmental policy and inbound US FDI: theory and evidence",2002,article,289,0.02412958169825499,middle,0,0,1
+13,https://openalex.org/W2056125794,One Swallow Doesn't Make a Summer: New Evidence on Anchoring Effects,2013,article,280,0.023378141437755698,last,0,0,0
+14,https://openalex.org/W2145143898,Consumers’ misunderstanding of health insurance,2013,article,263,0.021958754279034817,middle,0,0,0
+15,https://openalex.org/W2167086923,Environmental Regulations and New Plant Location Decisions: Evidence from a Meta‐Analysis,2002,article,260,0.02170827419220172,middle,0,0,1
+16,https://openalex.org/W2106264727,Calibration of the difference between actual and hypothetical valuations in a field experiment,1998,article,230,0.019203473323870752,first,0,0,1
+17,https://openalex.org/W2049501216,Consequentiality: A Theoretical and Experimental Exploration of a Single Binary Choice,2014,article,224,0.018702513150204558,last,0,0,0
+18,https://openalex.org/W2002884515,The effect of varying the causes of environmental problems on stated WTP values: evidence from a field study,2004,article,220,0.018368539701093763,middle,0,0,0
+19,https://openalex.org/W2157799850,Using Choice Experiments to Value Non-Market Goods and Services: Evidence from Field Experiments,2006,article,197,0.016448192368706687,first,0,0,0
+20,https://openalex.org/W2759432548,How Elections Matter: Theory and Evidence from Environmental Policy*,2006,article,178,0.014861818485430408,first,0,0,0
+21,https://openalex.org/W2607162680,Putting a value on injuries to natural assets: The BP oil spill,2017,article,169,0.014110378224931119,middle,0,0,0
+22,https://openalex.org/W2141619774,Non-renewable resource prices: Deterministic or stochastic trends?,2006,article,159,0.01327544460215413,middle,0,0,0
+23,https://openalex.org/W2091788384,US county-level determinants of inbound FDI: evidence from a two-step modified count data model,2001,article,139,0.011605577356600151,first,0,0,1
+24,https://openalex.org/W2087901445,Effects of environmental regulation on foreign and domestic plant births: is there a home field advantage?,2004,article,128,0.010687150371545462,first,0,0,0
+25,https://openalex.org/W2063390365,Effects of air quality regulation on the destination choice of relocating plants,2003,article,128,0.010687150371545462,first,0,0,0
+26,https://openalex.org/W3125844915,Optimal Institutional Arrangements for Transboundary Pollutants in a Second-Best World: Evidence from a Differential Game with Asymmetric Players,2001,article,127,0.010603657009267763,first,0,0,1
+27,https://openalex.org/W1999768633,Have Air Pollutant Emissions Converged among U. S. Regions? Evidence from Unit Root Tests,1999,article,124,0.010353176922434667,first,0,0,1
+28,https://openalex.org/W2116979732,Using <i>Ex Ante</i> Approaches to Obtain Credible Signals for Value in Contingent Markets: Evidence from the Field,2007,article,120,0.01001920347332387,last,0,0,0
+29,https://openalex.org/W1978055245,The Case of the Missing Pollution Haven Hypothesis,2004,article,100,0.008349336227769892,last,0,0,0
+30,https://openalex.org/W2076323962,Calibration of Willingness-to-Accept,2002,article,90,0.007514402604992903,first,0,0,1
+31,https://openalex.org/W2766843744,Scaling for Economists: Lessons from the Non-Adherence Problem in the Medical Literature,2017,article,77,0.006428988895382817,middle,0,0,0
+32,https://openalex.org/W2144454777,Information Cascades: Evidence from a Field Experiment with Financial Market Professionals,2004,article,76,0.006345495533105118,last,0,0,0
+33,https://openalex.org/W1984407178,The Market: Catalyst for Rationality and Filter of Irrationality,2008,article,75,0.006262002170827419,first,0,0,0
+34,https://openalex.org/W2008714056,"Shadow prices, environmental stringency, and international competitiveness",2005,article,75,0.006262002170827419,middle,0,0,0
+35,https://openalex.org/W2980302077,How can experiments play a greater role in public policy? Twelve proposals from an economic model of scaling,2020,article,73,0.006095015446272022,middle,0,0,0
+36,https://openalex.org/W2107460714,REGULATORY FEDERALISM AND THE DISTRIBUTION OF AIR POLLUTANT EMISSIONS*,2007,article,71,0.005928028721716623,middle,0,0,0
+37,https://openalex.org/W3127880630,The $100 Million Nudge: Increasing Tax Compliance of Businesses and the Self-Employed Using a Natural Field Experiment,2020,article,61,0.005093095098939634,middle,0,0,0
+38,https://openalex.org/W1909688980,Is Hypothetical Bias a Universal Phenomenon? A Multinational Investigation,2008,article,58,0.004842615012106538,last,0,0,0
+39,https://openalex.org/W2015394005,The Unintended Disincentive in the Clean Air Act,2004,article,53,0.004425148200718043,first,0,0,0
+40,https://openalex.org/W2168071960,Examining Trends of Criteria Air Pollutants: Are the Effects of Governmental Intervention Transitory?,2004,article,50,0.004174668113884946,last,0,0,0
+41,https://openalex.org/W3123760536,Field Experiments in Labor Economics,2010,preprint,49,0.004091174751607247,first,0,0,0
+42,https://openalex.org/W2071301228,Measuring the effects of air quality regulations on “dirty” firm births: Evidence from the neo‐and mature‐regulatory periods,2000,article,48,0.0040076813893295486,first,0,0,1
+43,https://openalex.org/W2232734197,Using Random nth Price Auctions to Value Non-Market Goods and Services,2003,article,48,0.0040076813893295486,first,0,0,0
+44,https://openalex.org/W2510845435,The Use of Field Experiments in Environmental and Resource Economics,2016,article,45,0.0037572013024964514,first,0,0,0
+45,https://openalex.org/W2095696288,Valuation on the Frontier: Calibrating Actual and Hypothetical Statements of Value,2004,article,45,0.0037572013024964514,last,0,0,0
+46,https://openalex.org/W2892163328,Do Equal Employment Opportunity Statements Backfire? Evidence From A Natural Field Experiment On Job-Entry Decisions,2018,preprint,44,0.0036737079402187527,last,0,0,0
+47,https://openalex.org/W3047255041,The $100 Million Nudge: Increasing Tax Compliance of Businesses and the Self-Employed using a Natural Field Experiment,2020,preprint,39,0.003256241128830258,middle,0,0,0
+48,https://openalex.org/W2511641285,Can Myopic Loss Aversion Explain the Equity Premium Puzzle? Evidence from a Natural Field Experiment with Professional Traders,2016,preprint,33,0.0027552809551640643,middle,0,0,0
+49,https://openalex.org/W2164613854,"Scientific Numerology, Preference Anomalies, and Environmental Policymaking",2005,article,33,0.0027552809551640643,first,0,0,0
+50,https://openalex.org/W1488916263,Environmental Protection and Economic Growth: What Do the Residuals Tell Us?,2000,article,32,0.0026717875928863656,first,0,0,1
+51,https://openalex.org/W2152328119,Can Field Experiments Return Agricultural Economics to the Glory Days?,2009,article,31,0.002588294230608667,last,0,0,0
+52,https://openalex.org/W4312083230,The $100 million nudge: Increasing tax compliance of firms using a natural field experiment,2022,article,31,0.002588294230608667,middle,0,0,0
+53,https://openalex.org/W2160571364,Investigating Risky Choices Over Losses Using Experimental Data,2005,article,30,0.0025048008683309676,last,0,0,0
+54,https://openalex.org/W3122717084,THAT’S NEWS TO ME! INFORMATION REVELATION IN PROFESSIONAL CERTIFICATION MARKETS,2010,article,29,0.002421307506053269,last,0,0,0
+55,https://openalex.org/W3122417694,"Measuring the effects of air quality regulations on ""dirty"" firm births: Evidence from the neo- and mature-regulatory periods",2000,article,26,0.002170827419220172,first,0,0,1
+56,https://openalex.org/W1678227038,Testing neoclassical competitive market theory in the field,2002,article,26,0.002170827419220172,first,0,0,1
+57,https://openalex.org/W3122726624,The Value of Time in the United States: Estimates from Nationwide Natural Field Experiments,2020,article,24,0.0020038406946647743,middle,0,0,0
+58,https://openalex.org/W2238810176,Homo economicus evolves,2008,article,22,0.0018368539701093763,last,0,0,0
+59,https://openalex.org/W2141608495,Evidence of Early Withdrawal in Time Deposit Portfolios,1999,article,21,0.0017533606078316774,middle,0,0,1
+60,https://openalex.org/W2132277015,Economic Valuation of Health for Environmental Policy: Comparing Alternative Approaches. Introduction and Overview,2006,article,18,0.0015028805209985807,last,0,0,0
+61,https://openalex.org/W2008093791,Spatial aspects of pollution control when pollutants have synergistic effects: Evidence from a differential game with asymmetric information,1999,article,18,0.0015028805209985807,first,0,0,1
+62,https://openalex.org/W2162059404,Is the Endangered Species Act Endangering Species?,2006,article,18,0.0015028805209985807,first,0,0,0
+63,https://openalex.org/W4230818025,Have Air Pollutant Emissions Converged Among U.S. Regions? Evidence from Unit Root Tests,1999,article,17,0.0014193871587208817,first,0,0,1
+64,https://openalex.org/W3122626195,Are CO2 Emission Levels Converging Among Industrial Countries,2003,preprint,16,0.0013358937964431828,first,0,0,0
+65,https://openalex.org/W2150802554,Optimal Institutional Arrangements for Transboundary Pollutants in a Second-Best World: Evidence from a Differential Game with Asymmetric Players,2000,article,16,0.0013358937964431828,first,0,0,1
+66,https://openalex.org/W2166989935,The Economic Consequences of Electoral Accountability Revisited,2004,article,14,0.0011689070718877848,last,0,0,0
+67,https://openalex.org/W2015907439,Market share instability: an application of unit root tests to the cigarette industry,2001,article,14,0.0011689070718877848,last,0,0,1
+68,https://openalex.org/W2104775907,Investment Under Uncertainty: Testing the Options Model with Professional Traders,2010,article,13,0.001085413709610086,first,0,0,0
+69,https://openalex.org/W1593695196,The hidden costs and returns of incentives: trust and trustworthiness among CEOs,2002,article,13,0.001085413709610086,last,0,0,1
+70,https://openalex.org/W3024057057,The Behavioralist As Tax Collector: Using Natural Field Experiments to Enhance Tax Compliance,2014,preprint,12,0.0010019203473323871,middle,0,0,0
+71,https://openalex.org/W2033828847,Is foreign direct investment attracted to ‘knowledge creators’?,2004,article,12,0.0010019203473323871,last,0,0,0
+72,https://openalex.org/W4377082911,Judging Nudging: Understanding the Welfare Effects of Nudges Versus Taxes,2023,article,11,0.0009184269850546882,first,0,0,0
+73,https://openalex.org/W2983681480,That's News to Me! Information Revelation in Professional Certification Markets,2006,preprint,11,0.0009184269850546882,last,0,0,0
+74,https://openalex.org/W1607125103,Optimal Institutional Arrangements for Pollution Control,1996,article,10,0.0008349336227769892,first,0,0,1
+75,https://openalex.org/W3125815917,Using ex ante approaches to obtain credible signals for value in contingent markets: Evidence from the field,2007,preprint,10,0.0008349336227769892,last,0,0,0
+76,https://openalex.org/W3140682462,The Dozen Things Experimental Economists Should Do (More of),2019,preprint,10,0.0008349336227769892,last,0,0,0
+77,https://openalex.org/W1586083586,THE WTP/WTA DISPARITY: HAVE WE BEEN OBSERVING DYNAMIC VALUES BUT INTERPRETING THEM AS STATIC?,2003,preprint,9,0.0007514402604992904,middle,0,0,0
+78,https://openalex.org/W4206366267,The $100 Million Nudge: Increasing Tax Compliance of Firms Using a Natural Field Experiment,2022,article,8,0.0006679468982215914,middle,0,0,0
+79,https://openalex.org/W4243029239,Introduction,2017,article,8,0.0006679468982215914,first,0,0,0
+80,https://openalex.org/W3122652209,Using random nth price auctions to value non-market goods and services,2003,preprint,7,0.0005844535359438924,first,0,0,0
+81,https://openalex.org/W2046410305,Cyclicality and the Labor Market for Economists,2005,article,7,0.0005844535359438924,middle,0,0,0
+82,https://openalex.org/W2124091801,Is the Endowment Effect an Expectations Effect?,2013,article,7,0.0005844535359438924,last,0,0,0
+83,https://openalex.org/W2736915713,Nonrenewable Resource Prices: Deterministic or Stochastic Trends?,2005,preprint,7,0.0005844535359438924,middle,0,0,0
+84,https://openalex.org/W4285718406,The Social Side of Early Human Capital Formation: Using a Field Experiment to Estimate the Causal Impact of Neighborhoods,2020,article,6,0.0005009601736661936,first,0,0,0
+85,https://openalex.org/W3141534864,The Value of Time in the United States: Estimates from Nationwide Natural Field Experiments,2020,article,6,0.0005009601736661936,middle,0,0,0
+86,https://openalex.org/W1564475168,Average Derivative Estimation of Hedonic Price Models,2000,article,6,0.0005009601736661936,last,0,0,1
+87,https://openalex.org/W3020967449,A New Approach to an Age-Old Problem: Solving Externalities by Incenting Workers Directly,2016,preprint,5,0.0004174668113884946,middle,0,0,0
+88,https://openalex.org/W3124734430,Environmental Regulations and New Plant Location Decisions: Evidence from a Meta-Analysis,2002,article,5,0.0004174668113884946,middle,0,0,1
+89,https://openalex.org/W2890215504,Toward an Understanding of Learning by Doing: Evidence from an Automobile Assembly Plant,2013,preprint,5,0.0004174668113884946,middle,0,0,0
+90,https://openalex.org/W4248348791,Field Experiments,2004,article,5,0.0004174668113884946,last,0,0,0
+91,https://openalex.org/W2266260179,Politics and environmental policy: theory and evidence from U.S. states,2002,article,5,0.0004174668113884946,last,0,0,1
+92,https://openalex.org/W2353870655,The Effects of Environmental Regulation on the Competiveness of U.S. Manufacturing,2011,preprint,5,0.0004174668113884946,middle,0,0,0
+93,https://openalex.org/W3124708206,DO PROFESSIONAL TRADERS EXHIBIT MYOPIC LOSS AVERSION? AN EXPERIMENTAL ANALYSIS,2002,preprint,5,0.0004174668113884946,middle,0,0,1
+94,https://openalex.org/W3122663941,The nature and extent of discrimination in the marketplace: Evidence from the field,2004,preprint,4,0.0003339734491107957,first,0,0,0
+95,https://openalex.org/W3126115253,Field Experiments in Labor Economics,2010,article,4,0.0003339734491107957,first,0,0,0
+96,https://openalex.org/W4376854434,Judging Nudging: Understanding the Welfare Effects of Nudges Versus Taxes,2023,article,4,0.0003339734491107957,first,0,0,0
+97,https://openalex.org/W2789153643,"The Past, Present, and Future of Economics: A Celebration of the 125-Year Anniversary of the JPE and of Chicago Economics",2017,preprint,4,0.0003339734491107957,middle,0,0,0
+98,https://openalex.org/W3124005821,The Environmental Kuznets Curve: Real Progress or Misspecified Models?,2002,preprint,3,0.0002504800868330968,last,0,0,1
+99,https://openalex.org/W3121731402,The $100 Million Nudge: Increasing Tax Compliance of Businesses and the Self-Employed Using a Natural Field Experiment,2020,article,3,0.0002504800868330968,middle,0,0,0
+100,https://openalex.org/W3124555638,"Research Registries: Facts, Myths, and Possible Improvements",2020,article,3,0.0002504800868330968,last,0,0,0
+101,https://openalex.org/W3125388673,The Case of the Missing Pollution Haven Hypothesis,2004,preprint,3,0.0002504800868330968,first,0,0,0
+102,https://openalex.org/W3123177750,The Market: Catalyst for Rationality and Filter of Irrationality,2004,preprint,3,0.0002504800868330968,first,0,0,0
+103,https://openalex.org/W3124687934,Interview Scheduling Strategies of New Ph. D. Economists,2000,article,3,0.0002504800868330968,first,0,0,1
+104,https://openalex.org/W3121550457,Effects of air quality regulation on the destination choice of relocating plants,2003,preprint,3,0.0002504800868330968,first,0,0,0
+105,https://openalex.org/W2291517285,Field experiments in the developed world: an introduction,2014,preprint,2,0.00016698672455539785,first,0,0,0
+106,https://openalex.org/W2248796388,Is hypothetical bias a universal phenomenon? A multinational investigation,2008,preprint,2,0.00016698672455539785,middle,0,0,0
+107,https://openalex.org/W4323049653,Editor’s Introduction to <i>JPE Micro</i>,2023,article,2,0.00016698672455539785,first,0,0,0
+108,https://openalex.org/W2978323883,Toward an Understanding of Reference-Dependent Labor Supply: Theory and Evidence from a Field Experiment,2014,preprint,2,0.00016698672455539785,last,0,0,0
+109,https://openalex.org/W1963684536,Industry chasing and the tax effect: a question of approach,1998,article,2,0.00016698672455539785,last,0,0,1
+110,https://openalex.org/W1988389881,A method for valuing global ecosystem services,1998,article,2,0.00016698672455539785,middle,0,0,1
+111,https://openalex.org/W3123144232,Field experiments in economics: An introduction,2005,preprint,2,0.00016698672455539785,last,0,0,0
+112,https://openalex.org/W3121433624,Stakes Matter in Ultimatum Games,2011,preprint,2,0.00016698672455539785,last,0,0,0
+113,https://openalex.org/W3125894956,The Effects of Environmental Regulations on Foreign Direct Investment,2000,preprint,2,0.00016698672455539785,last,0,0,1
+114,https://openalex.org/W2125164506,DIMINISHING MARGINAL VALUE,2004,preprint,2,0.00016698672455539785,middle,0,0,0
+115,https://openalex.org/W2599615125,"""Beggar thy Neighbor:"" Testing for Free Riding in State-Level Endangered Species Expenditures",2002,preprint,2,0.00016698672455539785,middle,0,0,1
+116,https://openalex.org/W2548269444,Environmental Regulations and New Plant Location Decisions: Evidence from a Meta-Analysis,2002,article,2,0.00016698672455539785,last,0,0,1
+117,https://openalex.org/W4226275993,What Motivates People to Pay Their Taxes? Evidence from Four Experiments on Tax Compliance,2022,article,2,0.00016698672455539785,middle,0,0,0
+118,https://openalex.org/W2157626730,Do causes of environmental problems affect Hicksian equivalent surplus? Evidence from the field,2004,article,2,0.00016698672455539785,middle,0,0,0
+119,https://openalex.org/W2074055764,Ranking State Environmental Outputs: Evidence from Panel Data,2000,article,2,0.00016698672455539785,first,0,0,1
+120,https://openalex.org/W3124366008,The environmental Kuznets curve: does one size fit all,1999,preprint,1,8.349336227769892e-05,last,0,0,1
+121,https://openalex.org/W3125414229,Effects of Environmental Regulations on Manufacturing Plant Births: Evidence from a Propensity Score Matching Estimator,2003,preprint,1,8.349336227769892e-05,middle,0,0,0
+122,https://openalex.org/W1593229184,Testing neoclassical competitive market theory in the field: Some pilot results,2002,preprint,1,8.349336227769892e-05,first,0,0,1
+123,https://openalex.org/W3160054255,Experimental tests of the endowment effect and the Coase theorem,2020,preprint,1,8.349336227769892e-05,first,0,0,0
+124,https://openalex.org/W3123833350,Design and Analysis of Cluster-Randomized Field Experiments in Panel Data Settings,2019,article,1,8.349336227769892e-05,middle,0,0,0
+125,https://openalex.org/W2892281208,Information Cascades: Evidence from a Field Experiment with Financial Market Professionals,2007,preprint,1,8.349336227769892e-05,last,0,0,0
+126,https://openalex.org/W4376456340,Toward an Understanding of Tax Amnesties: Theory and Evidence from a Natural Field Experiment,2023,article,1,8.349336227769892e-05,middle,0,0,0
+127,https://openalex.org/W4403195730,Toward an understanding of tax amnesty take-up: Evidence from a natural field experiment,2024,article,1,8.349336227769892e-05,middle,0,0,0
+128,https://openalex.org/W3124551813,Investigating Risky Choices Over Losses Using Experimental Data,2006,article,1,8.349336227769892e-05,last,0,0,0
+129,https://openalex.org/W3121548922,The Effects of Environmental Regulation on the Competitiveness of U.S. Manufacturing,2011,article,1,8.349336227769892e-05,middle,0,0,0
+130,https://openalex.org/W2029198944,A Natural Experiment on the ‘Race to the Bottom’ Hypothesis: Testing for Stochastic Dominance in Temporal Pollution Trends*,2003,article,1,8.349336227769892e-05,last,0,0,0
+131,https://openalex.org/W2541744363,Have Air Pollutant Emissions Converged Amongst U.S. Regions,1999,preprint,1,8.349336227769892e-05,first,0,0,1
+132,https://openalex.org/W3122453223,Recent Advances in Environmental Economics,2002,preprint,1,8.349336227769892e-05,first,0,0,1
+133,https://openalex.org/W3185974626,Toward an Understanding of the Economics of Apologies: Evidence from a Large-Scale Natural Field Experiment,2018,preprint,1,8.349336227769892e-05,middle,0,0,0
+134,https://openalex.org/W3122948111,Can Myopic Loss Aversion Explain the Equity Premium Puzzle? Evidence from a Natural Field Experiment with Professional Traders,2016,article,1,8.349336227769892e-05,middle,0,0,0
+135,https://openalex.org/W4406316283,Valuing Non-Marketed Goods and Services Using a List Experiment in the Field,2025,preprint,1,8.349336227769892e-05,first,0,0,0
+136,https://openalex.org/W4313034872,Nothing Propinks Like Propinquity: Using Machine Learning to Estimate the Effects of Spatial Proximity in the Major League Baseball Draft,2022,article,1,8.349336227769892e-05,middle,0,0,0
+137,https://openalex.org/W1608804795,CLOSING THE BARN DOOR: CONSTRUCTION AND ENDANGERED SPECIES RESTRICTIONS,2002,article,1,8.349336227769892e-05,middle,0,0,1
+138,https://openalex.org/W1973892352,Experimental approaches to public economics: guest editors' introduction,2004,article,1,8.349336227769892e-05,last,0,0,0
+139,https://openalex.org/W2069999208,"When Economists Dream, They Dream of Clear Skies",2005,article,1,8.349336227769892e-05,last,0,0,0
+140,https://openalex.org/W3123216617,"When Economists Dream, They Dream of Clear Skies",2005,preprint,0,0.0,middle,0,0,0
+141,https://openalex.org/W4411193356,Reservation Wages and Workers’ Valuation of Job Flexibility: Evidence from a Natural Field Experiment,2025,article,0,0.0,middle,0,0,0
+142,https://openalex.org/W3126122412,A Natural Experiment on the 'Race to the Bottom' Hypothesis: Testing for Stochastic Dominance in Temporal Pollution Trends,2003,preprint,0,0.0,first,0,0,0
+143,https://openalex.org/W3121894956,Digging into background risk: Experiments with farmers and students,2012,preprint,0,0.0,last,0,0,0
+144,https://openalex.org/W3125373135,On the Generalizability of Experimental Results in Economics: With a Response to Commentors,2013,article,0,0.0,last,0,0,0
+145,https://openalex.org/W4401749163,Toward an Understanding of the Economics of Prosumers: Evidence from a Natural Field Experiment,2024,article,0,0.0,first,0,0,0
+146,https://openalex.org/W3124013953,"WTP/WTA Disparity: Have We Been Observing Dynamic Values but Interpreting Them as Static?, The",2003,article,0,0.0,middle,0,0,0
+147,https://openalex.org/W3122454628,The Social Side of Early Human Capital Formation: Using a Field Experiment to Estimate the Causal Impact of Neighborhoods,2020,article,0,0.0,first,0,0,0
+148,https://openalex.org/W3122935810,Using choice experiments to value non-market goods and services: Evidence from field experiments,2006,preprint,0,0.0,first,0,0,0
+149,https://openalex.org/W3122388824,Exploring the Impact of Financial Incentives on Stereotype Threat: Evidence from a Pilot Study,2008,preprint,0,0.0,middle,0,0,0
+150,https://openalex.org/W2273292222,Testing neoclassical competitive market theory in the field,2002,article,0,0.0,first,0,0,1
+151,https://openalex.org/W3123058231,US county-level determinants of inbound FDI: evidence from a two-step modified count data model,2001,preprint,0,0.0,first,0,0,1
+152,https://openalex.org/W4401687305,Toward an Understanding of the Economics of Prosumers: Evidence from a Natural Field Experiment,2024,article,0,0.0,first,0,0,0
+153,https://openalex.org/W3122818415,Consumersâ€™ Misunderstanding of Health Insurance,2013,preprint,0,0.0,middle,0,0,0
+154,https://openalex.org/W2242940291,Do causes of environmental problems affect hicksian equivalent surplus? Evidence from the field,2004,preprint,0,0.0,last,0,0,0
+155,https://openalex.org/W3164952059,Myopic Loss Aversion and Investment Decisions: From the Laboratory to the Field,2021,article,0,0.0,middle,0,0,0
+156,https://openalex.org/W4407040729,Have We Got News For You: Firm-Level Evidence on the Optimal Choice of Expected Capacity Utilization,2025,preprint,0,0.0,last,0,0,0
+157,https://openalex.org/W4388688367,Economics of Scale—Lessons for Radiologists,2023,article,0,0.0,last,0,0,0
+158,https://openalex.org/W4375933768,Toward an Understanding of Tax Amnesties: Theory and Evidence from a Natural Field Experiment,2023,article,0,0.0,middle,0,0,0
+159,https://openalex.org/W4386286173,Stress Testing Structural Models of Unobserved Heterogeneity: Robust Inference on Optimal Nonlinear Pricing,2023,article,0,0.0,middle,0,0,0
+160,https://openalex.org/W3124790517,Internal Increasing Returns to Scale and Economic Growth,2007,preprint,0,0.0,first,0,0,0
+161,https://openalex.org/W3005902283,"Fundraising Design: Key Issues, Unifying Framework, and Open Puzzles",2020,article,0,0.0,middle,0,0,0
+162,https://openalex.org/W3122523013,Diminishing Marginal Value,2004,article,0,0.0,middle,0,0,0
+163,https://openalex.org/W2074392440,Is a race to the bottom rational? Evidence from a differential game,1999,article,0,0.0,first,0,0,1
+164,https://openalex.org/W1565172320,Cyclicality and the Labor Market,2004,preprint,0,0.0,middle,0,0,0
+165,https://openalex.org/W3123109464,Do explicit warnings eliminate the hypothetical bias in elicitation procedures? Evidence from field auctions for sportscards,2001,preprint,0,0.0,first,0,0,1
+166,https://openalex.org/W3122975132,Auction mechanisms and the measurement of WTP and WTA,2001,preprint,0,0.0,middle,0,0,1
+167,https://openalex.org/W1488413900,“Beggar thy Neighbor:” Testing for Free Riding in State-Level Endangered Species Expenditures,2002,article,0,0.0,first,0,0,1
+168,https://openalex.org/W4386452598,Stress Testing Structural Models of Unobserved Heterogeneity: Robust Inference on Optimal Nonlinear Pricing,2023,article,0,0.0,middle,0,0,0
+169,https://openalex.org/W3125546781,Gender Differences In Revealed Risk Taking: Evidence From Mutual Fund Investors,2002,preprint,0,0.0,last,0,0,1
+170,https://openalex.org/W3125521059,Using Field Experiments in Environmental and Resource Economics,2013,article,0,0.0,first,0,0,0
+171,https://openalex.org/W3125258156,Valuation on the Frontier: Calibrating Actual and Hypothetical Statements of Value,2004,preprint,0,0.0,last,0,0,0
+172,https://openalex.org/W3124255307,One Swallow Doesn't Make a Summer: Reply to Kataria,2014,preprint,0,0.0,first,0,0,0
+173,https://openalex.org/W3124704904,Consequentiality: A Theoretical and Experimental Exploration of a Single Binary Choice,2015,preprint,0,0.0,last,0,0,0
+174,https://openalex.org/W3122314347,Effects of environmental regulation on foreign and domestic plant births: is there a home field advantage?,2004,preprint,0,0.0,first,0,0,0
+175,https://openalex.org/W3123814419,Scientific Numerology Preference Pnomalies and Environmental Policymaking,2005,preprint,0,0.0,first,0,0,0
+176,https://openalex.org/W3121180020,"Gender, Competitiveness, and Socialization at a Young Age: Evidence From a Matrilineal and a Patriarchal Society",2013,preprint,0,0.0,middle,0,0,0
+177,https://openalex.org/W4313635938,Nothing Propinks Like Propinquity: Using Machine Learning to Estimate the Effects of Spatial Proximity in the Major League Baseball Draft,2022,article,0,0.0,middle,0,0,0
+178,https://openalex.org/W4391176251,The Voltage Effect,2024,article,0,0.0,first,0,0,0
+179,https://openalex.org/W3121151454,Market share instability: an application of unit root tests to the cigarette industry,2001,preprint,0,0.0,last,0,0,1
+180,https://openalex.org/W3124007609,The Nature of Excess: Using Randomized Treatments to Investigate Price Dynamics,2010,preprint,0,0.0,middle,0,0,0
+181,https://openalex.org/W3122419024,Experimental approaches to public economics: guest editors' introduction,2005,preprint,0,0.0,last,0,0,0
+182,https://openalex.org/W1014439265,Commitment Costs and the Basic Independence Assumption: Evidence from the Field,2002,article,0,0.0,middle,0,0,1
+183,https://openalex.org/W3124583493,Cyclicality and the Labor Market for Economists,2004,article,0,0.0,middle,0,0,0
+184,https://openalex.org/W3125280010,"Shadow prices, environmental stringency, and international competitiveness",2006,preprint,0,0.0,middle,0,0,0
+185,https://openalex.org/W3124119292,Calibration of the difference between actual and hypothetical valuations in a field experiment,1998,preprint,0,0.0,first,0,0,1
+186,https://openalex.org/W3136000988,The impact of management practices on employee productivity: a field experiment with airline captains,2020,article,0,0.0,middle,0,0,0
+187,https://openalex.org/W2590236838,Regulatory Federalism and the Distribution of Air Pollutant Emissions,2007,article,0,0.0,middle,0,0,0
