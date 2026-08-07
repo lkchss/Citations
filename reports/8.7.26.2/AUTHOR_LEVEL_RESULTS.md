@@ -15,10 +15,28 @@ For the current descriptive work:
 These definitions are useful for screening. They are not yet a causal research
 design.
 
-## Presentation takeaway
+## Central comparison: different paths to prominence
+
+John List provides a useful contrast with economists whose prominence is much
+more concentrated in one paper.
+
+![Hit concentration and citation changes across author cases](../8.7.26/author_hit_profiles/author_prominence_contrast.svg)
+
+| Author | Largest economics-paper share | Raw older-paper change | Interpretation |
+|---|---:|---:|---|
+| John List | 10.1% | +1.686 | Gradual, multi-paper prominence; pretrend fails |
+| Michael Jensen | 69.5% | +5.740 | Concentrated hit; large rise but pretrend fails |
+| Manuel Arellano | 57.7% | +0.150 | Concentrated hit; small rise |
+| Robert Solow | 56.0% | +0.093 | Concentrated hit; sparse, near-zero rise |
+
+This juxtaposition is more informative than presenting the authors as four
+versions of the same treatment. A dominant paper is not necessary for a visible
+rise in older-paper citations, and a dominant paper does not guarantee a large
+rise. The result is descriptive because List's event represents a breakthrough
+period, while the other events represent publication of a candidate hit.
 
 The author cases show patterns consistent with citation spillovers, but none is
-currently a clean causal example. The most valuable result is diagnostic:
+currently a clean causal example:
 
 1. John List illustrates gradual prominence and a visible rise in citations to
    older work, but he never meets the 50% big-hit rule.
@@ -28,8 +46,9 @@ currently a clean causal example. The most valuable result is diagnostic:
 4. Robert Solow's older-paper citation counts are too sparse for a persuasive
    individual estimate.
 
-The cases therefore motivate the subject-level analysis; they should not be
-presented as four independent demonstrations of an effect.
+The cases therefore motivate heterogeneity in the subject-level analysis:
+compare gradual versus concentrated prominence instead of imposing a single
+50% treatment definition on every author.
 
 ## Result 1: the definition of a big hit matters
 
@@ -147,15 +166,13 @@ to unrelated work.
 
 ## Recommended presentation sequence
 
-1. Show the denominator figure to explain why candidate classification is
-   provisional.
-2. Use John List as the motivating career narrative and show his fixed-cohort
-   time series.
-3. Show the concentration statistics to explain that any effect is unlikely to
-   be uniform across papers.
-4. Show the matched comparison and emphasize the failed pretrend.
-5. Transition to the subject-level analysis as the attempt to move beyond
-   selected anecdotes.
+1. Lead with the List-versus-concentrated-hit comparison figure.
+2. Use John List's timeline to illustrate gradual prominence.
+3. Show the denominator figure to explain why classification is provisional.
+4. Show the concentration statistics: both prominence across an author's
+   portfolio and spillovers across older papers can be concentrated.
+5. Show the matched comparison and emphasize the failed pretrend.
+6. Transition to subject-level heterogeneity by type of prominence event.
 
 ## Immediate author-level improvements
 
@@ -175,6 +192,7 @@ Before elevating any case to primary evidence:
 ## Supporting files
 
 - [Author profiles](../8.7.26/author_hit_profiles/author_hit_profiles.csv)
+- [Author contrast data](../8.7.26/author_hit_profiles/author_prominence_contrast.csv)
 - [John List paper contributions](../8.7.26/john_list_case_study/paper_contributions.csv)
 - [Matched-control summary](../8.7.26/author_matched_controls/matched_control_summary.csv)
 - [Matched pairs](../8.7.26/author_matched_controls/matched_pairs.csv)
