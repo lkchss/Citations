@@ -3,6 +3,15 @@
 This folder compiles the economics citation-prominence outputs produced during
 the August 7, 2026 project audit and exploratory analysis session.
 
+## Canonical connected reports
+
+- [`author_level_results.md`](author_level_results.md) connects the candidate
+  screen, John List case study, Jensen/Arellano/Solow profiles, original
+  figures, and matched-control specifications.
+- [`subject_level_results.md`](subject_level_results.md) connects the original
+  economics event study, panel-balance diagnosis, publication-risk correction,
+  age standardization, and ingestion outputs.
+
 ## Ingestion-ready Package
 
 Directory: [`ingestion_ready/`](ingestion_ready/)
