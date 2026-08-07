@@ -14,7 +14,7 @@ import duckdb
 
 
 QUERY = r"""
-WITH base AS (
+WITH raw_base AS (
   SELECT a.author_id, a.author_name, a.author_position, w.work_id, w.title,
          w.publication_year, w.type, coalesce(w.cited_by_count, 0) AS citations,
          w.subfield_name, w.topic_name
@@ -23,6 +23,20 @@ WITH base AS (
   WHERE a.subject = 'economics_econometrics_and_finance'
     AND w.type IN ('article', 'preprint', 'review')
     AND w.publication_year IS NOT NULL
+),
+base AS (
+  -- Defensive deduplication: incremental subject builds may contain repeated
+  -- work or authorship records. Never allow those rows to multiply a career
+  -- denominator or a candidate hit's citation count.
+  SELECT * EXCLUDE (_duplicate_rank)
+  FROM (
+    SELECT *, row_number() OVER (
+      PARTITION BY author_id, work_id
+      ORDER BY (author_name IS NOT NULL) DESC, author_name, author_position
+    ) AS _duplicate_rank
+    FROM raw_base
+  )
+  WHERE _duplicate_rank = 1
 ),
 ranked AS (
   SELECT *, row_number() OVER (
@@ -126,14 +140,15 @@ def main() -> None:
     (args.output_dir / "economics_big_hit_candidates.html").write_text(report, encoding="utf-8")
     audit = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "database": str(args.database), "definition": "economics research-work portfolio",
+        "database": str(args.database), "definition": "deduplicated economics research-work portfolio",
         "work_types": ["article", "preprint", "review"],
         "minimum_author_citations": args.minimum_author_citations,
         "minimum_hit_share_strict": args.minimum_hit_share,
         "minimum_prior_works": args.minimum_prior_works,
         "rows_written": len(records), "shortlist_rows": len(shortlist), "limit": args.limit,
         "temp_directory": str(args.temp_directory),
-        "caveat": "Requires all-field denominator, deduplication, and hit-reference validation before final classification.",
+        "deduplication_key": ["author_id", "work_id"],
+        "caveat": "Requires an all-field denominator, intellectual-work version clustering, identity review, and hit-reference validation before final classification.",
     }
     (args.output_dir / "economics_big_hit_screen_audit.json").write_text(
         json.dumps(audit, indent=2), encoding="utf-8")

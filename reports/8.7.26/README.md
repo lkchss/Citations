@@ -3,6 +3,16 @@
 This folder compiles the economics citation-prominence outputs produced during
 the August 7, 2026 project audit and exploratory analysis session.
 
+## Ingestion-ready Package
+
+Directory: [`ingestion_ready/`](ingestion_ready/)
+
+This portable package can be rebuilt without the external SSD. It contains
+tidy CSVs, combined JSONL records, five SVG figures, a data dictionary, and a
+checksummed manifest. Start with
+[`headline_results.csv`](ingestion_ready/headline_results.csv) for headline
+values or [`results.jsonl`](ingestion_ready/results.jsonl) for direct ingestion.
+
 ## John List Case Study
 
 Directory: [`john_list_case_study/`](john_list_case_study/)

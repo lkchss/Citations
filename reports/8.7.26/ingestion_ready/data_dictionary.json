@@ -1,0 +1,35 @@
+{
+  "headline_results.csv": {
+    "primary_key": [
+      "analysis",
+      "metric",
+      "window"
+    ],
+    "description": "Key counts, descriptive estimates, and citation reconciliation values"
+  },
+  "economics_event_time_tidy.csv": {
+    "primary_key": [
+      "analysis",
+      "event_time",
+      "outcome"
+    ],
+    "unit": "author-focal-paper-hit-year, aggregated with equal unit weight",
+    "description": "Economics publication-event outcomes"
+  },
+  "john_list_fixed_cohort_tidy.csv": {
+    "primary_key": [
+      "author_id",
+      "year"
+    ],
+    "unit": "fixed cohort of 49 prior papers, aggregated by year",
+    "description": "John List exploratory time series"
+  },
+  "results.jsonl": {
+    "description": "Union of all three result tables with record_type discriminator"
+  },
+  "common_fields": {
+    "causal": "Always 0 for this exploratory package",
+    "event_time": "Calendar year minus candidate-hit publication year",
+    "estimate": "Reported descriptive value in the units named by outcome"
+  }
+}

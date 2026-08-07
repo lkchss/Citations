@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-07T14:37:08.348077+00:00",
+  "status": "exploratory_descriptive",
+  "causal_claim": false,
+  "source_scope": "committed aggregate outputs; no external SSD required",
+  "definitions": {
+    "hit": "paper with >50% of an author's economics-portfolio citations and at least 101 citations",
+    "unrelated": "older focal paper absent from hit paper references",
+    "treatment_time": "hit publication year"
+  },
+  "warnings": [
+    "economics-only treatment denominator",
+    "OpenAlex author identity contamination",
+    "work-version duplication",
+    "strong pre-event trend",
+    "no counterfactual group"
+  ],
+  "files": [
+    {
+      "name": "README.md",
+      "bytes": 702,
+      "sha256": "983dcdaf191a5412d31c44045edcc0967b7617f8d996b70ed30d3d235b93894e"
+    },
+    {
+      "name": "data_dictionary.json",
+      "bytes": 1029,
+      "sha256": "256a8df904e3e677a26fd56a327f13dc49eeac86db12eba34ea010b640d42958"
+    },
+    {
+      "name": "economics_event_levels_and_change.svg",
+      "bytes": 3201,
+      "sha256": "407843a359a12044b8d7fe0aa7100e7e059febaaeb8879b80175c7bd3363e3ee"
+    },
+    {
+      "name": "economics_event_time_tidy.csv",
+      "bytes": 5785,
+      "sha256": "194e20b3770174d881d4e3ab7faa95852b11e4b3de9e8167167230942da21a6a"
+    },
+    {
+      "name": "economics_positive_citation_share.svg",
+      "bytes": 2743,
+      "sha256": "b4a1f9cd8a70b82aa384b874fc356d513fb6a93e381a8ec76f18ff2e261ccb67"
+    },
+    {
+      "name": "headline_results.csv",
+      "bytes": 842,
+      "sha256": "76529c738e845430dfb169c3735818e1d53454cc843c001a1e2bc36d4b78a067"
+    },
+    {
+      "name": "john_list_fixed_cohort_mean.svg",
+      "bytes": 2550,
+      "sha256": "904eb33eea6e6ccd04cc04dd32f1005a267e0699f7eee77ca2e73b0a05bf03be"
+    },
+    {
+      "name": "john_list_fixed_cohort_positive_share.svg",
+      "bytes": 2559,
+      "sha256": "54ef437e87ed25ccdcc3a567f23e468d66a64a5e1ab39fe865b853b70cb6ffcb"
+    },
+    {
+      "name": "john_list_fixed_cohort_tidy.csv",
+      "bytes": 1813,
+      "sha256": "3d4d75de9e1525356d29ae2ef4dae196fb54bd9eecf544668367a5c53b7e3fa9"
+    },
+    {
+      "name": "john_list_paper_change_concentration.svg",
+      "bytes": 4547,
+      "sha256": "c7dc09f90e8099efe6668ebe51df853e750e2557de2acdf9def404f1d9160ad8"
+    },
+    {
+      "name": "results.jsonl",
+      "bytes": 21750,
+      "sha256": "cbba440b50b5f6148e0e1896c9deeab40e1dce835ddc977ff3b19fb05bf8ff50"
+    }
+  ]
+}

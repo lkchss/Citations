@@ -1,0 +1,9 @@
+analysis,metric,value,window,interpretation
+economics_big_hit,authors,11155,all,distinct OpenAlex author entities
+economics_big_hit,focal_pairs,75882,all,deduplicated author-focal-hit units
+economics_big_hit,pre_mean,0.5160934081863947,event_time_-5_to_-1,mean annual focal-paper citations
+economics_big_hit,post_mean,0.8643051052950634,event_time_0_to_4,mean annual focal-paper citations
+economics_big_hit,raw_pre_post_difference,0.3482116971086687,post_minus_pre,descriptive; not causal
+john_list,local_economics_work_citations,11977,current_snapshot,economics-only work total
+john_list,reconstructed_economics_citations,12030,available_reference_years,annual citations reconstructed from local references
+john_list,openalex_author_object_citations,46684,live_2026-08-07,all-field author-entity diagnostic; identity contamination suspected
