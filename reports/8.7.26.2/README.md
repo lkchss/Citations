@@ -11,6 +11,9 @@ or image files.
 - [Economics subject-level results](SUBJECT_LEVEL_RESULTS.md): original event
   pattern, panel-balance diagnosis, paper-age normalization, and the fully
   balanced specification.
+- [Original regressions and paper-age controls](REGRESSION_RESULTS.md): exact
+  reproduction of the GitHub regressions and new age-control sensitivity
+  estimates made possible by the recovered SSD input.
 
 ## Main result
 
