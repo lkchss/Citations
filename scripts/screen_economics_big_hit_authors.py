@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import html
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -125,19 +124,30 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(shortlist)
 
-    table_rows = "".join(
-        "<tr>" + "".join([
-            f"<td>{html.escape(str(row['author_name']))}</td>",
-            f"<td>{html.escape(str(row['hit_title']))}</td>",
-            f"<td>{row['hit_publication_year']}</td>",
-            f"<td>{row['hit_cited_by_count']:,}</td>",
-            f"<td>{row['economics_portfolio_citations']:,}</td>",
-            f"<td>{row['hit_share']:.1%}</td>",
-            f"<td>{row['prior_works']}</td>",
-        ]) + "</tr>" for row in shortlist[:250]
+    clean = lambda value: str(value).replace("|", "\\|").replace("\n", " ")
+    table_rows = "\n".join(
+        f"| {clean(row['author_name'])} | {clean(row['hit_title'])} | {row['hit_publication_year']} | {row['hit_cited_by_count']:,} | {row['economics_portfolio_citations']:,} | {row['hit_share']:.1%} | {row['prior_works']} |"
+        for row in shortlist[:250]
     )
-    report = f"""<!doctype html><html><head><meta charset='utf-8'><title>Economics big-hit candidates</title><style>body{{font:15px system-ui;max-width:1200px;margin:40px auto;padding:0 20px}}table{{border-collapse:collapse;width:100%}}th,td{{padding:7px;border-bottom:1px solid #ddd;text-align:left}}th{{position:sticky;top:0;background:white}}.note{{background:#fffaeb;padding:14px;border-left:5px solid #f79009}}</style></head><body><h1>Economics big-hit author candidates</h1><p class='note'><strong>Screening output, not final classification.</strong> Citation shares use research works classified in the economics subject database, not each author's complete all-field OpenAlex portfolio. Reference-based unrelated-paper eligibility is the next validation stage.</p><p>Raw definition: author economics citations ≥ {args.minimum_author_citations:,}; top-work share &gt; {args.minimum_hit_share:.0%}; at least {args.minimum_prior_works} earlier research works. The displayed research shortlist additionally requires ≥{args.shortlist_minimum_prior_citations} prior citations, ≥{args.shortlist_minimum_cited_prior_works} cited prior works, and ≤{args.shortlist_maximum_hit_authors} authors on the hit. {len(shortlist):,} shortlisted among {len(records):,} raw rows shown.</p><table><thead><tr><th>Author</th><th>Candidate hit</th><th>Year</th><th>Hit cites</th><th>Portfolio cites</th><th>Share</th><th>Prior works</th></tr></thead><tbody>{table_rows}</tbody></table></body></html>"""
-    (args.output_dir / "economics_big_hit_candidates.html").write_text(report, encoding="utf-8")
+    report = f"""# Economics big-hit author candidates
+
+> **Screening output, not final classification.** Citation shares use research
+> works classified in economics, not each author's complete all-field OpenAlex
+> portfolio. Reference-based unrelated-paper eligibility is the next stage.
+
+Raw definition: author economics citations ≥ {args.minimum_author_citations:,};
+top-work share > {args.minimum_hit_share:.0%}; at least
+{args.minimum_prior_works} earlier research works. The displayed shortlist also
+requires ≥{args.shortlist_minimum_prior_citations} prior citations,
+≥{args.shortlist_minimum_cited_prior_works} cited prior works, and
+≤{args.shortlist_maximum_hit_authors} authors on the hit. **{len(shortlist):,}**
+shortlisted among **{len(records):,}** raw rows shown.
+
+| Author | Candidate hit | Year | Hit cites | Portfolio cites | Share | Prior works |
+|---|---|---:|---:|---:|---:|---:|
+{table_rows}
+"""
+    (args.output_dir / "economics_big_hit_candidates.md").write_text(report, encoding="utf-8")
     audit = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "database": str(args.database), "definition": "deduplicated economics research-work portfolio",

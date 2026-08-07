@@ -7,7 +7,6 @@ import argparse
 import csv
 import difflib
 import hashlib
-import html
 import json
 import re
 import time
@@ -109,7 +108,7 @@ def comparison_svg(rows: list[dict], path: Path) -> None:
         y = top + index * group_height
         econ = float(row["local_economics_hit_share"])
         live = float(row["live_all_field_hit_share"])
-        items.append(f"<text x='{left-14}' y='{y+30}' text-anchor='end' font-size='14'>{html.escape(row['openalex_name'])}</text><rect x='{left}' y='{y+5}' width='{econ*plot_width}' height='24' fill='#175cd3'/><rect x='{left}' y='{y+36}' width='{live*plot_width}' height='24' fill='#f79009'/><text x='{left+econ*plot_width+7}' y='{y+22}' font-size='12'>{econ:.1%}</text><text x='{left+live*plot_width+7}' y='{y+53}' font-size='12'>{live:.1%}</text>")
+        items.append(f"<text x='{left-14}' y='{y+30}' text-anchor='end' font-size='14'>{row['openalex_name']}</text><rect x='{left}' y='{y+5}' width='{econ*plot_width}' height='24' fill='#175cd3'/><rect x='{left}' y='{y+36}' width='{live*plot_width}' height='24' fill='#f79009'/><text x='{left+econ*plot_width+7}' y='{y+22}' font-size='12'>{econ:.1%}</text><text x='{left+live*plot_width+7}' y='{y+53}' font-size='12'>{live:.1%}</text>")
     threshold = left + .5 * plot_width
     path.write_text(f"""<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {width} {height}' role='img'><rect width='100%' height='100%' fill='white'/><text x='{width/2}' y='28' text-anchor='middle' font-size='21' font-weight='700'>Candidate-hit share depends on the denominator</text><text x='{width/2}' y='49' text-anchor='middle' font-size='13' fill='#475467'>Economics-only snapshot versus live all-field OpenAlex author total</text><line x1='{threshold}' y1='{top-12}' x2='{threshold}' y2='{top+3*group_height-30}' stroke='#b42318' stroke-dasharray='6 5'/><text x='{threshold+6}' y='{top-18}' fill='#b42318' font-size='12'>50% threshold</text>{''.join(items)}<rect x='{left}' y='{height-55}' width='20' height='14' fill='#175cd3'/><text x='{left+28}' y='{height-43}' font-size='12'>Local economics portfolio</text><rect x='{left+260}' y='{height-55}' width='20' height='14' fill='#f79009'/><text x='{left+288}' y='{height-43}' font-size='12'>Live all-field author entity</text></svg>""", encoding="utf-8")
 
@@ -163,15 +162,41 @@ def main() -> None:
         with (args.output_dir/filename).open("w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n"); writer.writeheader(); writer.writerows(rows)
     comparison_svg(summary, args.output_dir/"hit_share_denominator_comparison.svg")
-    table = "".join(f"<tr><td>{html.escape(row['openalex_name'])}</td><td>{row['hit_year']}</td><td>{float(row['local_economics_hit_share']):.1%}</td><td>{row['live_all_field_hit_share']:.1%}</td><td>{row['eligible_prior_unrelated_clusters']}</td><td>{row['pre_mean_minus5_minus1']:.3f}</td><td>{row['post_mean_0_4']:.3f}</td><td>{row['raw_difference']:+.3f}</td></tr>" for row in summary)
-    report = f"""<!doctype html><html><head><meta charset='utf-8'><title>Economics author hit profiles</title><style>body{{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px;color:#182230}}.warning{{background:#fffaeb;padding:14px;border-left:5px solid #f79009}}table{{border-collapse:collapse;width:100%}}th,td{{padding:8px;border-bottom:1px solid #ddd;text-align:right}}th:first-child,td:first-child{{text-align:left}}img{{width:100%}}</style></head><body><h1>Jensen, Arellano, and Solow: exploratory hit profiles</h1><p class='warning'><strong>Descriptive and provisional.</strong> Live OpenAlex author entities contain identity errors and work versions. The event series use fixed, version-clustered cohorts of attributed older works not referenced by the candidate hit. They are not causal estimates.</p><img src='hit_share_denominator_comparison.svg' alt='Hit share denominator comparison'><table><thead><tr><th>Author</th><th>Hit year</th><th>Economics share</th><th>All-field share</th><th>Prior clusters</th><th>Pre mean</th><th>Post mean</th><th>Difference</th></tr></thead><tbody>{table}</tbody></table><h2>Author event figures</h2><img src='michael_c_jensen_event_time.svg'><img src='manuel_arellano_event_time.svg'><img src='robert_m_solow_event_time.svg'><h2>Identity warnings</h2><ul><li>Arellano's entity includes a 1912 geography record, an obvious namesake error.</li><li>Jensen's attributed pre-hit portfolio includes duplicated versions and a likely namesake record.</li><li>Version clustering is conservative and does not establish author identity.</li></ul></body></html>"""
-    (args.output_dir/"author_hit_profiles.html").write_text(report, encoding="utf-8")
+    table = "\n".join(f"| {row['openalex_name']} | {row['hit_year']} | {float(row['local_economics_hit_share']):.1%} | {row['live_all_field_hit_share']:.1%} | {row['eligible_prior_unrelated_clusters']} | {row['pre_mean_minus5_minus1']:.3f} | {row['post_mean_0_4']:.3f} | {row['raw_difference']:+.3f} |" for row in summary)
+    report = f"""# Jensen, Arellano, and Solow: exploratory hit profiles
+
+> **Descriptive and provisional.** Live OpenAlex author entities contain
+> identity errors and work versions. Event series use fixed, version-clustered
+> cohorts of attributed older works not referenced by the candidate hit. They
+> are not causal estimates.
+
+![Hit share denominator comparison](hit_share_denominator_comparison.svg)
+
+| Author | Hit year | Economics share | All-field share | Prior clusters | Pre mean | Post mean | Difference |
+|---|---:|---:|---:|---:|---:|---:|---:|
+{table}
+
+## Author event figures
+
+![Michael Jensen event profile](michael_c_jensen_event_time.svg)
+
+![Manuel Arellano event profile](manuel_arellano_event_time.svg)
+
+![Robert Solow event profile](robert_m_solow_event_time.svg)
+
+## Identity warnings
+
+- Arellano's entity includes a 1912 geography record, an obvious namesake error.
+- Jensen's attributed pre-hit portfolio includes duplicated versions and a likely namesake record.
+- Version clustering is conservative and does not establish author identity.
+"""
+    (args.output_dir/"author_hit_profiles.md").write_text(report, encoding="utf-8")
     (args.output_dir/"README.md").write_text("""# API-based author hit profiles
 
 Exploratory profiles for Michael Jensen, Manuel Arellano, and Robert Solow,
 built from the live OpenAlex API without the external SSD. Start with
 `author_hit_profiles.csv` for headline results, `author_hit_event_time.csv` for
-tidy event series, and `author_hit_profiles.html` for the figures.
+tidy event series, and `author_hit_profiles.md` for the figures.
 
 The script clusters obvious versions using DOI or highly similar titles within
 one publication year. It does not solve OpenAlex author-identity errors. All

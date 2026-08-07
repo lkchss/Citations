@@ -94,12 +94,12 @@ treatments.
 
 ## Output Files
 
-- `reports/economics/john_list_case_study/john_list_case_study.html`
+- `reports/8.7.26/john_list_case_study/john_list_case_study.md`
 - `reports/economics/john_list_case_study/author_works.csv`
 - `reports/economics/john_list_case_study/paper_year.csv`
 - `reports/economics/john_list_case_study/paper_contributions.csv`
 - `reports/economics/john_list_case_study/event_time.csv`
-- `reports/economics/big_hit_screen/economics_big_hit_candidates.html`
+- `reports/8.7.26/big_hit_screen/economics_big_hit_candidates.md`
 - `reports/economics/big_hit_screen/economics_big_hit_candidates.csv`
 - `reports/economics/big_hit_screen/economics_big_hit_research_shortlist.csv`
 - `reports/economics/big_hit_screen/economics_big_hit_screen_audit.json`

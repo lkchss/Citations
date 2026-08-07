@@ -27,7 +27,7 @@ OpenAlex author denominator; all three identities still require manual review.
 
 Directory: [`john_list_case_study/`](john_list_case_study/)
 
-- [`john_list_case_study.html`](john_list_case_study/john_list_case_study.html):
+- [`john_list_case_study.md`](john_list_case_study/john_list_case_study.md):
   rendered exploratory report.
 - [`author_works.csv`](john_list_case_study/author_works.csv): economics-classified
   portfolio and hit/focal eligibility flags.
@@ -51,7 +51,7 @@ from 1.18 in 2002 to 3.02 in 2007–09, but the top five focal papers account fo
 
 Directory: [`big_hit_screen/`](big_hit_screen/)
 
-- [`economics_big_hit_candidates.html`](big_hit_screen/economics_big_hit_candidates.html):
+- [`economics_big_hit_candidates.md`](big_hit_screen/economics_big_hit_candidates.md):
   browsable candidate dashboard.
 - [`economics_big_hit_candidates.csv`](big_hit_screen/economics_big_hit_candidates.csv):
   top 5,000 provisional candidates under the raw screen.
@@ -70,7 +70,7 @@ economics-portfolio shares, not final all-field author shares.
 
 Directory: [`economics_subject_level/`](economics_subject_level/)
 
-- [`economics_big_hit_subject_summary.html`](economics_subject_level/economics_big_hit_subject_summary.html):
+- [`economics_big_hit_subject_summary.md`](economics_subject_level/economics_big_hit_subject_summary.md):
   full economics publication-year event summary.
 - [`economics_big_hit_event_time.csv`](economics_subject_level/economics_big_hit_event_time.csv):
   event-time estimates.

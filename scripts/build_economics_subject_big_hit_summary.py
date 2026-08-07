@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import html
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -83,9 +82,27 @@ def main() -> None:
     svg(rows, args.output_dir/"economics_big_hit_event_time.svg")
     pre = sum(float(r["mean_citations"]) for r in rows if -5 <= r["event_time"] <= -1)/5
     post = sum(float(r["mean_citations"]) for r in rows if 0 <= r["event_time"] <= 4)/5
-    table = "".join(f"<tr><td>{r['event_time']:+d}</td><td>{r['mean_citations']:.3f}</td><td>{r['mean_change_from_t_minus_1']:+.3f}</td><td>{r['share_with_positive_citations']:.1%}</td></tr>" for r in rows)
-    report = f"""<!doctype html><html><head><meta charset='utf-8'><title>Economics subject big-hit summary</title><style>body{{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px;color:#182230}}.note{{background:#fffaeb;padding:14px;border-left:5px solid #f79009}}.kpi{{display:inline-block;padding:14px;margin:5px;background:#f2f4f7;border-radius:8px}}table{{border-collapse:collapse;width:100%}}th,td{{padding:8px;border-bottom:1px solid #ddd;text-align:right}}th:first-child,td:first-child{{text-align:left}}img{{width:100%}}</style></head><body><h1>Economics subject-level big-hit summary</h1><p class='note'><strong>Descriptive, not causal.</strong> Hits are author-specific papers with at least 101 lifetime citations and over 50% of the author's economics-portfolio citations. Treatment is hit publication year. Older papers are unrelated when the hit does not cite them. OpenAlex identity, version duplication, and economics-only denominators remain unresolved.</p><div><span class='kpi'><b>{counts[1]:,}</b><br>authors</span><span class='kpi'><b>{counts[3]:,}</b><br>author-hit events</span><span class='kpi'><b>{counts[4]:,}</b><br>focal pairs</span><span class='kpi'><b>{pre:.3f} → {post:.3f}</b><br>mean citations, -5:-1 vs 0:+4</span></div><img src='economics_big_hit_event_time.svg' alt='Economics event-time figure'><table><thead><tr><th>Event time</th><th>Mean citations</th><th>Change from -1</th><th>Positive share</th></tr></thead><tbody>{table}</tbody></table></body></html>"""
-    (args.output_dir/"economics_big_hit_subject_summary.html").write_text(report, encoding="utf-8")
+    table = "\n".join(f"| {r['event_time']:+d} | {r['mean_citations']:.3f} | {r['mean_change_from_t_minus_1']:+.3f} | {r['share_with_positive_citations']:.1%} |" for r in rows)
+    report = f"""# Economics subject-level big-hit summary
+
+> **Descriptive, not causal.** Hits are author-specific papers with at least
+> 101 lifetime citations and over 50% of the author's economics-portfolio
+> citations. Treatment is hit publication year. Older papers are unrelated
+> when the hit does not cite them. OpenAlex identity, version duplication, and
+> economics-only denominators remain unresolved.
+
+- Authors: **{counts[1]:,}**
+- Author-hit events: **{counts[3]:,}**
+- Focal pairs: **{counts[4]:,}**
+- Mean citations, event -5:-1 versus 0:+4: **{pre:.3f} → {post:.3f}**
+
+![Economics event-time figure](economics_big_hit_event_time.svg)
+
+| Event time | Mean citations | Change from -1 | Positive share |
+|---:|---:|---:|---:|
+{table}
+"""
+    (args.output_dir/"economics_big_hit_subject_summary.md").write_text(report, encoding="utf-8")
     summary = {"generated_at": datetime.now(timezone.utc).isoformat(), "panel": str(args.panel),
                "rows": counts[0], "authors": counts[1], "hit_works": counts[2],
                "author_hit_events": counts[3], "focal_pairs": counts[4],

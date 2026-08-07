@@ -189,8 +189,9 @@ def main() -> None:
                    band_end=2006 if args.author_id.endswith("A5083530241") else None)
     (args.output_dir / "unrelated_prior_citations.svg").write_text(svg, encoding="utf-8")
 
-    top_rows = "".join(f"<tr><td>{r['citation_rank']}</td><td>{html.escape(r['title'])}</td><td>{r['publication_year']}</td><td>{r['cited_by_count']:,}</td><td>{r['portfolio_citation_share']:.1%}</td><td>{'yes' if r['eligible_unrelated_prior'] else 'no'}</td></tr>" for r in portfolio[:20])
-    warning = "" if hit_share > .5 else "<p class='warning'><strong>Baseline diagnostic:</strong> the top paper does not exceed 50% of this economics-portfolio citation denominator, so this author is not treated under the baseline definition.</p>"
+    clean = lambda value: str(value).replace("|", "\\|").replace("\n", " ")
+    top_rows = "\n".join(f"| {r['citation_rank']} | {clean(r['title'])} | {r['publication_year']} | {r['cited_by_count']:,} | {r['portfolio_citation_share']:.1%} | {'yes' if r['eligible_unrelated_prior'] else 'no'} |" for r in portfolio[:20])
+    warning = "" if hit_share > .5 else "> **Baseline diagnostic:** The top paper does not exceed 50% of this economics-portfolio citation denominator, so this author is not treated under the baseline definition.\n\n"
     fixed = {r["year"]: r["mean_citations"] for r in event_rows if r["eligible_papers"] == len(eligible_ids)}
     initial = sum(fixed.get(y, 0) for y in (2003, 2004))/2
     chicago = sum(fixed.get(y, 0) for y in (2005, 2006))/2
@@ -198,9 +199,56 @@ def main() -> None:
     total_growth = sum(row["change"] for row in contributions)
     concentration = {n: sum(row["change"] for row in contributions[:n]) / total_growth
                      if total_growth else 0 for n in (1, 5, 10)}
-    contribution_rows = "".join(f"<tr><td>{html.escape(row['title'])}</td><td>{row['publication_year']}</td><td>{row['citations_2002']:.1f}</td><td>{row['mean_citations_2007_2009']:.1f}</td><td>{row['change']:+.1f}</td></tr>" for row in contributions[:10])
-    report = f"""<!doctype html><html><head><meta charset='utf-8'><title>{html.escape(args.author_name)} citation case study</title><style>body{{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px;color:#182230}}table{{border-collapse:collapse;width:100%}}th,td{{padding:8px;border-bottom:1px solid #ddd;text-align:left}}.kpi{{display:inline-block;padding:14px;margin:5px;background:#f2f4f7;border-radius:8px}}.warning{{background:#fffaeb;padding:14px;border-left:5px solid #f79009}}img{{width:100%}}</style></head><body><h1>{html.escape(args.author_name)}: exploratory citation-spillover case study</h1><p>OpenAlex author: <code>{html.escape(args.author_id)}</code>. Descriptive output; not a causal estimate.</p>{warning}<div><span class='kpi'><b>{len(works)}</b><br>economics works</span><span class='kpi'><b>{total_citations:,}</b><br>economics-portfolio citations</span><span class='kpi'><b>{hit_share:.1%}</b><br>top-paper share</span><span class='kpi'><b>{len(eligible_ids)}</b><br>unrelated prior papers</span></div><h2>Fixed-cohort timeline</h2><p>Using the same 49 papers throughout: 2002 baseline <strong>{fixed.get(2002,0):.2f}</strong>; 2003–04 <strong>{initial:.2f}</strong>; 2005–06 <strong>{chicago:.2f}</strong>; 2007–09 <strong>{later:.2f}</strong> mean annual citations per paper. The pattern is gradual and cannot separate the publication cluster from the 2005 Chicago move.</p><img src='unrelated_prior_citations.svg' alt='Citation time series'><h2>Where the increase comes from</h2><p>The top 1, 5, and 10 focal papers account for {concentration[1]:.1%}, {concentration[5]:.1%}, and {concentration[10]:.1%} of the net increase from 2002 to the 2007–09 average.</p><table><thead><tr><th>Prior paper</th><th>Year</th><th>2002</th><th>2007–09 mean</th><th>Change</th></tr></thead><tbody>{contribution_rows}</tbody></table><h2>Candidate hit</h2><p><strong>{html.escape(hit['title'])}</strong> ({hit_year}), {hit_citations:,} citations. “Unrelated” means this candidate does not cite the prior focal paper.</p><h2>Top portfolio works</h2><table><thead><tr><th>Rank</th><th>Title</th><th>Year</th><th>Citations</th><th>Share</th><th>Eligible focal</th></tr></thead><tbody>{top_rows}</tbody></table><h2>Data notes</h2><ul><li>Annual outcomes use reconstructed economics citations from OpenAlex reference links.</li><li>Portfolio shares are economics-only and use current <code>cited_by_count</code>; they are not an all-field career denominator.</li><li>The headline timeline begins in 2002, when all 49 focal papers are already published.</li><li>Same-year and post-hit papers are excluded.</li><li>All citations, including later self-citations, are counted.</li><li>OpenAlex may contain article/preprint versions that require deduplication.</li></ul></body></html>"""
-    (args.output_dir / "john_list_case_study.html").write_text(report, encoding="utf-8")
+    contribution_rows = "\n".join(f"| {clean(row['title'])} | {row['publication_year']} | {row['citations_2002']:.1f} | {row['mean_citations_2007_2009']:.1f} | {row['change']:+.1f} |" for row in contributions[:10])
+    report = f"""# {args.author_name}: exploratory citation-spillover case study
+
+OpenAlex author: `{args.author_id}`. Descriptive output; not a causal estimate.
+
+{warning}- Economics works: **{len(works)}**
+- Economics-portfolio citations: **{total_citations:,}**
+- Top-paper share: **{hit_share:.1%}**
+- Unrelated prior papers: **{len(eligible_ids)}**
+
+## Fixed-cohort timeline
+
+Using the same 49 papers throughout: 2002 baseline **{fixed.get(2002,0):.2f}**;
+2003–04 **{initial:.2f}**; 2005–06 **{chicago:.2f}**; 2007–09
+**{later:.2f}** mean annual citations per paper. The pattern is gradual and
+cannot separate the publication cluster from the 2005 Chicago move.
+
+![Citation time series](unrelated_prior_citations.svg)
+
+## Where the increase comes from
+
+The top 1, 5, and 10 focal papers account for {concentration[1]:.1%},
+{concentration[5]:.1%}, and {concentration[10]:.1%} of the net increase from
+2002 to the 2007–09 average.
+
+| Prior paper | Year | 2002 | 2007–09 mean | Change |
+|---|---:|---:|---:|---:|
+{contribution_rows}
+
+## Candidate hit
+
+**{clean(hit['title'])}** ({hit_year}), {hit_citations:,} citations.
+“Unrelated” means this candidate does not cite the prior focal paper.
+
+## Top portfolio works
+
+| Rank | Title | Year | Citations | Share | Eligible focal |
+|---:|---|---:|---:|---:|---|
+{top_rows}
+
+## Data notes
+
+- Annual outcomes use reconstructed economics citations from OpenAlex reference links.
+- Portfolio shares are economics-only, not an all-field career denominator.
+- The headline timeline begins in 2002, when all 49 focal papers are published.
+- Same-year and post-hit papers are excluded.
+- All citations, including later self-citations, are counted.
+- OpenAlex may contain article/preprint versions requiring deduplication.
+"""
+    (args.output_dir / "john_list_case_study.md").write_text(report, encoding="utf-8")
     provenance = {"author_id": args.author_id, "author_name": args.author_name, "subject_dir": str(args.subject_dir),
                   "citation_source": str(calculated), "works": len(works), "missing_work_metadata": missing_metadata,
                   "portfolio_citations": total_citations, "hit_work_id": hit_id, "hit_year": hit_year,
