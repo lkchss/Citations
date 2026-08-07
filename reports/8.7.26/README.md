@@ -23,6 +23,24 @@ version-clustered prior-work cohorts, event-time CSV data, four SVG figures, and
 an HTML report. Only Arellano's candidate exceeds 50% under the live all-field
 OpenAlex author denominator; all three identities still require manual review.
 
+## Age-adjusted Economics Results
+
+Directory: [`economics_adjusted/`](economics_adjusted/)
+
+Aggregate-cell adjustments exclude pre-publication pseudo-observations and
+standardize mature focal papers to fixed age-bin weights. The standardized raw
+pre/post difference falls to +0.213, compared with +0.348 in the unadjusted
+headline series.
+
+## API-derived Matched Controls
+
+Directory: [`author_matched_controls/`](author_matched_controls/)
+
+Publication-year, work-type, and topic-matched OpenAlex controls are provided
+for John List, Michael Jensen, Manuel Arellano, and Robert Solow. The output
+includes matched-pair records, tidy event series, pretrend diagnostics, and four
+SVG figures. These are exploratory comparisons rather than causal estimates.
+
 ## John List Case Study
 
 Directory: [`john_list_case_study/`](john_list_case_study/)

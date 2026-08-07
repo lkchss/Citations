@@ -1,0 +1,19 @@
+{
+  "status": "descriptive_aggregate_adjustment",
+  "pre_mean": 0.6361281686607656,
+  "post_mean": 0.8491606832970312,
+  "raw_difference": 0.2130325146362656,
+  "age_bins": [
+    "11-20",
+    "21+",
+    "3-5",
+    "6-10"
+  ],
+  "weights": {
+    "11-20": 0.22937142624585394,
+    "21+": 0.10123517082799179,
+    "3-5": 0.34336528091488105,
+    "6-10": 0.32602812201127324
+  },
+  "warning": "Cell reweighting is not a paper-level regression or matched-control design."
+}
