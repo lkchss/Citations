@@ -1,0 +1,11 @@
+{
+  "normalized_rows": 1166574,
+  "focal_works": 70986,
+  "authors": 11155,
+  "balanced_row_count": 295596,
+  "balanced_units": 14076,
+  "balanced_authors": 3667,
+  "balanced_event_years": 21,
+  "benchmark": "deduplicated economics works grouped by calendar year, paper age, and document type",
+  "warning": "Descriptive normalization; benchmark includes treated works and does not create a causal counterfactual."
+}

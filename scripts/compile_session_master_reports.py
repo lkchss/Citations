@@ -144,6 +144,9 @@ publication year and document type, plus primary topic where available.
 def subject_report() -> str:
     raw = json.loads((ROOT / "economics_subject_level/economics_big_hit_subject_summary.json").read_text())
     adjusted = json.loads((ROOT / "economics_adjusted/summary.json").read_text())
+    normalized_meta = json.loads((ROOT / "economics_paper_level_normalized/metadata.json").read_text())
+    normalized_rows = read_csv(ROOT / "economics_paper_level_normalized/normalized_pre_post_summary.csv")
+    normalized = {(row["sample"],row["metric"]):row for row in normalized_rows}
     risk = read_csv(ROOT / "economics_adjusted/at_risk_event_time.csv")
     risk_by_event = {int(row["event_time"]): row for row in risk}
     comparison = "\n".join([
@@ -204,6 +207,36 @@ to **{adjusted['raw_difference']:+.3f}**, a reduction of
 - [Adjustment methodology](economics_adjusted/README.md)
 - [Age-standardized event data](economics_adjusted/mature_age_standardized_event_time.csv)
 - [Adjustment summary](economics_adjusted/summary.json)
+
+## Paper-level lifecycle and calendar-year normalization
+
+The recovered author–paper–year panel permits a stronger adjustment. Expected
+citations are estimated from deduplicated economics works in the same calendar
+year, paper age, and document type. The genuinely balanced cohort requires all
+21 event years (-10:+10) to be observed for each author–focal–hit unit.
+
+- Balanced units: **{normalized_meta['balanced_units']:,}**
+- Balanced authors: **{normalized_meta['balanced_authors']:,}**
+- Observations per balanced event year: **{normalized_meta['balanced_units']:,}**
+
+| Sample | Excess-citation change | Observed/expected change |
+|---|---:|---:|
+| Publication at-risk | {float(normalized[('at_risk','mean_excess_citations')]['difference']):+.3f} | {float(normalized[('at_risk','observed_expected_ratio')]['difference']):+.3f} |
+| Fully balanced -10:+10 | {float(normalized[('balanced_full_window','mean_excess_citations')]['difference']):+.3f} | {float(normalized[('balanced_full_window','observed_expected_ratio')]['difference']):+.3f} |
+
+![Paper-level lifecycle-adjusted excess citations](economics_paper_level_normalized/paper_level_excess_citations.svg)
+
+![Paper-level observed/expected ratio](economics_paper_level_normalized/paper_level_observed_expected_ratio.svg)
+
+The at-risk sample remains positive after lifecycle normalization, but the fully
+balanced older-paper cohort is negative. This is a major specification result:
+the positive aggregate pattern is not robust to requiring complete event-window
+support.
+
+- [Paper-level normalization report](economics_paper_level_normalized/README.md)
+- [Normalized event-time data](economics_paper_level_normalized/normalized_event_time.csv)
+- [Normalized pre/post summary](economics_paper_level_normalized/normalized_pre_post_summary.csv)
+- [Normalization metadata](economics_paper_level_normalized/metadata.json)
 
 ## Additional ingestion outputs
 

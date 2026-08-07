@@ -44,6 +44,15 @@ headline series.
 The [original unadjusted economics figure](economics_subject_level/economics_big_hit_event_time.svg)
 is preserved alongside the adjusted specifications.
 
+## Paper-level Normalized Economics Results
+
+Directory: [`economics_paper_level_normalized/`](economics_paper_level_normalized/)
+
+The recovered 191-million-row panel supports calendar-year, paper-age, and
+document-type normalization. The at-risk sample remains positive, but the
+genuinely balanced 14,076-unit -10:+10 cohort has a negative normalized
+pre/post difference. This is the strongest current specification diagnostic.
+
 ## API-derived Matched Controls
 
 Directory: [`author_matched_controls/`](author_matched_controls/)
