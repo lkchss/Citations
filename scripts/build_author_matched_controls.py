@@ -125,6 +125,17 @@ same publication year and work type, and the same primary topic when available.
 Annual outcomes count citing works by publication year. The table compares
 event -5:-1 with 0:+4.
 
+## Original unadjusted figures
+
+The original figures are preserved unchanged:
+
+- [John List original figure](../john_list_case_study/unrelated_prior_citations.svg)
+- [Michael Jensen original figure](../author_hit_profiles/michael_c_jensen_event_time.svg)
+- [Manuel Arellano original figure](../author_hit_profiles/manuel_arellano_event_time.svg)
+- [Robert Solow original figure](../author_hit_profiles/robert_m_solow_event_time.svg)
+
+The matched-control figures below are additional specifications, not replacements.
+
 | Author | Focal papers | Focal change | Control change | Difference in changes | Pretrend slope gap | Parallel flag |
 |---|---:|---:|---:|---:|---:|---|
 {table}

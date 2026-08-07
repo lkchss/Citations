@@ -32,6 +32,9 @@ standardize mature focal papers to fixed age-bin weights. The standardized raw
 pre/post difference falls to +0.213, compared with +0.348 in the unadjusted
 headline series.
 
+The [original unadjusted economics figure](economics_subject_level/economics_big_hit_event_time.svg)
+is preserved alongside the adjusted specifications.
+
 ## API-derived Matched Controls
 
 Directory: [`author_matched_controls/`](author_matched_controls/)
@@ -40,6 +43,9 @@ Publication-year, work-type, and topic-matched OpenAlex controls are provided
 for John List, Michael Jensen, Manuel Arellano, and Robert Solow. The output
 includes matched-pair records, tidy event series, pretrend diagnostics, and four
 SVG figures. These are exploratory comparisons rather than causal estimates.
+The [original John List figure](john_list_case_study/unrelated_prior_citations.svg)
+and the [original Jensen/Arellano/Solow figures](author_hit_profiles/) remain
+available unchanged.
 
 ## John List Case Study
 
