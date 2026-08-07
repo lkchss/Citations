@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-08-07T14:43:12.348477+00:00",
+  "source": "live OpenAlex API",
+  "method": "fixed cohort of all attributed pre-hit works absent from hit references; citing-work counts grouped by publication year",
+  "warning": "Author identities and work versions are not validated. Results are descriptive and API-vintage dependent.",
+  "authors": 3,
+  "event_rows": 63,
+  "prior_works": 37
+}

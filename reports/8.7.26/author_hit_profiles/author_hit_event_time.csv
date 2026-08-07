@@ -1,0 +1,64 @@
+author_id,author_name,hit_work_id,hit_year,event_time,year,eligible_prior_papers,total_citations,mean_citations,causal
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-10,1966,10,0,0.0,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-9,1967,10,0,0.0,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-8,1968,10,5,0.5,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-7,1969,10,4,0.4,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-6,1970,10,12,1.2,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-5,1971,10,7,0.7,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-4,1972,10,20,2.0,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-3,1973,10,30,3.0,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-2,1974,10,57,5.7,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,-1,1975,10,41,4.1,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,0,1976,10,71,7.1,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,1,1977,10,85,8.5,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,2,1978,10,103,10.3,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,3,1979,10,96,9.6,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,4,1980,10,87,8.7,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,5,1981,10,65,6.5,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,6,1982,10,55,5.5,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,7,1983,10,85,8.5,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,8,1984,10,69,6.9,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,9,1985,10,51,5.1,0
+https://openalex.org/A5068490503,Michael C. Jensen,https://openalex.org/W2752617332,1976,10,1986,10,65,6.5,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-10,1981,12,0,0.0,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-9,1982,12,0,0.0,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-8,1983,12,0,0.0,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-7,1984,12,0,0.0,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-6,1985,12,1,0.08333333333333333,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-5,1986,12,0,0.0,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-4,1987,12,1,0.08333333333333333,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-3,1988,12,1,0.08333333333333333,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-2,1989,12,3,0.25,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,-1,1990,12,5,0.4166666666666667,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,0,1991,12,1,0.08333333333333333,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,1,1992,12,8,0.6666666666666666,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,2,1993,12,3,0.25,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,3,1994,12,3,0.25,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,4,1995,12,4,0.3333333333333333,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,5,1996,12,11,0.9166666666666666,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,6,1997,12,6,0.5,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,7,1998,12,10,0.8333333333333334,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,8,1999,12,10,0.8333333333333334,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,9,2000,12,11,0.9166666666666666,0
+https://openalex.org/A5114113233,Manuel Arellano,https://openalex.org/W2025610165,1991,10,2001,12,20,1.6666666666666667,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-10,1946,15,0,0.0,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-9,1947,15,0,0.0,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-8,1948,15,0,0.0,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-7,1949,15,0,0.0,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-6,1950,15,0,0.0,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-5,1951,15,0,0.0,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-4,1952,15,3,0.2,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-3,1953,15,6,0.4,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-2,1954,15,2,0.13333333333333333,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,-1,1955,15,3,0.2,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,0,1956,15,3,0.2,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,1,1957,15,3,0.2,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,2,1958,15,3,0.2,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,3,1959,15,12,0.8,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,4,1960,15,0,0.0,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,5,1961,15,4,0.26666666666666666,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,6,1962,15,6,0.4,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,7,1963,15,29,1.9333333333333333,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,8,1964,15,5,0.3333333333333333,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,9,1965,15,5,0.3333333333333333,0
+https://openalex.org/A5001761955,Robert M. Solow,https://openalex.org/W2070631858,1956,10,1966,15,8,0.5333333333333333,0

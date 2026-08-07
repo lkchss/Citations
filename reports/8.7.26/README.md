@@ -13,6 +13,16 @@ checksummed manifest. Start with
 [`headline_results.csv`](ingestion_ready/headline_results.csv) for headline
 values or [`results.jsonl`](ingestion_ready/results.jsonl) for direct ingestion.
 
+## Additional Author Hit Profiles
+
+Directory: [`author_hit_profiles/`](author_hit_profiles/)
+
+API-based exploratory profiles compare Michael Jensen, Manuel Arellano, and
+Robert Solow. The package includes all-field versus economics-only hit shares,
+version-clustered prior-work cohorts, event-time CSV data, four SVG figures, and
+an HTML report. Only Arellano's candidate exceeds 50% under the live all-field
+OpenAlex author denominator; all three identities still require manual review.
+
 ## John List Case Study
 
 Directory: [`john_list_case_study/`](john_list_case_study/)
