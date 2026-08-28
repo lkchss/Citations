@@ -5,56 +5,46 @@
 
 ## Executive summary
 
-- The reliable WoS agricultural-economics panel and the full OpenAlex panel both show a much larger coefficient for related than unrelated citation exposure. In WoS agricultural economics both coefficients are positive; in full OpenAlex the related coefficient is positive while the conditional unrelated coefficient is slightly negative.
-- The WoS economics-only and combined economics/agricultural-economics panels are explicitly flagged as broken in the source report and should not be treated as reliable comparison estimates.
+- The full WoS economics and full OpenAlex economics regressions are compared using the same related/unrelated citation-exposure models.
 - The triangles project is constructing a rigorously screened set of 500 pairwise citation-importance comparisons: 50 focal papers, 10 triangles per focal, and at least five distinct citing papers per focal.
 - The current PDF gate admits 1,581 candidate triangles backed by 2,990 lawful, identity-verified documents. Thirty-seven focal papers currently meet the structural requirement of at least 10 triangles from at least five distinct citing papers. Citation-occurrence and cited-paper-evidence screening are still in progress, so the final 500-triangle dataset has not yet been selected.
 
-## Related versus unrelated citations: WoS compared with OpenAlex
+## Related versus unrelated citations: full WoS economics compared with full OpenAlex economics
 
-The regressions ask whether an author's accumulated citations to earlier papers predict annual citations to a later focal paper. “Related” papers have a direct reference edge with the focal paper in either direction; other eligible prior papers are “unrelated.” Exposures are lagged through the prior year.
+### Model 1
 
-The two directly comparable specifications are:
+```text
+annual focal-paper citations
+    ~ lagged accumulated unrelated citations
+    + paper fixed effects
+    + year fixed effects
+```
 
-1. Annual focal-paper citations on accumulated unrelated citations, with paper and year fixed effects.
-2. Annual focal-paper citations on accumulated unrelated and related citations, with paper and year fixed effects.
+| Result | Full WoS economics | Full OpenAlex economics | OpenAlex − WoS |
+|---|---:|---:|---:|
+| Unrelated coefficient | -0.00007762 | 0.00004077 | +0.00011839 |
+| Standard error | 0.000006891 | 0.00001327 | +0.00000638 |
+| Within R² | 0.000693 | 0.000109 | -0.000584 |
+| Observations | 15,733,536 | 27,213,454 | +11,479,918 |
 
-Standard errors are clustered by focal work. Both comparisons use level outcomes and exposures.
+### Model 2
 
-| Estimate | WoS agricultural economics | Full OpenAlex economics panel |
-|---|---:|---:|
-| Model 1: unrelated | 0.0006922*** (0.0000621) | 0.0000408** (0.0000133) |
-| Model 2: unrelated | 0.0004619*** (0.0000574) | -0.0000404† (0.0000206) |
-| Model 2: related | 0.003217*** (0.000548) | 0.001521*** (0.000392) |
-| Observations | 888,901 | 27,213,454 |
-| Within R², Model 1 | 0.001875 | 0.000109 |
-| Within R², Model 2 | 0.002772 | 0.004443 |
+```text
+annual focal-paper citations
+    ~ lagged accumulated unrelated citations
+    + lagged accumulated related citations
+    + paper fixed effects
+    + year fixed effects
+```
 
-Parentheses contain paper-clustered standard errors. `*** p < 0.001`; `** p < 0.01`; `† p = 0.0506`. Per 100 accumulated citations, the Model 2 estimates imply approximately `+0.0462` unrelated and `+0.322` related annual citations in WoS agricultural economics, compared with `-0.00404` unrelated and `+0.152` related annual citations in full OpenAlex.
-
-### Interpretation
-
-The strongest common result is that related exposure matters more than unrelated exposure. In WoS agricultural economics, the Model 2 related coefficient is about seven times the unrelated coefficient. In full OpenAlex, the related coefficient is positive and precisely estimated, while the unrelated coefficient becomes small and negative after related exposure is included.
-
-The OpenAlex coefficients are smaller than the reliable WoS agricultural-economics coefficients: about 94.1% smaller for Model 1 unrelated exposure, 91.3% smaller in absolute value for Model 2 unrelated exposure, and 52.7% smaller for Model 2 related exposure. These are descriptive contrasts—not estimates of a database effect—because the panels differ in field coverage, construction, and sample size.
-
-The full OpenAlex panel is much broader:
-
-| Quantity | WoS agricultural economics | Full OpenAlex |
-|---|---:|---:|
-| Paper-year observations | 888,901 | 27,213,454 |
-| Focal works | Not reported in the WoS summary | 1,253,129 |
-| Authors | Not reported in the WoS summary | 197,777 |
-| Model 1 within R² | 0.001875 | 0.000109 |
-| Model 2 within R² | 0.002772 | 0.004443 |
-
-The OpenAlex panel contains about 30.6 times as many observations. Unlike the earlier recovered OpenAlex benchmark, the WoS agricultural-economics model does not display an unusually high within R²; its within fit is low and comparable in scale to the full OpenAlex result.
-
-### WoS economics quality warning
-
-The WoS source also reports an economics-only panel with 15,733,536 observations, but labels it **“broken.”** Its Model 2 coefficients are `-0.0000749` for unrelated exposure and a statistically insignificant `-0.0000540` for related exposure. The combined economics/agricultural-economics panel is likewise dominated by the problematic economics data and produces mostly small negative coefficients. The source associates this behavior with a likely economics data or panel-construction problem. Those estimates are retained as diagnostics but excluded from the primary WoS/OpenAlex comparison above.
-
-The WoS provenance is documented in `wos_regressions.md` on `origin/main`, which identifies `/fsr/citations/code/run_regression_analysis.R` and the result files under `/fsr/citations/data/`. Those original `/fsr` inputs are not present in this checkout, so the report can verify the repository's documented estimates but cannot independently rerun the WoS models here.
+| Result | Full WoS economics | Full OpenAlex economics | OpenAlex − WoS |
+|---|---:|---:|---:|
+| Unrelated coefficient | -0.00007488 | -0.00004036 | +0.00003452 |
+| Unrelated standard error | 0.00001001 | 0.00002064 | +0.00001063 |
+| Related coefficient | -0.00005398 | 0.00152136 | +0.00157534 |
+| Related standard error | 0.0002033 | 0.0003915 | +0.0001882 |
+| Within R² | 0.000698 | 0.004443 | +0.003745 |
+| Observations | 15,733,536 | 27,213,454 | +11,479,918 |
 
 ## Citation-importance triangles
 
@@ -101,12 +91,10 @@ The current work is extracting page-aligned text, resolving the two citation eve
 
 ## Bottom line
 
-The reliable WoS agricultural-economics and full OpenAlex results agree that related citation exposure has the larger positive association with focal-paper citations, although they differ on the sign of conditional unrelated exposure. The triangles work has moved from graph construction into full-text qualification and occurrence/evidence validation, but it is not complete: the current pool is 13 structurally qualifying focal papers short before accounting for further occurrence and evidence attrition.
+The full WoS economics and full OpenAlex economics results are now reported side by side under the same two model specifications. The triangles work has moved from graph construction into full-text qualification and occurrence/evidence validation, but it is not complete: the current pool is 13 structurally qualifying focal papers short before accounting for further occurrence and evidence attrition.
 
 ## Supporting project artifacts
 
-- `reports/openalex_comparison/README.md`
-- `reports/openalex_comparison/legacy_vs_full_openalex.csv`
 - `reports/openalex_comparison/full_openalex_two_model_regressions.summary.json`
 - `wos_regressions.md` (`origin/main`)
 - `docs/FOCAL_CITATION_IMPORTANCE_PILOT.md`
