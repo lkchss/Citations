@@ -24,6 +24,7 @@ annual focal-paper citations
 |---|---:|---:|---:|
 | Unrelated coefficient | -0.00007762 | 0.00004077 | +0.00011839 |
 | Standard error | 0.000006891 | 0.00001327 | +0.00000638 |
+| p-value | <0.001 | 0.00212 | — |
 | Within R² | 0.000693 | 0.000109 | -0.000584 |
 | Observations | 15,733,536 | 27,213,454 | +11,479,918 |
 
@@ -41,8 +42,10 @@ annual focal-paper citations
 |---|---:|---:|---:|
 | Unrelated coefficient | -0.00007488 | -0.00004036 | +0.00003452 |
 | Unrelated standard error | 0.00001001 | 0.00002064 | +0.00001063 |
+| Unrelated p-value | <0.001 | 0.05058 | — |
 | Related coefficient | -0.00005398 | 0.00152136 | +0.00157534 |
 | Related standard error | 0.0002033 | 0.0003915 | +0.0001882 |
+| Related p-value | ≈0.791 | 0.000102 | — |
 | Within R² | 0.000698 | 0.004443 | +0.003745 |
 | Observations | 15,733,536 | 27,213,454 | +11,479,918 |
 
